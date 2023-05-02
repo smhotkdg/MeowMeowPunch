@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ba7d5939e956e44eb89e58f352801bf, type: 3}
+  m_Name: Goal
+  m_EditorClassIdentifier: 
+  icon: {fileID: 2800000, guid: f7a22e8ed53516e40a26f882c708fadd, type: 3}
+  color: {r: 1, g: 1, b: 1, a: 1}
+  rooms:
+    DEFAULT:
+    - {fileID: 9079742225020444089, guid: bf6955bbee9f17e4cbbb45f0ebf83c51, type: 3}
+    TBLR: []
+    TB: []
+    LR: []
+    T: []
+    B: []
+    L: []
+    R: []
+    TL: []
+    TR: []
+    BL: []
+    BR: []
+    TBL: []
+    TBR: []
+    TLR: []
+    BLR: []

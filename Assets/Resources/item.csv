@@ -1,0 +1,89 @@
+﻿item_code,item_name,damage,damage_x_time,attack_speed,attack_speed_x_time,range,range_x_time,shot_speed,shot_speed_x_time,luck,curse,move_speed,attack_type,attack_method,tier,hp,max_hp,gold,key,boom,flying,map,use,position,once,other
+1,The Sad Onion(눈물나는 양파),0,0,0.7,0,0,0,0,0,0,0,0,normal,normal,3,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+2,The Inner Eye(내면의 눈),0,0,0,0.51,0,0,0,0,0,0,0,triple,normal,2,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+3,Spoon Bender(초능력자),0,0,0,0,0,0,0,0,0,0,0,normal,homing,3,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+4,Cricket's Head(크리켓의 머리),0.5,1.5,0,0,0,0,0,0,0,0,0,normal,normal,4,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+5,My Reflection(거울상),1.5,0,0,0,1.5,1.6,0,1.6,-1,0,0,normal,boomerang,2,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+6,Number One(오줌싸개),0,0,1.5,0,-1.5,0.8,0,0,0,0,0,normal,normal,2,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+7,Blood of the Martyr(순교자의 피),1,0,0,0,0,0,0,0,0,0,0,normal,normal,3,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+11,1UP!,0,0,0,0,0,0,0,0,0,0,0,normal,normal,2,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+12,Magic Mushroom(요술 버섯),0.3,1.5,0,0,1.5,0,0,0,0,0,0.3,normal,normal,4,0,1,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+13,The Virus(바이러스),0,0,0,0,0,0,0,0,0,0,0.2,normal,normal,2,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+14,Roid Rage(불량 스테로이드),0,0,0,0,1.5,0,0,0,0,0,0.3,normal,normal,2,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+15,<3,0,0,0,0,0,0,0,0,0,0,0,normal,normal,2,0,1,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+16,Raw Liver(생간),0,0,0,0,0,0,0,0,0,0,0,normal,normal,2,0,2,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+17,Skeleton Key(해골 열쇠),0,0,0,0,0,0,0,0,0,0,0,normal,normal,3,0,0,0,99,0,FALSE,FALSE,TRUE,0,FALSE,normal
+18,A Dollar(1달러),0,0,0,0,0,0,0,0,0,0,0,normal,normal,3,0,0,100,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+19,Boom!(꽈광!),0,0,0,0,0,0,0,0,0,0,0,normal,normal,0,0,0,0,0,10,FALSE,FALSE,TRUE,0,FALSE,normal
+20,"Transcendence(초월)	",0,0,0,0,0,0,0,0,0,0,0,normal,normal,3,0,0,0,0,0,TRUE,FALSE,TRUE,0,FALSE,normal
+21,The Compass(나침반),0,0,0,0,0,0,0,0,0,0,0,normal,normal,2,0,0,0,0,0,FALSE,TRUE,TRUE,0,FALSE,normal
+22,Lunch(점심밥),0,0,0,0,0,0,0,0,0,0,0,normal,normal,1,0,1,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+23,Dinner(저녁밥),0,0,0,0,0,0,0,0,0,0,0,normal,normal,1,0,1,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+24,Dessert(간식),0,0,0,0,0,0,0,0,0,0,0,normal,normal,1,0,1,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+25,BreakFast(아침밥),0,0,0,0,0,0,0,0,0,0,0,normal,normal,1,0,1,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+26,Rotten Meat(썩은 고기),0,0,0,0,0,0,0,0,0,0,0,normal,normal,1,0,1,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+27,Wooden Spoon(나무 숟가락),0,0,0,0,0,0,0,0,0,0,0,normal,normal,1,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+28,The Belt(벨트),0,0,0,0,0,0,0,0,0,0,0,normal,normal,2,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+29,Mom's Underwear(엄마의 속옷),0,0,0,0,1.5,0,0,0,0,0,0,normal,normal,1,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+30,Mom's Heels(엄마의 하이힐),0,0,0,0,1.5,0,0,0,0,0,0,normal,normal,1,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+31,Mom's Lipstick(엄마의 립스틱),0,0,0,0,2.25,0,0,0,0,0,0,normal,normal,1,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+32,Wire Coat Hanger(철제 옷걸이),0,0,0.7,0,0,0,0,0,0,0,0,normal,normal,3,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+46,Lucky Foot(행운의 발목),0,0,0,0,0,0,0,0,1,0,0,normal,normal,2,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+48,"Cupid's Arrow(큐피드의 화살)	",0,0,0,0,0,0,0,0,0,0,0,penetration_monster,normal,3,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+50,"Steven(스티븐)	",1,0,0,0,0,0,0,0,0,0,0,normal,normal,3,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+51,Pentagram(오망성),1,0,0,0,0,0,0,0,0,0,0,normal,normal,3,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+53,Magneto(자석),0,0,0,0,0,0,0,0,0,0,0,normal,normal,1,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,followItem
+54,Treasure Map(보물 지도),0,0,0,0,0,0,0,0,0,0,0,normal,normal,2,0,0,0,0,0,FALSE,TRUE,TRUE,0,FALSE,normal
+55,Mom's eye(엄마의 눈알),0,0,0,0,0,0,0,0,0,0,0,back,normal,1,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+56,Charm of the Vampire(흡혈귀의 부적),0.3,0,0,0,0,0,0,0,0,0,0,normal,normal,1,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+64,Steam Sale(스팀 세일),0,0,0,0,0,0,0,0,0,0,0,normal,normal,2,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,price_50
+68,Technology(기계 장치),0,0,0,0,0,0,0,0,0,0,0,normal,laser,3,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+70,Growth Hormones(성장 호르몬),1,0,0,0,0,0,0,0,0,0,0.2,normal,normal,3,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+71,Mini Mush(미니 버섯),0,0,0,0,1.5,0,0,0,0,0,0.3,normal,normal,2,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+72,Rosary(묵주),0,0,0.5,0,0,0,0,0,0,0,0,normal,normal,2,3,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+74,A Quarter(쿼터),0,0,0,0,0,0,0,0,0,0,0,normal,normal,1,0,0,25,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+79,The Mark(낙인),1,0,0,0,0,0,0,0,0,0,0.2,normal,normal,3,1,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+80,The Pact(계약),0.5,0,0.7,0,0,0,0,0,0,0,0,normal,normal,3,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+82,Lord of the Pit(구덩이의 제왕),0,0,0,0,0,0,0,0,0,0,0.3,normal,normal,3,0,0,0,0,0,TRUE,FALSE,TRUE,0,FALSE,normal
+87,Loki's Horns(로키의 뿔),0,0,0,0,0,0,0,0,0,0,0,cross,normal,1,0,0,0,0,0,TRUE,FALSE,TRUE,0,FALSE,normal
+89,Spider Bite(물어버리는 거미),0,0,0,0,0,0,0,0,0,0,0,slow,normal,2,0,0,0,0,0,TRUE,FALSE,TRUE,0,FALSE,normal
+90,The Small Rock(돌멩이),1,0,0.2,0,0,0,0,0,0,0,-0.2,normal,normal,3,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+92,Super Bandage(슈퍼 밴디지),0,0,0,0,0,0,0,0,0,0,0,normal,normal,2,2,1,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+101,The Halo(광륜),0.3,0,0.2,0,0.25,0,0,0,0,0,0.3,normal,normal,2,0,1,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+103,The Common Cold(감기),0,0,0,0,0,0,0,0,0,0,0,poison,normal,1,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+104,The Parasite(기생 생물),0,0,0,0,0,0,0,0,0,0,0,split,normal,2,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+108,The Wafer(밀빵),0,0,0,0,0,0,0,0,0,0,0,normal,normal,4,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,half_damage
+109,Money = Power(돈의 힘),0,0,0,0,0,0,0,0,0,0,0,normal,normal,3,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,money_power
+110,Mom's contacts(엄마의 렌즈),0,0,0,0,0.25,0,0,0,0,0,0,normal,normal,3,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+115,Ouija Board(분신사바),0,0,0.4,0,0,0,0,0,0,0,0,penetration_object,normal,2,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+119,Blood Bag(혈액 주머니),0,0,0,0,0,0,0,0,0,0,0.3,normal,normal,2,1,1,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+120,Odd Mushroom(수상한 버섯),0,0,1.7,0,0,0,0,0,0,0,0,normal,normal,3,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+121,Odd Mushroom(수상한 버섯),0.3,0,0,0,0.25,0,0,0,0,0,-0.1,normal,normal,2,0,1,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+122,Whore of Babylon(바빌론의 창녀),1.5,0,0,0,0,0,0,0,0,1,0.3,normal,normal,2,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+129,Bucket of Lard(돼지기름),0,0,0,0,0,0,0,0,0,0,0,normal,normal,1,1,2,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+138,Stigmata(성흔),0.3,0,0,0,0,0,0,0,0,0,0,normal,normal,2,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+141,Pageant Boy(분장 소년),0,0,0,0,0,0,0,0,0,0,0,normal,normal,0,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,random_coin
+143,Speed Ball(스피드볼 마약),0,0,0,0,0,0,0.2,0,0,0,0.3,normal,normal,2,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+150,Tough Love(사랑의 매),0,0,0,0,0,0,0,0,0,0,0,critical,normal,3,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+153,Mutant Spider(돌연변이 거미),0,0,0,0,0,0,0,0,0,0,0,quad,normal,3,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+154,Chemical Peel(화학 박피제),0,0,0,0,0,0,0,0,0,0,0,plus_2_random,normal,3,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+159,Spirit of the Night(밤의 영혼),0,0,0,0,0,0,0,0,0,0,0,penetration_object,normal,3,0,0,0,0,0,TRUE,FALSE,TRUE,0,FALSE,normal
+162,Celtic Cross(켈트 십자가),0,0,0,0,0,0,0,0,0,0,0,normal,normal,1,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,shield_7
+165,Cat-O-Nine-Tails(아홉 가닥 채찍),1,0,0,0,0,0,0.23,0,0,0,0,normal,normal,3,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+169,Polyphemus(폴리페무스),0,0,0,0,0,0,0,0,0,0,0,Poly,normal,4,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+176,Stem cells(줄기세포),0,0,0,0,0,0,0.16,0,0,0,0,normal,normal,1,0,1,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+179,Fate(운명),0,0,0,0,0,0,0,0,0,0,0,normal,normal,3,0,0,0,0,0,TRUE,FALSE,TRUE,0,FALSE,normal
+182,Sacred Heart(성스러운 심장),1,2.3,-0.4,0,0,0,-0.25,0,0,0,0,normal,homing,4,10,1,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+183,Toothpicks(이쑤시개),0,0,0.7,0,0,0,0.16,0,0,0,0,normal,normal,3,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+184,Holy Grail(성배),0,0,0,0,0,0,0,0,0,0,0,normal,normal,3,0,1,0,0,0,TRUE,FALSE,TRUE,0,FALSE,normal
+185,Dead Dove(죽은 비둘기),0,0,0,0,0,0,0,0,0,0,0,penetration_object,normal,3,0,0,0,0,0,TRUE,FALSE,TRUE,0,FALSE,normal
+189,SMB Super Fan(슈미보 광팬),0.3,0,0.2,0,0.5,0,0,0,0,0,0.2,normal,normal,2,10,1,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+193,Meat! (고기!),0.3,0,0,0,0,0,0,0,0,0,0,normal,normal,2,0,1,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+194,Magic 8 Ball(마법의 8번 공),0,0,0,0,0,0,0.16,0,0,0,0,normal,normal,1,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+196,Squeezy(쥐어짜기),0,0,0.4,0,0,0,0,0,0,0,0,normal,normal,3,2,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+197,Jesus Juice(예수 음료수),0.5,0,0,0,0.25,0,0,0,0,0,0,normal,normal,2,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+199,Mom's Key(엄마의 열쇠),0,0,0,0,0,0,0,0,0,0,0,normal,normal,3,0,0,0,2,0,FALSE,FALSE,TRUE,0,FALSE,pickup_up
+200,Mom's Eyeshadow(엄마의 아이섀도우),0,0,0,0,0,0,0,0,0,0,0,fascination,normal,3,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+201,Iron Bar(철괴),0.3,0,0,0,0,0,0,0,0,0,0,stern,normal,3,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+202,Midas' Touch(미다스의 손길),0,0,0,0,0,0,0,0,0,0,0,normal,normal,2,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+204,Fanny Pack(작은 주머니),0,0,0,0,0,0,0,0,0,0,0,normal,normal,1,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,hit_drop_item
