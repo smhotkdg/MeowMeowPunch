@@ -33,8 +33,18 @@ public class DamageTest : MonoBehaviour
     }
 
     [Button]
-    public void TestItem(int itemIndex)
+    public void TestItem(int itemIndex,Vector3 pos)
     {
-        itemController.MakeItem(itemIndex);        
+        itemController.MakeItem(itemIndex,pos);        
+    }
+    [Button]
+    public void AllItem()
+    {
+        Vector3 initPos = new Vector3(0, 0, 0);
+        for(int i =0; i< itemController.GetMaxItemCount(); i++)
+        {
+            initPos.x = i * 0.5f;
+            itemController.MakeItem(i, initPos);
+        }
     }
 }

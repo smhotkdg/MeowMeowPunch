@@ -43,7 +43,7 @@ public class ItemController : MonoBehaviour
     public List<ItemData> GetItems = new List<ItemData>();
 
     ItemController itemController;
-    public delegate void OnChangeDamage(float damage,float tps,int shootCount,List<string> attackMethod,List<GameManager.AttackType> attackTypes,float range,float shootSpeed,float moveSpeed);
+    public delegate void OnChangeDamage(float damage,float tps,int shootCount,List<GameManager.AttackMethod> attackMethod,List<GameManager.AttackType> attackTypes,float range,float shootSpeed,float moveSpeed);
     public event OnChangeDamage OnChangeDamageEvnetHandler;
     private static ItemController _instance = null;
     public static ItemController Instance
@@ -195,7 +195,11 @@ public class ItemController : MonoBehaviour
         }
         GetDamage();
     }
-    public void MakeItem(int itemIndex)
+    public int GetMaxItemCount()
+    {
+        return items.Count;
+    }
+    public void MakeItem(int itemIndex,Vector3 position)
     {
         //int rand = Random.Range(0, items.Count);
         int rand = itemIndex;
@@ -232,7 +236,7 @@ public class ItemController : MonoBehaviour
         }
     
 
-        temp.transform.position = new Vector3(0, 0, 0);
+        temp.transform.position = position;
         temp_item.SetIcon();
     }
     public float GetDamage()
@@ -256,8 +260,9 @@ public class ItemController : MonoBehaviour
         float range = 0;
         float shootSpeed = 0;
         float moveSpeed = 0;
-        List<string> attackMethod = new List<string>();
+        
         List<GameManager.AttackType> attackType= new List<GameManager.AttackType>();
+        List<GameManager.AttackMethod> attackMethod = new List<GameManager.AttackMethod>();
         for (int i =0; i< GetItems.Count; i++)
         {
             if(GetItems[i].getList.Count >0)
@@ -316,10 +321,7 @@ public class ItemController : MonoBehaviour
                 if (GetItems[i].item_code == 169) poly = true;
                 if(GetItems[i].attack_type == "triple"){shootCount += 2;}
                 if (GetItems[i].attack_type == "quad") { shootCount += 3; }
-                if (GetItems[i].attack_method !="normal")
-                {
-                    attackMethod.Add(GetItems[i].attack_method);
-                }
+           
 
                 if(GetItems[i].attack_type !="normal")
                 {
@@ -337,8 +339,14 @@ public class ItemController : MonoBehaviour
                         case "stern": attackType.Add(GameManager.AttackType.stern); break;
                         case "Poly": attackType.Add(GameManager.AttackType.Poly); break;
                         case "penetration_monster":attackType.Add(GameManager.AttackType.penetration_monster); break;
+                    }                    
+                }
+                if(GetItems[i].attack_method !="normal")
+                {
+                    switch(GetItems[i].attack_method)
+                    {
+                        case "homing": attackMethod.Add(GameManager.AttackMethod.homing);  break;
                     }
-                    
                 }
             }            
         }

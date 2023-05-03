@@ -7,6 +7,7 @@ public class ShootController : MonoBehaviour
 {
     public GameObject Gun;
     public List<bool> m_attackTypes = new List<bool>();
+    public List<bool> m_attackMethods = new List<bool>();
     [SerializeField]
     private float BulletRange = 20;
     [SerializeField]
@@ -27,12 +28,24 @@ public class ShootController : MonoBehaviour
         {
             m_attackTypes.Add(false);
         }
+
+        for (int i = 0; i < System.Enum.GetValues(typeof(GameManager.AttackMethod)).Length; i++)
+        {
+            m_attackMethods.Add(false);
+        }
     }
     public void SetBulletAttackType(List<GameManager.AttackType> attackTypes)
     {
         for(int i=0; i< attackTypes.Count; i++)
         {
             m_attackTypes[(int)attackTypes[i]] = true;
+        }
+    }
+    public void SetBulletMethodType(List<GameManager.AttackMethod> attackMethods)
+    {
+        for (int i = 0; i < attackMethods.Count; i++)
+        {
+            m_attackMethods[(int)attackMethods[i]] = true;
         }
     }
     private void Update()
@@ -81,6 +94,7 @@ public class ShootController : MonoBehaviour
                     Transform object_transfrom =  EZ_PoolManager.Spawn(Bullet.transform, BulletPos.transform.position, Quaternion.AngleAxis(angle - range, Vector3.forward));
                    // object_transfrom.gameObject.SetActive(false);
                     object_transfrom.GetComponent<Bullet>().SetAttackType(m_attackTypes);
+                    object_transfrom.GetComponent<Bullet>().SetAttackMethods(m_attackMethods,Target);
                     object_transfrom.GetComponent<Bullet>().SetSpeed(speed);
                     object_transfrom.GetComponent<Bullet>().Power = Damage;
 
@@ -88,7 +102,12 @@ public class ShootController : MonoBehaviour
                     object_transfrom.gameObject.SetActive(true);
                     object_transfrom.GetComponent<Rigidbody2D>().velocity = moveVec;
                     object_transfrom.GetComponent<Bullet>().bulletDirection = global::Bullet.BulletDirection.forward;
-                    
+                    object_transfrom.GetComponent<Bullet>().SetVelocity();
+                    if (m_attackTypes[(int)GameManager.AttackType.plus_2_random])
+                    {
+                        StartCoroutine(ShootPlus(rangle_bullet, angle, range));
+                    }
+
                 }
                 float range_temp = 90;
                 if (m_attackTypes[(int)GameManager.AttackType.back])
@@ -110,12 +129,14 @@ public class ShootController : MonoBehaviour
                         Transform object_transfrom_back = EZ_PoolManager.Spawn(Bullet.transform, BulletPos.transform.position, Quaternion.AngleAxis(angle - range_temp, Vector3.forward));
                         //object_transfrom_back.gameObject.SetActive(false);
                         object_transfrom_back.GetComponent<Bullet>().SetAttackType(m_attackTypes);
+                        object_transfrom_back.GetComponent<Bullet>().SetAttackMethods(m_attackMethods,Target);
                         object_transfrom_back.GetComponent<Bullet>().SetSpeed(speed);
                         object_transfrom_back.GetComponent<Bullet>().Power = Damage;
                         object_transfrom_back.gameObject.SetActive(true);
                         object_transfrom_back.GetComponent<Rigidbody2D>().velocity = -BulletPos.transform.up * speed;
                         object_transfrom_back.GetComponent<Bullet>().bulletDirection = global::Bullet.BulletDirection.back;
-                        
+                        object_transfrom_back.GetComponent<Bullet>().SetVelocity();
+
                     }
                 }
                 if (m_attackTypes[(int)GameManager.AttackType.cross])
@@ -130,35 +151,59 @@ public class ShootController : MonoBehaviour
                         Transform object_transfrom_back = EZ_PoolManager.Spawn(Bullet.transform, BulletPos.transform.position, Quaternion.AngleAxis(angle - range_temp, Vector3.forward));
                         //object_transfrom_back.gameObject.SetActive(false);
                         object_transfrom_back.GetComponent<Bullet>().SetAttackType(m_attackTypes);
+                        object_transfrom_back.GetComponent<Bullet>().SetAttackMethods(m_attackMethods,Target);
                         object_transfrom_back.GetComponent<Bullet>().Power = Damage;
                         object_transfrom_back.GetComponent<Bullet>().SetSpeed(speed);
                         object_transfrom_back.gameObject.SetActive(true);
                         object_transfrom_back.GetComponent<Rigidbody2D>().AddForce(-BulletPos.transform.up * speed, ForceMode2D.Impulse);
                         object_transfrom_back.GetComponent<Bullet>().bulletDirection = global::Bullet.BulletDirection.back;
-                        
-                       
+                        object_transfrom_back.GetComponent<Bullet>().SetVelocity();
+
+
 
                         Transform object_transfrom_Right = EZ_PoolManager.Spawn(Bullet.transform, BulletPos.transform.position, Quaternion.AngleAxis(angle - range_temp, Vector3.forward));
                         //object_transfrom_Right.gameObject.SetActive(false);
                         object_transfrom_Right.GetComponent<Bullet>().SetAttackType(m_attackTypes);
+                        object_transfrom_Right.GetComponent<Bullet>().SetAttackMethods(m_attackMethods,Target);
                         object_transfrom_Right.GetComponent<Bullet>().SetSpeed(speed);
                         object_transfrom_Right.GetComponent<Bullet>().Power = Damage;
                         object_transfrom_Right.gameObject.SetActive(true);
                         object_transfrom_Right.GetComponent<Rigidbody2D>().AddForce(BulletPos.transform.right * speed, ForceMode2D.Impulse);
                         object_transfrom_Right.GetComponent<Bullet>().bulletDirection = global::Bullet.BulletDirection.right;
+                        object_transfrom_Right.GetComponent<Bullet>().SetVelocity();
 
                         Transform object_transfrom_Left = EZ_PoolManager.Spawn(Bullet.transform, BulletPos.transform.position, Quaternion.AngleAxis(angle - range_temp, Vector3.forward));
                         //object_transfrom_Left.gameObject.SetActive(false);
                         object_transfrom_Left.GetComponent<Bullet>().SetAttackType(m_attackTypes);
+                        object_transfrom_Left.GetComponent<Bullet>().SetAttackMethods(m_attackMethods,Target);
                         object_transfrom_Left.GetComponent<Bullet>().SetSpeed(speed);
                         object_transfrom_Left.GetComponent<Bullet>().Power = Damage;
                         object_transfrom_Left.gameObject.SetActive(true);
                         object_transfrom_Left.GetComponent<Rigidbody2D>().AddForce(-BulletPos.transform.right * speed, ForceMode2D.Impulse);
                         object_transfrom_Left.GetComponent<Bullet>().bulletDirection = global::Bullet.BulletDirection.left;
+                        object_transfrom_Left.GetComponent<Bullet>().SetVelocity();
                     }
                 }
+                
                 shoot = false;
             }
         }
+    }
+    IEnumerator ShootPlus(float rangle_bullet,float angle,float range)
+    {
+        yield return new WaitForSeconds(.1f);
+        Vector2 moveVec = (BulletPos.transform.up + (BulletPos.transform.right * rangle_bullet / 2)) * speed;
+
+        Transform object_transfrom = EZ_PoolManager.Spawn(Bullet.transform, BulletPos.transform.position, Quaternion.AngleAxis(angle - range, Vector3.forward));
+        
+        object_transfrom.GetComponent<Bullet>().SetAttackType(m_attackTypes);
+        object_transfrom.GetComponent<Bullet>().SetAttackMethods(m_attackMethods, Target);
+        object_transfrom.GetComponent<Bullet>().SetSpeed(speed);
+        object_transfrom.GetComponent<Bullet>().Power = 2f;
+        object_transfrom.transform.localScale = Bullet.transform.localScale * 0.75f;
+        object_transfrom.gameObject.SetActive(true);
+        object_transfrom.GetComponent<Rigidbody2D>().velocity = moveVec;
+        object_transfrom.GetComponent<Bullet>().bulletDirection = global::Bullet.BulletDirection.forward;
+        object_transfrom.GetComponent<Bullet>().SetVelocity();
     }
 }

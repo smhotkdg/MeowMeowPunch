@@ -2,16 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using EZ_Pooling;
+using SensorToolkit;
+using System.Linq;
+
 public class Bullet : DamageColider
 {
     public Color SlowColor;
     public Color PosionColor;
+    public Color CriticalColor;
+    public Color Plus_2_randColor;
+    public Color FascinationColor;
+    public Color SternColor;
     private readonly int ColorGradient = Shader.PropertyToID("_GradTopLeftCol");
     public List<bool> m_attackTypes = new List<bool>();
     public List<bool> m_attackTypes_Bullets = new List<bool>();
     public List<bool> m_attackTypes_Bullets_before = new List<bool>();
     [SerializeField]
-    BoxCollider2D boxCollider;    
+    BoxCollider2D boxCollider;
+    GameObject m_Target;
+
+    public List<bool> m_attackMethods = new List<bool>();
 
     public float LifeTime =3;
 
@@ -21,6 +31,7 @@ public class Bullet : DamageColider
 
     Material material;
     float deltaTime;
+    RangeSensor2D rangeSensor2D;
     public enum BulletDirection
     {
         forward,
@@ -37,6 +48,8 @@ public class Bullet : DamageColider
     float defaultKncokback;
     private void Awake()
     {
+        rangeSensor2D = GetComponent<RangeSensor2D>();
+        defaultHorming = hormingTime;
         material = GetComponent<SpriteRenderer>().material;
         defaultKncokback = knockbackForce;
         initScale = transform.localScale;
@@ -50,11 +63,28 @@ public class Bullet : DamageColider
             m_attackTypes_Bullets.Add(false);
             m_attackTypes_Bullets_before.Add(false);
         }
-        
+
+        for (int i = 0; i < System.Enum.GetValues(typeof(GameManager.AttackMethod)).Length; i++)
+        {
+            m_attackMethods.Add(false);
+        }
+
     }
+    
     public void SetAttackType(List<bool> _attackType)
     {
         m_attackTypes = _attackType;
+    }
+    Vector2 velocity;
+    public void SetVelocity()
+    {
+        velocity = rb.velocity;
+    }
+
+    public void SetAttackMethods(List<bool> _attackMethod,GameObject target)
+    {       
+        m_attackMethods = _attackMethod;
+        m_Target = target;
     }
     bool CheckAllFalse = false;
     public void CheckAttackType()
@@ -63,16 +93,32 @@ public class Bullet : DamageColider
         knockbackForce = defaultKncokback;
         isPenetration_object = false;
         isSplit = false;
+        isCritical = false;
         for (int i = 0; i < m_attackTypes.Count; i++)
         {            
             if (m_attackTypes[i] == true)
             {
                 switch (i)
                 {                    
-                    case (int)GameManager.AttackType.critical: break;                    
-                    case (int)GameManager.AttackType.fascination: break;
+                    case (int)GameManager.AttackType.critical:
+                        m_attackTypes_Bullets[(int)GameManager.AttackType.critical] = false;
+                        if (CheckCritical())
+                        {
+                            m_attackTypes_Bullets[(int)GameManager.AttackType.critical] = true;
+                        }
+                        break;                    
+                    case (int)GameManager.AttackType.fascination:
+                        m_attackTypes_Bullets[(int)GameManager.AttackType.fascination] = false;
+                        if (CheckFascination())
+                        {
+                            m_attackTypes_Bullets[(int)GameManager.AttackType.fascination] = true;
+                        }
+                        break;
                     case (int)GameManager.AttackType.penetration_object: isPenetration_object = true; break;
-                    case (int)GameManager.AttackType.plus_2_random: break;
+                    case (int)GameManager.AttackType.plus_2_random:
+                        m_attackTypes_Bullets[(int)GameManager.AttackType.plus_2_random] = false;                      
+                        m_attackTypes_Bullets[(int)GameManager.AttackType.plus_2_random] = true;                      
+                        break;
                     case (int)GameManager.AttackType.posion:
                         m_attackTypes_Bullets[(int)GameManager.AttackType.posion] = false;
                         if (CheckPosion())
@@ -88,7 +134,13 @@ public class Bullet : DamageColider
                         }                        
                         break;
                     case (int)GameManager.AttackType.split: isSplit = true; break;
-                    case (int)GameManager.AttackType.stern: break;
+                    case (int)GameManager.AttackType.stern:
+                        m_attackTypes_Bullets[(int)GameManager.AttackType.stern] = false;
+                        if (CheckStern())
+                        {
+                            m_attackTypes_Bullets[(int)GameManager.AttackType.stern] = true;
+                        }
+                        break;
                     case (int)GameManager.AttackType.Poly: transform.localScale = initScale * 2; break;
                     case (int)GameManager.AttackType.penetration_monster: isPenetation_monster = true; knockbackForce = 0; break;
                 }
@@ -121,26 +173,85 @@ public class Bullet : DamageColider
             {               
                 if (i == (int)GameManager.AttackType.posion && m_attackTypes_Bullets_before[i] == false)
                 {
-                    status = Monster.Status.Posion;
-                    DamangeColor = PosionColor;
+                    status = Monster.Status.Posion;                    
                     m_attackTypes_Bullets_before[i] = true;
-                    SetColor(PosionColor);
-                    //Debug.Log("독 공격");
+                    SetColor(PosionColor);                    
                     return;
                 }
                 if (i == (int)GameManager.AttackType.slow && m_attackTypes_Bullets_before[i] == false)
                 {
-                    status = Monster.Status.Slow;
-                    DamangeColor = SlowColor;
+                    status = Monster.Status.Slow;                    
                     m_attackTypes_Bullets_before[i] = true;
-                    SetColor(SlowColor);
-                    //Debug.Log("슬로우 공격");
+                    SetColor(SlowColor);                    
                     return;
                 }
-              
+                if (i == (int)GameManager.AttackType.critical && m_attackTypes_Bullets_before[i] == false)
+                {
+                    isCritical = true;
+                    SetColor(CriticalColor);
+                    return;
+                }
+                if (i == (int)GameManager.AttackType.fascination && m_attackTypes_Bullets_before[i] == false)
+                {       
+                    status = Monster.Status.Fascination;                    
+                    m_attackTypes_Bullets_before[i] = true;
+                    SetColor(FascinationColor);
+                    return;
+                }
+                if (i == (int)GameManager.AttackType.stern && m_attackTypes_Bullets_before[i] == false)
+                {
+                    status = Monster.Status.Stren;
+                    m_attackTypes_Bullets_before[i] = true;
+                    SetColor(SternColor);
+                    return;
+                }
+
             }
         }
 
+    }
+    bool CheckStern()
+    {
+        bool isStern = false;
+
+        if (GameManager.Instance.luck == 0)
+        {
+            if (Random.Range(0, 101f) <= 10f)
+            {
+                isStern = true;
+            }
+        }
+        else if (Random.Range(0, 101f) <= 10f + (GameManager.Instance.luck * 3.461f))
+        {
+            isStern = true;
+        }
+        return isStern;
+    }
+    bool CheckFascination()
+    {
+        bool isFascination = false;
+        if (GameManager.Instance.luck == 0)
+        {
+            if (Random.Range(0, 101f) <= 10f)
+            {
+                isFascination = true;
+            }
+        }
+        else if (Random.Range(0, 101f) <= 10f +(GameManager.Instance.luck *3.461f))
+        {
+            isFascination = true;
+        }
+        return isFascination;
+    }
+
+    bool CheckCritical()
+    {
+        bool isCirtical= false;      
+        if (Random.Range(GameManager.Instance.luck + 1, 11) >= Random.Range(0, 11))
+        {
+            isCirtical = true;
+        }
+        return isCirtical;
     }
     bool CheckPosion()
     {
@@ -178,6 +289,7 @@ public class Bullet : DamageColider
     {
         speed = _speed;
     }
+ 
     private void OnEnable()
     {
         //RandColor();
@@ -188,11 +300,13 @@ public class Bullet : DamageColider
         boxCollider.enabled = true;
         deltaTime = LifeTime;
         CheckAttackType();
+        hormingTime = defaultHorming;
         isEnable = true;
         
     }  
     void SetColor(Color color)
     {
+        
         //material.SetColor("Top Color", new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f)));
         material.SetColor(ColorGradient, color);
     }
@@ -202,6 +316,94 @@ public class Bullet : DamageColider
         if(deltaTime <=0)
         {
             EZ_PoolManager.Despawn(transform);
+        }
+        Homing();
+    }
+    public float AngleSpeed = 1;    
+    public float hormingTime = 1f;
+    float defaultHorming;
+    public Transform[] trees;    
+    GameObject findMin()
+    {
+        GameObject tempObject;
+        float shortDis = Vector3.Distance(transform.position, rangeSensor2D.DetectedObjects[0].transform.position);
+
+        tempObject = rangeSensor2D.DetectedObjects[0];
+        trees = new Transform[rangeSensor2D.DetectedObjects.Count];
+        int index = 0;
+        foreach (GameObject found in rangeSensor2D.DetectedObjects)
+        {
+            float Distance = Vector3.Distance(transform.position, found.transform.position);
+
+            if (found.tag != "Obstacles")
+            {
+                if (Distance < shortDis)
+                {
+                    tempObject = found;
+                    shortDis = Distance;
+                }
+                trees[index] = found.transform;
+                index++;
+            }
+        }
+
+        trees = trees.OrderBy((d) => (d.position - transform.position).sqrMagnitude).ToArray();
+
+        return trees[0].gameObject;
+    }
+    void Homing()
+    {
+        if(m_attackMethods[(int)GameManager.AttackMethod.homing])
+        {
+            float rotateAmount = 0;
+            hormingTime -= Time.deltaTime;
+            Vector2 direction;
+            GameObject temp;
+            if(rangeSensor2D.DetectedObjects.Count >0)
+            {
+                temp = findMin();
+            }
+            else
+            {
+                return;
+            }
+            if (hormingTime <= 0)
+            {
+                return;
+            }
+            switch(bulletDirection)
+            {
+                case BulletDirection.forward:
+                    direction = (Vector2)temp.transform.position - rb.position;
+                    direction.Normalize();
+                    rotateAmount = Vector3.Cross(direction, transform.up).z;
+                    rb.angularVelocity = -AngleSpeed * rotateAmount;
+                    rb.velocity = transform.up * speed;
+                    break;
+                case BulletDirection.back:                    
+                    direction = (Vector2)temp.transform.position - rb.position;
+                    direction.Normalize();
+                    rotateAmount = Vector3.Cross(direction, -transform.up).z;
+                    rb.angularVelocity = AngleSpeed * rotateAmount;
+                    rb.velocity = -transform.up * speed;
+                    break;
+                case BulletDirection.left:
+                    direction = (Vector2)temp.transform.position - rb.position;
+                    direction.Normalize();
+                    rotateAmount = Vector3.Cross(direction, -transform.right).z;
+                    rb.angularVelocity = AngleSpeed * rotateAmount;
+                    rb.velocity = transform.right * speed;
+                    break;
+                case BulletDirection.right:
+                    direction = (Vector2)temp.transform.position - rb.position;
+                    direction.Normalize();
+                    rotateAmount = Vector3.Cross(direction, transform.right).z;
+                    rb.angularVelocity = -AngleSpeed * rotateAmount;
+                    rb.velocity = -transform.right * speed;
+                    break;
+            }
+             
+
         }
     }
     public void EndAnimation()

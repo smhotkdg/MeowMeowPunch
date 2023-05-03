@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 1886751429709243638}
   - component: {fileID: 6217937330324209208}
   - component: {fileID: 4088019242112763543}
+  - component: {fileID: 146091361341722316}
   m_Layer: 0
   m_Name: Bullet
   m_TagString: Untagged
@@ -116,15 +117,23 @@ MonoBehaviour:
   knockbackForce: 1
   isEnable: 0
   DamangeColor: {r: 0, g: 0, b: 0, a: 0}
-  SlowColor: {r: 1, g: 0.504717, b: 0.504717, a: 0}
-  PosionColor: {r: 0, g: 1, b: 0, a: 0}
+  SlowColor: {r: 1, g: 0.504717, b: 0.504717, a: 1}
+  PosionColor: {r: 0, g: 1, b: 0, a: 1}
+  CriticalColor: {r: 1, g: 0.8742013, b: 0, a: 1}
+  Plus_2_randColor: {r: 0, g: 0, b: 0, a: 0}
+  FascinationColor: {r: 0.03127098, g: 0, b: 1, a: 0}
+  SternColor: {r: 0.67576694, g: 0, b: 1, a: 0}
   m_attackTypes: 
   m_attackTypes_Bullets: 
   m_attackTypes_Bullets_before: 
   boxCollider: {fileID: 0}
+  m_attackMethods: 
   LifeTime: 3
   speed: 1
   bulletDirection: 0
+  AngleSpeed: 500
+  hormingTime: 1
+  trees: []
 --- !u!61 &118045673638574294
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -337,3 +346,40 @@ MonoBehaviour:
   normalStrength: 5
   normalSmoothing: 1
   computingNormal: 0
+--- !u!114 &146091361341722316
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5917518549968756677}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea99d7406bae0404195d20652de48155, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IgnoreList: []
+  EnableTagFilter: 0
+  AllowedTags: []
+  OnDetected:
+    m_PersistentCalls:
+      m_Calls: []
+  OnLostDetection:
+    m_PersistentCalls:
+      m_Calls: []
+  DetectionMode: 0
+  RequiresLineOfSight: 0
+  BlocksLineOfSight:
+    serializedVersion: 2
+    m_Bits: 0
+  TestLOSTargetsOnly: 0
+  NumberOfRays: 1
+  MinimumVisibility: 0.5
+  SensorRange: 0.2
+  DetectsOnLayers:
+    serializedVersion: 2
+    m_Bits: 8192
+  SensorUpdateMode: 0
+  CheckInterval: 0.1
+  InitialBufferSize: 20
+  DynamicallyIncreaseBufferSize: 1

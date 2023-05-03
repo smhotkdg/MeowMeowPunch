@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
-{
+{    
+    public GameObject Player;
     public enum AttackType
     {        
         back,
@@ -19,6 +20,11 @@ public class GameManager : MonoBehaviour
         stern,
         Poly,
         penetration_monster
+    }
+    public enum AttackMethod
+    {        
+        homing,
+        boomerang
     }
     public Transform HpPrefab;
     public Transform MaxHpPrefab;

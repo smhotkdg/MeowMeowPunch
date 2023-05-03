@@ -1,5 +1,6 @@
 using DungeonMaker;
 using DungeonMaker.Core;
+using Pathfinding;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,6 +15,7 @@ public class TestScript : MonoBehaviour
     void Start()
     {
         InitSetting();
+        AstarPath.active.Scan();
     }
 
     // Update is called once per frame
@@ -175,6 +177,15 @@ public class TestScript : MonoBehaviour
             {
                 CmvCam.GetComponent<Cinemachine.CinemachineConfiner>().m_BoundingShape2D = MapList[MapList.Count - 1].GetComponent<PolygonCollider2D>();
                 Player.transform.position = MapList[MapList.Count - 1].transform.Find("InitPos").transform.position;
+
+
+                AstarData data = AstarPath.active.data;
+                GridGraph gg = data.graphs[0] as GridGraph;
+
+                gg.center = MapList[MapList.Count - 1].transform.Find("InitPos").transform.position;
+                gg.SetDimensions(15, 18, 0.2f);
+                AstarPath.active.Scan();
+
             }
         }
         StartCoroutine(MapMakeRoutine());
@@ -182,6 +193,14 @@ public class TestScript : MonoBehaviour
     }
     public void ChangeMap(GameObject nextMap,GameObject Position)
     {
+        //GameManager.Instance.AStar
+        AstarData data = AstarPath.active.data;
+        GridGraph gg = data.graphs[0] as GridGraph;
+
+        gg.center = nextMap.transform.position;
+
+        AstarPath.active.Scan();
+        
         CmvCam.GetComponent<Cinemachine.CinemachineConfiner>().m_BoundingShape2D = nextMap.GetComponent<PolygonCollider2D>();
         Player.transform.position = Position.transform.position;
     }
@@ -195,6 +214,7 @@ public class TestScript : MonoBehaviour
             if(node.room.name == "init")
             {                
                 generator.correlator.dungeon.currentNode = node;
+                
             }
         }
     }

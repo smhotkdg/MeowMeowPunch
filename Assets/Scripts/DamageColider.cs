@@ -31,22 +31,27 @@ public class DamageColider : MonoBehaviour
         if (isEnable == false)
             return;
         if (collision.tag == "Monster" && collision.gameObject != PrevTarget)
-        {        
+        {
+            float _damage = Power;
+            if(isCritical)
+            {
+                _damage = Power * 3.2f;
+            }
             Vector2 direction = (collision.transform.position- transform.position).normalized;
             float randPower = Random.Range(1.5f, 3f);
             Vector2 knocback = direction * randPower;            
                         
             if (knockbackForce > 0)
             {
-                collision.GetComponent<Monster>().SetDamage(Power, knocback,status, DamangeColor); 
+                collision.GetComponent<Monster>().SetDamage(_damage, knocback,status, DamangeColor); 
             }
             else
             {
-                collision.GetComponent<Monster>().SetDamage(Power, new Vector2(0,0), status, DamangeColor);
+                collision.GetComponent<Monster>().SetDamage(_damage, new Vector2(0,0), status, DamangeColor);
             }
             
 
-            UIManager.Instance.SetDamageNumber(collision.gameObject, Power);
+            UIManager.Instance.SetDamageNumber(collision.gameObject, _damage);
 
             if (isSplit)
             {   

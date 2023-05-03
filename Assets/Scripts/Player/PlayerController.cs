@@ -62,7 +62,7 @@ public class PlayerController : MonoBehaviour
         GunAnim = GunObject.GetComponent<Animator>();
     }
     float m_shootSpeed;
-    private void ItemController_OnChangeDamageEvnetHandler(float damage,float tps, int shootCount, List<string> attackMethod, 
+    private void ItemController_OnChangeDamageEvnetHandler(float damage,float tps, int shootCount, List<GameManager.AttackMethod> attackMethod, 
         List<GameManager.AttackType> attackTypes,float range,float shootSpeed,float moveSpeed)
     {
         Damage = damage;
@@ -72,7 +72,9 @@ public class PlayerController : MonoBehaviour
         ChangeRange(range);
         chainLightning.Power = Damage;
         shootController.SetBulletAttackType(attackTypes);
-        
+        shootController.SetBulletMethodType(attackMethod);
+
+
         if(shootSpeed>0)
         {            
             shootController.speed = shootSpeed;
