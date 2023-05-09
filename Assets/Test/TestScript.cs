@@ -166,7 +166,7 @@ public class TestScript : MonoBehaviour
     private void Generator_OnGeneratorFinish(DungeonObject d)
     {
         dungeonObject = d;
-        GameObject temp = GameObject.Find("Test1");
+        GameObject temp = GameObject.Find(dungeonObject.name);
         if (temp == null)
             return;
         List<GameObject> MapList = new List<GameObject>();
@@ -207,7 +207,8 @@ public class TestScript : MonoBehaviour
 
     public void MakeMap()
     {
-        generator.Generate();
+        DungeonData dungeonData = generator.dungeons[0];
+        generator.Generate(dungeonData);
         
         foreach (RoomNode node in generator.correlator.dungeon.nodes)        
         {

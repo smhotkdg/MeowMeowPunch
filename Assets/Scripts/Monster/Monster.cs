@@ -9,6 +9,7 @@ using Pathfinding;
 
 public class Monster : MonoBehaviour
 {
+    public int MonsterHitDamage = 1;
     private readonly int OutLineColor = Shader.PropertyToID("_OutlineColor");
     private readonly int OutLineAlpha = Shader.PropertyToID("_OutlineAlpha");
     AIDestinationSetter Aisetter;
@@ -86,6 +87,7 @@ public class Monster : MonoBehaviour
     List<bool> StatusBool = new List<bool>();
     List<GameObject> StatusTemp = new List<GameObject>();
     AILerp iLerp;
+
     private void Awake()
     {
         defaultSpeed = moveSpeed;
@@ -95,6 +97,7 @@ public class Monster : MonoBehaviour
         Aisetter = GetComponent<AIDestinationSetter>();
         iLerp = GetComponent<AILerp>();
     }
+  
     private void Start()
     {
         SetHP();
@@ -197,7 +200,7 @@ public class Monster : MonoBehaviour
                 StatusTemp.RemoveAt(i);
                 yield return null;
             }
-        }
+        }        
     }
     [SerializeField]
     float moveSpeed = 1;
@@ -256,6 +259,7 @@ public class Monster : MonoBehaviour
             randVector.y = knockback.y + randy;
             if(enableKncokBack)
             {
+                iLerp.canMove = false;
                 StartCoroutine(KnockbackRoutine(randVector));
                 isKnockback = true;
             }
@@ -321,12 +325,13 @@ public class Monster : MonoBehaviour
     {        
         if(collision.gameObject.tag =="Player")
         {            
-            collision.gameObject.GetComponent<PlayerController>().Knockback(transform.position);
+            collision.gameObject.GetComponent<PlayerController>().Knockback(transform.position,-MonsterHitDamage);
         }
     }
     void MoveObject()
     {
-        if(StatusBool[(int)Status.Stren])
+        iLerp.SearchPath();
+        if (StatusBool[(int)Status.Stren])
         {
             iLerp.canMove = false;
             return;
@@ -334,19 +339,18 @@ public class Monster : MonoBehaviour
         if (StatusBool[(int)Status.Fascination])
         {
             transform.position = Vector3.MoveTowards(transform.position, GameManager.Instance.Player.transform.position, -moveSpeed/2 * Time.deltaTime);
-            iLerp.SearchPath();
+            //iLerp.SearchPath();
             iLerp.canMove = false;
         }       
         if (Target == null)
             return;
-        if(StatusBool[(int)Status.Fascination] ==false)
+        if(StatusBool[(int)Status.Fascination] ==false && isKnockback ==false)
         {
             //transform.position = Vector3.MoveTowards(transform.position, Target.transform.position, moveSpeed * Time.deltaTime);
             Aisetter.target = Target.transform;
             iLerp.canMove = true;
             iLerp.speed = moveSpeed;
-            iLerp.SearchPath();
-            
+            //iLerp.SearchPath();            
         }        
     }
     void TargetCheck()

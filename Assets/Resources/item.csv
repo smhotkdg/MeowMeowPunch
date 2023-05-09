@@ -14,7 +14,7 @@
 16,Raw Liver(생간),0,0,0,0,0,0,0,0,0,0,0,normal,normal,2,0,2,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
 17,Skeleton Key(해골 열쇠),0,0,0,0,0,0,0,0,0,0,0,normal,normal,3,0,0,0,99,0,FALSE,FALSE,TRUE,0,FALSE,normal
 18,A Dollar(1달러),0,0,0,0,0,0,0,0,0,0,0,normal,normal,3,0,0,100,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
-19,Boom!(꽈광!),0,0,0,0,0,0,0,0,0,0,0,normal,normal,0,0,0,0,0,10,FALSE,FALSE,TRUE,0,FALSE,normal
+19,Boom!(꽈광!),0,0,0,0,0,0,0,0,0,0,0,normal,normal,0,0,0,10,0,10,FALSE,FALSE,TRUE,0,FALSE,normal
 20,"Transcendence(초월)	",0,0,0,0,0,0,0,0,0,0,0,normal,normal,3,0,0,0,0,0,TRUE,FALSE,TRUE,0,FALSE,normal
 21,The Compass(나침반),0,0,0,0,0,0,0,0,0,0,0,normal,normal,2,0,0,0,0,0,FALSE,TRUE,TRUE,0,FALSE,normal
 22,Lunch(점심밥),0,0,0,0,0,0,0,0,0,0,0,normal,normal,1,0,1,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
@@ -22,8 +22,8 @@
 24,Dessert(간식),0,0,0,0,0,0,0,0,0,0,0,normal,normal,1,0,1,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
 25,BreakFast(아침밥),0,0,0,0,0,0,0,0,0,0,0,normal,normal,1,0,1,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
 26,Rotten Meat(썩은 고기),0,0,0,0,0,0,0,0,0,0,0,normal,normal,1,0,1,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
-27,Wooden Spoon(나무 숟가락),0,0,0,0,0,0,0,0,0,0,0,normal,normal,1,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
-28,The Belt(벨트),0,0,0,0,0,0,0,0,0,0,0,normal,normal,2,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+27,Wooden Spoon(나무 숟가락),0,0,0,0,0,0,0,0,0,0,0.3,normal,normal,1,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
+28,The Belt(벨트),0,0,0,0,0,0,0,0,0,0,0.3,normal,normal,2,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
 29,Mom's Underwear(엄마의 속옷),0,0,0,0,1.5,0,0,0,0,0,0,normal,normal,1,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
 30,Mom's Heels(엄마의 하이힐),0,0,0,0,1.5,0,0,0,0,0,0,normal,normal,1,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
 31,Mom's Lipstick(엄마의 립스틱),0,0,0,0,2.25,0,0,0,0,0,0,normal,normal,1,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
@@ -85,5 +85,4 @@
 199,Mom's Key(엄마의 열쇠),0,0,0,0,0,0,0,0,0,0,0,normal,normal,3,0,0,0,2,0,FALSE,FALSE,TRUE,0,FALSE,pickup_up
 200,Mom's Eyeshadow(엄마의 아이섀도우),0,0,0,0,0,0,0,0,0,0,0,fascination,normal,3,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
 201,Iron Bar(철괴),0.3,0,0,0,0,0,0,0,0,0,0,stern,normal,3,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
-202,Midas' Touch(미다스의 손길),0,0,0,0,0,0,0,0,0,0,0,normal,normal,2,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
 204,Fanny Pack(작은 주머니),0,0,0,0,0,0,0,0,0,0,0,normal,normal,1,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,hit_drop_item

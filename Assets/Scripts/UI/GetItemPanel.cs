@@ -46,16 +46,35 @@ public class GetItemPanel : MonoBehaviour
         if (_item.hp > 0) strinfo += "체력 + " + _item.hp + "\n";
         if (_item.max_hp > 0) strinfo += "최대 체력 + " + _item.max_hp + "\n";
         if (_item.gold > 0) strinfo += "골드 + " + _item.gold + "\n";
-        if (_item.key > 0) strinfo += "열쇠 + " + _item.key + "\n";        
-        strinfo += "공격타입 = " + _item.attack_type + "\n";
-        strinfo += "공격방식 = " + _item.attack_method + "\n";
+        if (_item.key > 0) strinfo += "열쇠 + " + _item.key + "\n";
+        //if (_item.attack_type != "noraml") strinfo += _item.attack_type + "\n";
+        //if (_item.attack_method != "normal") strinfo += _item.attack_method + "\n";
+        if (_item.other != "normal")
+        {
+            if(_item.other == "followItem") strinfo += "자석 아이템\n";
+            if (_item.other == "price_50") strinfo += "상점 반값\n";
+            if (_item.other == "half_damage") strinfo += "피격데미지 고정\n";
+            if (_item.other == "money_power") strinfo += "돈 = 데미지\n";
+            if (_item.other == "random_coin") strinfo += "무작위 동전7개\n";
+            if (_item.other == "shield_7") strinfo += "확률 쉴드\n";
+            if (_item.other == "pickup_up") strinfo += "상자 보상*2\n";
+            if (_item.other == "hit_drop_item") strinfo += "피격시 확률적 보상\n";
+        }
+
+        if (_item.attack_type != "normal")
+            strinfo += "공격타입 = " + _item.attack_type + "\n";
+        if (_item.attack_method != "normal")
+            strinfo += "공격방식 = " + _item.attack_method + "\n";
         if (_item.flying == true) strinfo += "비행능력\n";
         if (_item.map == true) strinfo += "지도\n";
+        
+        
         Info.text = strinfo;
     }
     public void GetItme()
     {
         selectItem.itemController.GetItem(selectItem);
+        
         Destroy(selectItem.gameObject);
     }
 }

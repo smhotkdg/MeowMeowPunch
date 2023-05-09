@@ -5,9 +5,11 @@ using DamageNumbersPro;
 using UnityEngine.UI;
 public class UIManager : MonoBehaviour
 {
+    public Text KyeText;
     public GameObject GetItemPanelObject;
     public DamageNumber DamageNumberObject;
     private static UIManager _instance = null;
+
     public List<GameObject> HpList;
     public static UIManager Instance
     {
@@ -36,6 +38,7 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         SetHp();
+        SetKeyText();
     }
     public void SetDamageNumber(GameObject target, float _damage)
     {
@@ -55,15 +58,19 @@ public class UIManager : MonoBehaviour
             }
             if (i < GameManager.Instance.Hp)
             {
-                HpList[i].GetComponent<Image>().color = new Color(1, 0, 0);
+                HpList[i].GetComponent<Image>().color = new Color(1, 1, 1);
             }
             else
             {
-                HpList[i].GetComponent<Image>().color = new Color(1, 1, 1);
+                HpList[i].GetComponent<Image>().color = new Color(0, 0, 0);
             }
         }
     }
 
+    public void SetKeyText()
+    {
+        KyeText.text = "+ " + GameManager.Instance.Key.ToString("N0");
+    }
     public void ShowItemPanel(Item _item)
     {
         GetItemPanelObject.SetActive(true);

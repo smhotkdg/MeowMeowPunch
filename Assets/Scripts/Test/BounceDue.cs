@@ -5,117 +5,117 @@ using UnityEngine.Events;
 
 public class BounceDue : MonoBehaviour
 {
-        
-    public UnityEvent onGroundHitEvent;
-    private Transform trnsObject;
+    public int maxBounce;
+    public float xForce;
+    public float yForce;
+    public float gravity;
+
+    private Vector2 direction;
+    private int currentBounce = 0;
+    public bool isGrounded = true;
     
-    public float gravity = -10;
-    public Vector2 groundVelocity;
-    public float verticalVelocity;
-    private float lastVerticalVelocity;
-    public bool isGrounded;
-    private float randomYDrop;
-    float firstYPos;
+    private float maxHeight;
+    private float currentHeight;
 
+    public Transform sprite;
+    public Transform shadow;
+    public bool isMovePlayer = false;
+    GetItemController itemController;
+    public void StartMovePlayer()
+    {
+        if(isMovePlayer ==false)
+        {  
+            switch (itemController.itemType)
+            {
+                case GetItemController.GetItemType.coin:
+                    if (GameManager.Instance.CheckCoin(itemController.ItemCount))
+                    {
+                        isMovePlayer = true;
+                    }                   
+                    break;
 
-    public float yDropMin;
-    public float yDropMax;
-    public float randX_Min;
-    public float randX_Max;
-    public float randY_Min;
-    public float randY_Max;
-    public float PowerX;
-    public float PowerY;
-
-    //float groundRand;
-    bool moveTop = false;
-    Vector3 targetPos;
-    float distance;
-    CircleCollider2D collider2D;
+                case GetItemController.GetItemType.key:
+                    if (GameManager.Instance.CheckKey(itemController.ItemCount))
+                    {
+                        isMovePlayer = true;
+                    }                    
+                    break;
+                case GetItemController.GetItemType.Hp:
+                    if (GameManager.Instance.CheckHp(itemController.ItemCount))
+                    {
+                        isMovePlayer = true;
+                    }
+                    
+                    break;
+                case GetItemController.GetItemType.MaxHp:
+                    if (GameManager.Instance.CheckMaxHp(itemController.ItemCount))
+                    {
+                        isMovePlayer = true;
+                    }                   
+                    break;
+            }
+            
+        }
+    }
     private void Awake()
     {
-        //trnsBody = transform;
-        trnsObject = transform;
-        collider2D = GetComponent<CircleCollider2D>();
+        itemController = GetComponent<GetItemController>();
+    }
+    private void Start()
+    {
+        
     }
     private void OnEnable()
     {
-        collider2D.enabled = false;
-        moveTop = false;
-        transform.localPosition = new Vector3(0, 0, 0);
-        randomYDrop = Random.Range(yDropMin, yDropMax);
-        firstYPos = transform.position.y;
-        Set(Vector3.right * Random.Range(randX_Min, randX_Max) * Random.Range(randY_Min, randY_Max), Random.Range(PowerX, PowerY));
-        if(randomYDrop <0)
-        {
-            targetPos = trnsObject.position;
-            targetPos.y = firstYPos - randomYDrop;
-            distance = Vector3.Distance(trnsObject.position, targetPos);
-            moveTop = true;            
-        }
-        //groundRand = Random.Range(0.2f, .7f);
-    }    
-
-    void Update()
+        isMovePlayer = false;
+        currentBounce = 0;
+        currentHeight = Random.Range(yForce - 1, yForce);
+        maxHeight = currentHeight;
+        Initialize(new Vector2(Random.Range(-xForce, xForce), Random.Range(-xForce, xForce)));
+        shadow.localScale = Vector2.one;
+    }
+    private void Update()
     {
-        if (moveTop==false)
+        if(!isGrounded)
         {
-            UPosition();
+            currentHeight += -gravity + Time.deltaTime;
+            sprite.position += new Vector3(0, currentHeight, 0) * Time.deltaTime;
+            transform.position += (Vector3)direction * Time.deltaTime;
+
+            float totalVelocity = Mathf.Abs(currentHeight) + Mathf.Abs(maxHeight);
+            float scaleXY = Mathf.Abs(currentHeight) / totalVelocity;
+            shadow.localScale = Vector2.one * Mathf.Clamp(scaleXY, 0.5f, 1.0f);
+
             CheckGroundHit();
         }
-        else
+        if(isMovePlayer==true && isGrounded ==true)
         {
-            moveTopPos();
-        }        
-    }
-    void moveTopPos()
-    {        
-        trnsObject.position = Vector3.MoveTowards(trnsObject.position, targetPos, distance*0.2f);
-        if(targetPos.y <= trnsObject.position.y)
-        {
-            moveTop = false;
-            collider2D.enabled = true;
+            transform.position = Vector3.MoveTowards(transform.position, GameManager.Instance.Player.transform.position, Time.deltaTime*2f);
         }
     }
-    public void Set(Vector2 groundVelocity, float verticalVelocity)
+    private void Initialize(Vector2 _direction)
     {
         isGrounded = false;
-        this.groundVelocity = groundVelocity;
-        this.verticalVelocity = verticalVelocity;
-        lastVerticalVelocity = verticalVelocity;
-
+        maxHeight /= 1.5f;
+        direction = _direction;
+        currentHeight = maxHeight;
+        currentBounce++;
     }
-    public void UPosition()
-    {
-        if (!isGrounded)
-        {
-            verticalVelocity += gravity * Time.deltaTime;
-            trnsObject.position += new Vector3(0, verticalVelocity, 0) * Time.deltaTime;            
-        }
-        trnsObject.position += (Vector3)groundVelocity * Time.deltaTime;
-    }
-    
     void CheckGroundHit()
     {
-        if (trnsObject.position.y < firstYPos - randomYDrop && !isGrounded)
+        if(sprite.position.y < shadow.position.y)
         {
-            trnsObject.position = new Vector2(trnsObject.position.x, firstYPos - randomYDrop);
-            //trnsObject.position = new Vector2(trnsObject.position.x, firstYPos);            
-            isGrounded = true;
-            GroundHit();
+            sprite.position = shadow.position;
+            shadow.localScale = Vector2.zero;
+            if(currentBounce < maxBounce)
+            {
+                Initialize(direction / 1.5f);
+            }
+            else
+            {
+                isGrounded = true;
+                shadow.transform.localScale = Vector2.zero;
+            }
         }
-    }
-    void GroundHit()
-    {
-        onGroundHitEvent.Invoke();
-    }
-    public void Bounce(float division)
-    {            
-        Set(groundVelocity, lastVerticalVelocity / division);
-        collider2D.enabled = true;
-    }
-    public void SlowDownVelocity(float division)
-    {
-        groundVelocity = groundVelocity / division;
     }
 }

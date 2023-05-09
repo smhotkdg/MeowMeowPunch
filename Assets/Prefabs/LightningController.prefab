@@ -66,9 +66,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0dce3485692b78e478d63220ee0a2454, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Power: 18.405
+  status: 0
+  xMargin: 0.2
+  isPenetration_object: 0
+  isPenetation_monster: 0
+  isSplit: 0
+  Power: 3.5
   isDisable: 0
+  isCritical: 0
+  PrevTarget: {fileID: 0}
+  initPos: {x: 0, y: 0}
   knockbackForce: 2
+  isEnable: 0
+  DamangeColor: {r: 0, g: 0, b: 0, a: 0}
   setInit: 0
 --- !u!114 &4218889592805878127
 MonoBehaviour:

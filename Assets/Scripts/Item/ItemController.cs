@@ -43,7 +43,8 @@ public class ItemController : MonoBehaviour
     public List<ItemData> GetItems = new List<ItemData>();
 
     ItemController itemController;
-    public delegate void OnChangeDamage(float damage,float tps,int shootCount,List<GameManager.AttackMethod> attackMethod,List<GameManager.AttackType> attackTypes,float range,float shootSpeed,float moveSpeed);
+    public delegate void OnChangeDamage(float damage,float tps,int shootCount,List<GameManager.AttackMethod> attackMethod,List<GameManager.AttackType> attackTypes,
+        float range,float shootSpeed,float moveSpeed, List<GameManager.ItemOthers> ItemOthers);
     public event OnChangeDamage OnChangeDamageEvnetHandler;
     private static ItemController _instance = null;
     public static ItemController Instance
@@ -193,13 +194,19 @@ public class ItemController : MonoBehaviour
         {
             GameManager.Instance.Spawn(GameManager.SpawnType.Key, item.gameObject.transform.position, temp_item.key);
         }
+        if(temp_item.other == "random_coin")
+        {
+            GameManager.Instance.Spawn(GameManager.SpawnType.Coin, item.gameObject.transform.position, 7);
+        }
+        GameManager.Instance.Spawn(GameManager.SpawnType.GetEffect, item.gameObject.transform.position, 1);
+        GameManager.Instance.isVisibleMap = temp_item.map;
         GetDamage();
     }
     public int GetMaxItemCount()
     {
         return items.Count;
     }
-    public void MakeItem(int itemIndex,Vector3 position)
+    public void MakeItem(int itemIndex,Vector3 position,Transform pTransfrom)
     {
         //int rand = Random.Range(0, items.Count);
         int rand = itemIndex;
@@ -234,9 +241,9 @@ public class ItemController : MonoBehaviour
             temp_item.isOnce = items[rand].isOnce;
             temp_item.other = items[rand].other;
         }
-    
-
-        temp.transform.position = position;
+        if(pTransfrom !=null)
+            temp.transform.SetParent(pTransfrom);
+        temp.transform.localPosition = position;
         temp_item.SetIcon();
     }
     public float GetDamage()
@@ -260,14 +267,33 @@ public class ItemController : MonoBehaviour
         float range = 0;
         float shootSpeed = 0;
         float moveSpeed = 0;
-        
+        float luck = 0;
+        bool isMoneyPower = false;
         List<GameManager.AttackType> attackType= new List<GameManager.AttackType>();
         List<GameManager.AttackMethod> attackMethod = new List<GameManager.AttackMethod>();
+        List<GameManager.ItemOthers> itemOthers = new List<GameManager.ItemOthers>();
         for (int i =0; i< GetItems.Count; i++)
         {
             if(GetItems[i].getList.Count >0)
             {
-                if(GetItems[i].range>0)
+                isMoneyPower = false;
+                if (GetItems[i].other != "normal")
+                {
+                    switch (GetItems[i].other)
+                    {
+                        case "followItem": itemOthers.Add(GameManager.ItemOthers.followItem); break;
+                        case "half_damage": itemOthers.Add(GameManager.ItemOthers.half_damage); break;
+                        case "money_power":
+                            itemOthers.Add(GameManager.ItemOthers.money_power);
+                            isMoneyPower = true; break;
+                        case "shield_7": itemOthers.Add(GameManager.ItemOthers.shield_7); break;
+                        case "pickup_up": itemOthers.Add(GameManager.ItemOthers.pickup_up); break;
+                        case "hit_drop_item": itemOthers.Add(GameManager.ItemOthers.hit_drop_item); break;
+                    }
+                }
+                
+                luck += GetItems[i].luck;
+                if (GetItems[i].range>0)
                 {
                     range += GetItems[i].range;
                 }                
@@ -284,6 +310,10 @@ public class ItemController : MonoBehaviour
                     Sacred = true;
                     delayMod += GetItems[i].attack_speed;
                     continue;
+                }                
+                if(isMoneyPower)
+                {
+                    v2 += Mathf.Min(GameManager.Instance.Coin, 99f) * 0.04f;
                 }
                 v2 += GetItems[i].damage;
                 if(GetItems[i].damage_x_time >0)
@@ -306,10 +336,10 @@ public class ItemController : MonoBehaviour
                     v2 *= 0.9f;
                     v2 -= 0.4f;
                 }              
-                if(GetItems[i].other =="money_power")
-                {
-                    v2 += Mathf.Min(GameManager.Instance.coins, 99) * 0.04f;
-                }
+                //if(GetItems[i].other =="money_power")
+                //{
+                //    v2 += Mathf.Min(GameManager.Instance.coins, 99) * 0.04f;
+                //}
 
                 delayMod += GetItems[i].attack_speed;
                 if(GetItems[i].item_code == 149 || GetItems[i].item_code == 2 || GetItems[i].item_code == 153 || GetItems[i].item_code == 169)
@@ -346,8 +376,10 @@ public class ItemController : MonoBehaviour
                     switch(GetItems[i].attack_method)
                     {
                         case "homing": attackMethod.Add(GameManager.AttackMethod.homing);  break;
+                        case "boomerang": attackMethod.Add(GameManager.AttackMethod.boomerang); break;
                     }
                 }
+              
             }            
         }
        
@@ -388,10 +420,10 @@ public class ItemController : MonoBehaviour
             rof *= 3;
             dps *= 3;
         }
-
+        GameManager.Instance.luck = luck;
         Debug.Log("Damage = "+v2+ "     dps = " + dps + "     tps = " + rof);
 
-        OnChangeDamageEvnetHandler?.Invoke(v2, effectiveDelay, shootCount, attackMethod, attackType, range,shootSpeed,moveSpeed);
+        OnChangeDamageEvnetHandler?.Invoke(v2, effectiveDelay, shootCount, attackMethod, attackType, range,shootSpeed,moveSpeed, itemOthers);
         return v2;
     }
 }

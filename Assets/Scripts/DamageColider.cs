@@ -25,11 +25,24 @@ public class DamageColider : MonoBehaviour
     public float knockbackForce = 2;
     public bool isEnable = false;
     public Color DamangeColor;
+
    
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (isEnable == false)
             return;
+        if (collision.gameObject.tag == "wall" || collision.gameObject.tag == "Room_wall")
+        {            
+            if (isSplit)
+            {
+                Split(collision.gameObject);
+                isSplit = false;
+            }
+            if (isDisable == true)
+            {
+                EZ_Pooling.EZ_PoolManager.Despawn(transform);
+            }
+        }
         if (collision.tag == "Monster" && collision.gameObject != PrevTarget)
         {
             float _damage = Power;
@@ -122,6 +135,8 @@ public class DamageColider : MonoBehaviour
                 break;
         }
         Transform temp =  EZ_Pooling.EZ_PoolManager.Spawn(bullet.transform, target.transform.position, new Quaternion());
+        temp.GetComponent<Bullet>().SetAttackMethods(GetComponent<Bullet>().m_attackMethods, GetComponent<Bullet>().m_Target);
+        temp.GetComponent<Bullet>().bulletDirection = GetComponent<Bullet>().bulletDirection;
         temp.GetComponent<Bullet>().SetSplit(target);
         temp.GetComponent<Bullet>().isSplit = false;
         temp.transform.localScale = temp.transform.localScale / 2;
@@ -131,6 +146,8 @@ public class DamageColider : MonoBehaviour
 
 
         Transform temp_2 = EZ_Pooling.EZ_PoolManager.Spawn(bullet.transform, target.transform.position, new Quaternion());
+        temp_2.GetComponent<Bullet>().SetAttackMethods(GetComponent<Bullet>().m_attackMethods, GetComponent<Bullet>().m_Target);
+        temp_2.GetComponent<Bullet>().bulletDirection = GetComponent<Bullet>().bulletDirection;
         temp_2.GetComponent<Bullet>().SetSplit(target);        
         moveVec = direction - direction_split;
         

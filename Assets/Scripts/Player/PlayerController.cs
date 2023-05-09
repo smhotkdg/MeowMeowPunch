@@ -8,6 +8,8 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    public GameObject MagnetObj;
+    public GameObject ShieldObject;
     public enum ShootType
     {
         normal,
@@ -49,21 +51,57 @@ public class PlayerController : MonoBehaviour
     SpriteRenderer gunsprite;
     private Animator GunAnim;
     float defaultSpeed;
+    IEnumerator CheckShieldRoutine;
     private void Awake()
     {
-        defaultSpeed = speed;
-        ItemController.Instance.OnChangeDamageEvnetHandler += ItemController_OnChangeDamageEvnetHandler;
-        ItemController.Instance.GetDamage();
+        defaultSpeed = speed;       
         animator = GetComponent<Animator>();
         targetFollow = Target.GetComponent<TargetFollow>();
         attackTime = defaultAttackDelay;
         spriteRenderer = GetComponent<SpriteRenderer>();
         gunsprite = GunObject.GetComponent<SpriteRenderer>();
         GunAnim = GunObject.GetComponent<Animator>();
+        MagnetObj.SetActive(false);
+        for (int i = 0; i < System.Enum.GetValues(typeof(GameManager.ItemOthers)).Length; i++)
+        {
+            m_ItemOthers.Add(false);
+        }        
+        ItemController.Instance.OnChangeDamageEvnetHandler += ItemController_OnChangeDamageEvnetHandler;
+        ItemController.Instance.GetDamage();
+    }
+    private void OnEnable()
+    {
+        bStartShield = false;
     }
     float m_shootSpeed;
+    bool bStartShield = false;
+    IEnumerator ShieldRoutine()
+    {        
+        yield return new WaitForSeconds(2f);
+        double probability = 0.2d + (GameManager.Instance.luck * 0.29d);       
+        if(GameManager.Instance.FindProbability(probability))
+        {
+            ShieldObject.SetActive(true);
+            ShieldObject.GetComponent<ShieldController>().OnCompleteEvnetHander += PlayerController_OnCompleteEvnetHander;
+        }
+        else
+        {
+            CheckShieldRoutine = ShieldRoutine();
+            StartCoroutine(CheckShieldRoutine);
+        }
+    }
+
+    private void PlayerController_OnCompleteEvnetHander()
+    {
+        ShieldObject.GetComponent<ShieldController>().OnCompleteEvnetHander -= PlayerController_OnCompleteEvnetHander;
+        ShieldObject.SetActive(false);
+        CheckShieldRoutine = ShieldRoutine();
+        StartCoroutine(CheckShieldRoutine);
+    }
+
+    public List<bool> m_ItemOthers = new List<bool>();
     private void ItemController_OnChangeDamageEvnetHandler(float damage,float tps, int shootCount, List<GameManager.AttackMethod> attackMethod, 
-        List<GameManager.AttackType> attackTypes,float range,float shootSpeed,float moveSpeed)
+        List<GameManager.AttackType> attackTypes,float range,float shootSpeed,float moveSpeed,List<GameManager.ItemOthers> ItemOthers)
     {
         Damage = damage;
         defaultAttackDelay = tps /20;
@@ -73,16 +111,27 @@ public class PlayerController : MonoBehaviour
         chainLightning.Power = Damage;
         shootController.SetBulletAttackType(attackTypes);
         shootController.SetBulletMethodType(attackMethod);
-
-
-        if(shootSpeed>0)
-        {            
-            shootController.speed = shootSpeed;
+        for (int i = 0; i < ItemOthers.Count; i++)
+        {
+            m_ItemOthers[(int)ItemOthers[i]] = true;
         }
+        MagnetObj.SetActive(m_ItemOthers[(int)GameManager.ItemOthers.followItem]);
+        if(m_ItemOthers[(int)GameManager.ItemOthers.shield_7]==true && bStartShield ==false)
+        {
+            CheckShieldRoutine = ShieldRoutine();
+            StartCoroutine(CheckShieldRoutine);
+            bStartShield = true;
+        }
+        shootController.SetShootSpeed(shootSpeed);
+     
         if(moveSpeed>0)
         {
             speed = defaultSpeed + moveSpeed;
         }
+    }
+    private void OnDisable()
+    {
+        StopCoroutine(CheckShieldRoutine);
     }
     void ChangeRange(float range)
     {
@@ -237,21 +286,22 @@ public class PlayerController : MonoBehaviour
 
     }
     bool isKnockback = false;
-    public void Knockback(Vector3 value)
+    public void Knockback(Vector3 value,int HitDamage)
     {
         if(isKnockback ==false)
         {
             isKnockback = true;
-            StartCoroutine(KnockbackRoutine(value));
+            StartCoroutine(KnockbackRoutine(value, HitDamage));
         }
     }
     
     public float knockbackForce=2f;
-    IEnumerator KnockbackRoutine(Vector3 dir)
+    IEnumerator KnockbackRoutine(Vector3 dir, int HitDamage)
     {
         GameManager.Instance.gameStatus = GameManager.GameStatus.KNOCKBACK;
-        GameManager.Instance.Hp -= 1;
-        UIManager.Instance.SetHp();
+        //GameManager.Instance.Hp -= HitDamage;
+        GameManager.Instance.AddHp(HitDamage);
+        //UIManager.Instance.SetHp();
         float ctime = 0;
         Vector2 direction = (transform.position-dir).normalized;
         Vector2 knockVec = direction * knockbackForce;
@@ -367,12 +417,25 @@ public class PlayerController : MonoBehaviour
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Room")
+        if (collision.gameObject.tag == "Room_wall")
         {
             if (collision.transform.parent.parent.parent.parent.GetComponent<DungeonController>().IsOpen)
             {
-                collision.transform.parent.GetComponent<Rule>().NextMap.gameObject.GetComponent<DungeonController>().isCome = true;
-                testScript.ChangeMap(collision.transform.parent.GetComponent<Rule>().NextMap, collision.transform.parent.GetComponent<Rule>().NextPosition);
+                if (collision.transform.parent.GetComponent<Rule>().NextMap.name == "ItemRoom")
+                {
+                    if(GameManager.Instance.Key >=1)
+                    {
+                        collision.transform.parent.GetComponent<Rule>().NextMap.gameObject.GetComponent<DungeonController>().isCome = true;
+                        testScript.ChangeMap(collision.transform.parent.GetComponent<Rule>().NextMap, collision.transform.parent.GetComponent<Rule>().NextPosition);
+                        GameManager.Instance.Key -= 1;
+                        UIManager.Instance.SetKeyText();
+                    }
+                }
+                else
+                {
+                    collision.transform.parent.GetComponent<Rule>().NextMap.gameObject.GetComponent<DungeonController>().isCome = true;
+                    testScript.ChangeMap(collision.transform.parent.GetComponent<Rule>().NextMap, collision.transform.parent.GetComponent<Rule>().NextPosition);
+                }                
             }
         }
     }   

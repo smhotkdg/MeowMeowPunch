@@ -12,6 +12,10 @@ TagManager:
   - Monster
   - Room
   - Obstacle
+  - wall
+  - Room_wall
+  - Product
+  - Shield
   layers:
   - Default
   - TransparentFX
@@ -38,8 +42,8 @@ TagManager:
   - Camera4
   - Player
   - Minimap
-  - 
-  - 
+  - wall
+  - Shield
   - 
   - 
   - 

@@ -10,9 +10,14 @@ public class DungeonController : MonoBehaviour
     public bool IsOpen = false;
     public List<GameObject> Monsters = new List<GameObject>();
     public List<bool> MonsterDestory = new List<bool>();
+    public bool isBossRoom = false;
+    GameObject NextRoomObejct;
+    GameObject ItemObject;
+    public bool isMakeLootbox = false;
     private void OnEnable()
     {
         IsOpen = false;
+        isMakeChest = false;
         FindAllMonsters();
     }
     void FindAllMonsters()
@@ -28,6 +33,19 @@ public class DungeonController : MonoBehaviour
                 Monsters.Add(tr.gameObject);
                 findIndex++;
                 MonsterDestory.Add(false);
+            }
+            if(isBossRoom)
+            {
+                if(tr.name == "NextStage")
+                {
+                    NextRoomObejct = tr.gameObject;
+                    NextRoomObejct.SetActive(false);
+                }
+                if(tr.name == "Item_object")
+                {
+                    ItemObject = tr.gameObject;
+                    ItemObject.SetActive(false);
+                }
             }
         }               
     }
@@ -49,13 +67,35 @@ public class DungeonController : MonoBehaviour
         }
     }
 
+    bool isMakeChest = false;
+    void makeChest()
+    {
+        Vector2 newPosition = new Vector3(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f),0) + transform.position;
+        GameManager.Instance.Spawn(GameManager.SpawnType.NoramlLootBox, newPosition,1);
+    }
     private void FixedUpdate()
     {
         if (Monsters.Count <= 0)
         {
             IsOpen = true;
+            if(isBossRoom)
+            {
+                NextRoomObejct.SetActive(true);
+                ItemObject.SetActive(true);
+            }
+            if(isMakeChest ==false && isMakeLootbox==true)
+            {
+                makeChest();
+                isMakeChest = true;
+            }
         }
-        MinimapGFX.SetActive(isCome);
-
+        if(GameManager.Instance.isVisibleMap)
+        {
+            MinimapGFX.SetActive(true);
+        }
+        else
+        {
+            MinimapGFX.SetActive(isCome);
+        }
     }
 }

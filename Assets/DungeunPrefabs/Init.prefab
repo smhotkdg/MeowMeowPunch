@@ -307,9 +307,9 @@ GameObject:
   - component: {fileID: 3477779362703509161}
   - component: {fileID: 3477779362703509160}
   - component: {fileID: 3477779362703509163}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: BottomLeftWall
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -367,8 +367,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 47421343
-  m_SortingLayer: 4
+  m_SortingLayerID: 961700441
+  m_SortingLayer: 5
   m_SortingOrder: 0
   m_Sprite: {fileID: 7621246711392610420, guid: 4ff6b7c9e9de9aa42abb3d0c35a8eeb2,
     type: 3}
@@ -543,9 +543,9 @@ GameObject:
   - component: {fileID: 3477779362824712404}
   - component: {fileID: 3477779362824712407}
   - component: {fileID: 3477779362824712406}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: LeftWall
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -910,9 +910,9 @@ GameObject:
   - component: {fileID: 3477779362890547988}
   - component: {fileID: 3477779362890547991}
   - component: {fileID: 3477779362890547990}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: RightWall (6)
-  m_TagString: Room
+  m_TagString: Room_wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1194,8 +1194,8 @@ GameObject:
   - component: {fileID: 3477779363004009302}
   - component: {fileID: 3477779363004009301}
   m_Layer: 0
-  m_Name: tile_test.Sprites._13 (4)
-  m_TagString: Room
+  m_Name: wall
+  m_TagString: Room_wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1253,8 +1253,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 47421343
-  m_SortingLayer: 4
+  m_SortingLayerID: 961700441
+  m_SortingLayer: 5
   m_SortingOrder: 0
   m_Sprite: {fileID: -6414050984586155558, guid: 4ff6b7c9e9de9aa42abb3d0c35a8eeb2,
     type: 3}
@@ -1301,7 +1301,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3477779363004009387}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6193dc3686a269f4e9208d19bbd0675f, type: 3}
   m_Name: 
@@ -1403,9 +1403,9 @@ GameObject:
   - component: {fileID: 3477779363062299826}
   - component: {fileID: 3477779363062299837}
   - component: {fileID: 3477779363062299836}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: LeftWall
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1515,9 +1515,9 @@ GameObject:
   - component: {fileID: 3477779363064604994}
   - component: {fileID: 3477779363064605005}
   - component: {fileID: 3477779363064604995}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: Wall (2)
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1603,7 +1603,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.1}
+  m_Offset: {x: 0, y: 0.3}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -1614,7 +1614,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.32, y: 0.1}
+  m_Size: {x: 0.32, y: 0.5}
   m_EdgeRadius: 0
 --- !u!1 &3477779363099438505
 GameObject:
@@ -1712,9 +1712,9 @@ GameObject:
   - component: {fileID: 3477779363117943860}
   - component: {fileID: 3477779363117943863}
   - component: {fileID: 3477779363117943861}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: Wall (1)
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1800,7 +1800,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.1}
+  m_Offset: {x: 0, y: 0.3}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -1811,7 +1811,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.32, y: 0.1}
+  m_Size: {x: 0.32, y: 0.5}
   m_EdgeRadius: 0
 --- !u!1 &3477779363123587300
 GameObject:
@@ -1962,9 +1962,9 @@ GameObject:
   - component: {fileID: 3477779363160532935}
   - component: {fileID: 3477779363160532933}
   - component: {fileID: 3477779363160532932}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: TopightWall (1)
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2050,7 +2050,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.1}
+  m_Offset: {x: 0, y: 0.3}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -2061,7 +2061,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.32, y: 0.1}
+  m_Size: {x: 0.32, y: 0.5}
   m_EdgeRadius: 0
 --- !u!61 &3477779363160532932
 BoxCollider2D:
@@ -2270,9 +2270,9 @@ GameObject:
   - component: {fileID: 3477779363243308436}
   - component: {fileID: 3477779363243308439}
   - component: {fileID: 3477779363243308438}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: RightWall (7)
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2637,9 +2637,9 @@ GameObject:
   - component: {fileID: 3477779363348405359}
   - component: {fileID: 3477779363348405354}
   - component: {fileID: 3477779363348405353}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: RightWall (1)
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2749,9 +2749,9 @@ GameObject:
   - component: {fileID: 3477779363363732766}
   - component: {fileID: 3477779363363732761}
   - component: {fileID: 3477779363363732760}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: LeftWall
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3405,9 +3405,9 @@ GameObject:
   - component: {fileID: 3477779363513403321}
   - component: {fileID: 3477779363513403300}
   - component: {fileID: 3477779363513403323}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: RightWall (5)
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3602,9 +3602,9 @@ GameObject:
   - component: {fileID: 3477779363538590018}
   - component: {fileID: 3477779363538590029}
   - component: {fileID: 3477779363538590019}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: Wall (5)
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3690,7 +3690,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.1}
+  m_Offset: {x: 0, y: 0.3}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -3701,7 +3701,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.32, y: 0.1}
+  m_Size: {x: 0.32, y: 0.5}
   m_EdgeRadius: 0
 --- !u!1 &3477779363553286575
 GameObject:
@@ -3765,9 +3765,9 @@ GameObject:
   - component: {fileID: 3477779363591021739}
   - component: {fileID: 3477779363591021654}
   - component: {fileID: 3477779363591021653}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: LeftWall (3)
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3877,9 +3877,9 @@ GameObject:
   - component: {fileID: 3477779363646594162}
   - component: {fileID: 3477779363646594173}
   - component: {fileID: 3477779363646594172}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: RightWall (8)
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4022,9 +4022,9 @@ GameObject:
   - component: {fileID: 3477779363697349788}
   - component: {fileID: 3477779363697349791}
   - component: {fileID: 3477779363697349790}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: LeftWall (2)
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4323,9 +4323,9 @@ GameObject:
   - component: {fileID: 3477779363709812223}
   - component: {fileID: 3477779363709812218}
   - component: {fileID: 3477779363709812217}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: LeftWall (4)
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4520,9 +4520,9 @@ GameObject:
   - component: {fileID: 3477779363736439627}
   - component: {fileID: 3477779363736439670}
   - component: {fileID: 3477779363736439669}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: RightWall
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4718,8 +4718,8 @@ GameObject:
   - component: {fileID: 3477779363856946002}
   - component: {fileID: 367626248466579494}
   m_Layer: 0
-  m_Name: tile_test.Sprites._15
-  m_TagString: Room
+  m_Name: wall
+  m_TagString: Room_wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4829,9 +4829,9 @@ GameObject:
   - component: {fileID: 3477779363878484191}
   - component: {fileID: 3477779363878484186}
   - component: {fileID: 3477779363878484185}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: LeftWall
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4942,9 +4942,9 @@ GameObject:
   - component: {fileID: 3477779363881913075}
   - component: {fileID: 3477779363881913074}
   - component: {fileID: 3477779363881913084}
-  m_Layer: 0
-  m_Name: tile_test.Sprites._13 (5)
-  m_TagString: Untagged
+  m_Layer: 25
+  m_Name: wall_bottom
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5002,8 +5002,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 47421343
-  m_SortingLayer: 4
+  m_SortingLayerID: 961700441
+  m_SortingLayer: 5
   m_SortingOrder: 0
   m_Sprite: {fileID: 3619238849122823761, guid: 4ff6b7c9e9de9aa42abb3d0c35a8eeb2,
     type: 3}
@@ -5153,9 +5153,9 @@ GameObject:
   - component: {fileID: 3477779363956560173}
   - component: {fileID: 3477779363956560172}
   - component: {fileID: 3477779363956560174}
-  m_Layer: 0
-  m_Name: tile_test.Sprites._13 (1)
-  m_TagString: Untagged
+  m_Layer: 25
+  m_Name: wall_bottom
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5213,8 +5213,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 47421343
-  m_SortingLayer: 4
+  m_SortingLayerID: 961700441
+  m_SortingLayer: 5
   m_SortingOrder: 0
   m_Sprite: {fileID: 3619238849122823761, guid: 4ff6b7c9e9de9aa42abb3d0c35a8eeb2,
     type: 3}
@@ -5533,9 +5533,9 @@ GameObject:
   - component: {fileID: 3477779364041027383}
   - component: {fileID: 3477779364041027378}
   - component: {fileID: 3477779364041027377}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: RightWall (2)
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5816,9 +5816,9 @@ GameObject:
   - component: {fileID: 3477779364141346989}
   - component: {fileID: 3477779364141346988}
   - component: {fileID: 3477779364141346990}
-  m_Layer: 0
-  m_Name: tile_test.Sprites._13 (3)
-  m_TagString: Untagged
+  m_Layer: 25
+  m_Name: wall_bottom
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5876,8 +5876,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 47421343
-  m_SortingLayer: 4
+  m_SortingLayerID: 961700441
+  m_SortingLayer: 5
   m_SortingOrder: 0
   m_Sprite: {fileID: 3619238849122823761, guid: 4ff6b7c9e9de9aa42abb3d0c35a8eeb2,
     type: 3}
@@ -5942,9 +5942,9 @@ GameObject:
   - component: {fileID: 3477779364144870789}
   - component: {fileID: 3477779364144870811}
   - component: {fileID: 3477779364144870810}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: TopLeftWall (1)
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6030,7 +6030,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.1409079, y: 0}
+  m_Offset: {x: -0.1409079, y: 0.3}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -6041,7 +6041,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.05, y: 0.32}
+  m_Size: {x: 0.05, y: 0.5}
   m_EdgeRadius: 0
 --- !u!61 &3477779364144870810
 BoxCollider2D:
@@ -6056,7 +6056,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.1}
+  m_Offset: {x: 0, y: 0.3}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -6067,7 +6067,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.32, y: 0.1}
+  m_Size: {x: 0.32, y: 0.5}
   m_EdgeRadius: 0
 --- !u!1 &3477779364156548576
 GameObject:
@@ -6082,9 +6082,9 @@ GameObject:
   - component: {fileID: 3477779364156548579}
   - component: {fileID: 3477779364156548578}
   - component: {fileID: 3477779364156548589}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: BottomRightWall
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6142,8 +6142,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 47421343
-  m_SortingLayer: 4
+  m_SortingLayerID: 961700441
+  m_SortingLayer: 5
   m_SortingOrder: 0
   m_Sprite: {fileID: 1578366823547833063, guid: 4ff6b7c9e9de9aa42abb3d0c35a8eeb2,
     type: 3}
@@ -6318,9 +6318,9 @@ GameObject:
   - component: {fileID: 3477779364176573427}
   - component: {fileID: 3477779364176573438}
   - component: {fileID: 3477779364176573437}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: LeftWall (1)
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6430,9 +6430,9 @@ GameObject:
   - component: {fileID: 3477779364180123338}
   - component: {fileID: 3477779364180123381}
   - component: {fileID: 3477779364180123380}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: LeftWall (1)
-  m_TagString: Room
+  m_TagString: Room_wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7200,9 +7200,10 @@ GameObject:
   - component: {fileID: 3477779364388805588}
   - component: {fileID: 3477779364388805591}
   - component: {fileID: 3477779364388805589}
-  m_Layer: 0
+  - component: {fileID: 1032696372307119024}
+  m_Layer: 25
   m_Name: Wall (3)
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7301,6 +7302,27 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.32, y: 0.1}
   m_EdgeRadius: 0
+--- !u!50 &1032696372307119024
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3477779364388804651}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 7
 --- !u!1 &3477779364390603403
 GameObject:
   m_ObjectHideFlags: 0
@@ -7364,9 +7386,9 @@ GameObject:
   - component: {fileID: 3477779364394754297}
   - component: {fileID: 3477779364394754276}
   - component: {fileID: 3477779364394754299}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: RightWall (4)
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7613,9 +7635,9 @@ GameObject:
   - component: {fileID: 3477779364461205303}
   - component: {fileID: 3477779364461205298}
   - component: {fileID: 3477779364461205297}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: RightWall (7)
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7865,6 +7887,8 @@ MonoBehaviour:
   IsOpen: 0
   Monsters: []
   MonsterDestory: 
+  isBossRoom: 0
+  isMakeLootbox: 1
 --- !u!1 &3477779364482598579
 GameObject:
   m_ObjectHideFlags: 0
@@ -7877,9 +7901,9 @@ GameObject:
   - component: {fileID: 3477779364482598590}
   - component: {fileID: 3477779364482598589}
   - component: {fileID: 3477779364482598591}
-  m_Layer: 0
-  m_Name: tile_test.Sprites._13 (2)
-  m_TagString: Untagged
+  m_Layer: 25
+  m_Name: wall_bottom
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7937,8 +7961,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 47421343
-  m_SortingLayer: 4
+  m_SortingLayerID: 961700441
+  m_SortingLayer: 5
   m_SortingOrder: 0
   m_Sprite: {fileID: 3619238849122823761, guid: 4ff6b7c9e9de9aa42abb3d0c35a8eeb2,
     type: 3}
@@ -8115,8 +8139,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 47421343
-  m_SortingLayer: 4
+  m_SortingLayerID: 961700441
+  m_SortingLayer: 5
   m_SortingOrder: 0
   m_Sprite: {fileID: 3619238849122823761, guid: 4ff6b7c9e9de9aa42abb3d0c35a8eeb2,
     type: 3}
@@ -8163,7 +8187,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3477779364518926295}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6193dc3686a269f4e9208d19bbd0675f, type: 3}
   m_Name: 
@@ -8180,9 +8204,9 @@ GameObject:
   - component: {fileID: 3477779364590295702}
   - component: {fileID: 3477779364590295697}
   - component: {fileID: 3477779364590295703}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: Wall (4)
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -8268,7 +8292,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.1}
+  m_Offset: {x: 0, y: 0.3}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -8279,7 +8303,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.32, y: 0.1}
+  m_Size: {x: 0.32, y: 0.5}
   m_EdgeRadius: 0
 --- !u!1 &3477779364622509812
 GameObject:
@@ -8292,9 +8316,9 @@ GameObject:
   - component: {fileID: 3477779364622509813}
   - component: {fileID: 3477779364622509808}
   - component: {fileID: 3477779364622509815}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: RightWall (3)
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -8914,9 +8938,9 @@ GameObject:
   - component: {fileID: 3477779364796185863}
   - component: {fileID: 3477779364796185858}
   - component: {fileID: 3477779364796185857}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: LeftWall
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

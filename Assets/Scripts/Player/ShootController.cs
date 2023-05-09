@@ -19,12 +19,13 @@ public class ShootController : MonoBehaviour
     public GameObject Target;
     public GameObject Bullet;
     public GameObject BulletPos;
-
+    private float defaultShootSpeed;
     public bool shoot = false;
     public float Damage;
     private void Awake()
-    {        
-        for(int i =0; i< System.Enum.GetValues(typeof(GameManager.AttackType)).Length; i++)
+    {
+        defaultShootSpeed = speed;
+        for (int i =0; i< System.Enum.GetValues(typeof(GameManager.AttackType)).Length; i++)
         {
             m_attackTypes.Add(false);
         }
@@ -47,6 +48,10 @@ public class ShootController : MonoBehaviour
         {
             m_attackMethods[(int)attackMethods[i]] = true;
         }
+    }
+    public void SetShootSpeed(float _speed)
+    {
+        speed = defaultShootSpeed + _speed;
     }
     private void Update()
     {
@@ -92,7 +97,7 @@ public class ShootController : MonoBehaviour
                     Vector2 moveVec = (BulletPos.transform.up + (BulletPos.transform.right * rangle_bullet / 2))*speed;
 
                     Transform object_transfrom =  EZ_PoolManager.Spawn(Bullet.transform, BulletPos.transform.position, Quaternion.AngleAxis(angle - range, Vector3.forward));
-                   // object_transfrom.gameObject.SetActive(false);
+                    object_transfrom.gameObject.SetActive(false);
                     object_transfrom.GetComponent<Bullet>().SetAttackType(m_attackTypes);
                     object_transfrom.GetComponent<Bullet>().SetAttackMethods(m_attackMethods,Target);
                     object_transfrom.GetComponent<Bullet>().SetSpeed(speed);
@@ -127,7 +132,7 @@ public class ShootController : MonoBehaviour
                     if (canBack)
                     {
                         Transform object_transfrom_back = EZ_PoolManager.Spawn(Bullet.transform, BulletPos.transform.position, Quaternion.AngleAxis(angle - range_temp, Vector3.forward));
-                        //object_transfrom_back.gameObject.SetActive(false);
+                        object_transfrom_back.gameObject.SetActive(false);
                         object_transfrom_back.GetComponent<Bullet>().SetAttackType(m_attackTypes);
                         object_transfrom_back.GetComponent<Bullet>().SetAttackMethods(m_attackMethods,Target);
                         object_transfrom_back.GetComponent<Bullet>().SetSpeed(speed);
@@ -149,7 +154,7 @@ public class ShootController : MonoBehaviour
                     if (canCross)
                     {
                         Transform object_transfrom_back = EZ_PoolManager.Spawn(Bullet.transform, BulletPos.transform.position, Quaternion.AngleAxis(angle - range_temp, Vector3.forward));
-                        //object_transfrom_back.gameObject.SetActive(false);
+                        object_transfrom_back.gameObject.SetActive(false);
                         object_transfrom_back.GetComponent<Bullet>().SetAttackType(m_attackTypes);
                         object_transfrom_back.GetComponent<Bullet>().SetAttackMethods(m_attackMethods,Target);
                         object_transfrom_back.GetComponent<Bullet>().Power = Damage;
@@ -162,7 +167,7 @@ public class ShootController : MonoBehaviour
 
 
                         Transform object_transfrom_Right = EZ_PoolManager.Spawn(Bullet.transform, BulletPos.transform.position, Quaternion.AngleAxis(angle - range_temp, Vector3.forward));
-                        //object_transfrom_Right.gameObject.SetActive(false);
+                        object_transfrom_Right.gameObject.SetActive(false);
                         object_transfrom_Right.GetComponent<Bullet>().SetAttackType(m_attackTypes);
                         object_transfrom_Right.GetComponent<Bullet>().SetAttackMethods(m_attackMethods,Target);
                         object_transfrom_Right.GetComponent<Bullet>().SetSpeed(speed);
@@ -173,7 +178,7 @@ public class ShootController : MonoBehaviour
                         object_transfrom_Right.GetComponent<Bullet>().SetVelocity();
 
                         Transform object_transfrom_Left = EZ_PoolManager.Spawn(Bullet.transform, BulletPos.transform.position, Quaternion.AngleAxis(angle - range_temp, Vector3.forward));
-                        //object_transfrom_Left.gameObject.SetActive(false);
+                        object_transfrom_Left.gameObject.SetActive(false);
                         object_transfrom_Left.GetComponent<Bullet>().SetAttackType(m_attackTypes);
                         object_transfrom_Left.GetComponent<Bullet>().SetAttackMethods(m_attackMethods,Target);
                         object_transfrom_Left.GetComponent<Bullet>().SetSpeed(speed);

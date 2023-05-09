@@ -19,7 +19,7 @@ public class Bullet : DamageColider
     public List<bool> m_attackTypes_Bullets_before = new List<bool>();
     [SerializeField]
     BoxCollider2D boxCollider;
-    GameObject m_Target;
+    public GameObject m_Target;
 
     public List<bool> m_attackMethods = new List<bool>();
 
@@ -28,10 +28,11 @@ public class Bullet : DamageColider
     public float speed = 5;
 
     private Rigidbody2D rb;
-
+    public float boomerangTime = 1f;
     Material material;
     float deltaTime;
     RangeSensor2D rangeSensor2D;
+    float defaultboomerangTime;
     public enum BulletDirection
     {
         forward,
@@ -48,6 +49,11 @@ public class Bullet : DamageColider
     float defaultKncokback;
     private void Awake()
     {
+        m_attackMethods.Clear();
+        m_attackTypes.Clear();
+        m_attackTypes_Bullets_before.Clear();
+        m_attackTypes_Bullets.Clear();
+        defaultboomerangTime = boomerangTime;
         rangeSensor2D = GetComponent<RangeSensor2D>();
         defaultHorming = hormingTime;
         material = GetComponent<SpriteRenderer>().material;
@@ -293,6 +299,7 @@ public class Bullet : DamageColider
     private void OnEnable()
     {
         //RandColor();
+        boomerangTime = defaultboomerangTime;
         SetColor(new Color(1, 1, 1, 1));
         boxCollider.enabled = true;
         initPos = transform.position;
@@ -302,7 +309,7 @@ public class Bullet : DamageColider
         CheckAttackType();
         hormingTime = defaultHorming;
         isEnable = true;
-        
+        isBoomerang = false;
     }  
     void SetColor(Color color)
     {
@@ -318,6 +325,7 @@ public class Bullet : DamageColider
             EZ_PoolManager.Despawn(transform);
         }
         Homing();
+        boomerang();
     }
     public float AngleSpeed = 1;    
     public float hormingTime = 1f;
@@ -358,10 +366,23 @@ public class Bullet : DamageColider
             float rotateAmount = 0;
             hormingTime -= Time.deltaTime;
             Vector2 direction;
-            GameObject temp;
+            GameObject temp = null;
             if(rangeSensor2D.DetectedObjects.Count >0)
             {
-                temp = findMin();
+                if(PrevTarget !=null)
+                {
+                    if(findMin() != PrevTarget)
+                    {
+                        temp = findMin();
+                    }
+                }
+                else
+                {
+                    temp = findMin();
+                }
+
+                if (temp == null)
+                    return;
             }
             else
             {
@@ -371,40 +392,84 @@ public class Bullet : DamageColider
             {
                 return;
             }
-            switch(bulletDirection)
-            {
-                case BulletDirection.forward:
-                    direction = (Vector2)temp.transform.position - rb.position;
-                    direction.Normalize();
-                    rotateAmount = Vector3.Cross(direction, transform.up).z;
-                    rb.angularVelocity = -AngleSpeed * rotateAmount;
-                    rb.velocity = transform.up * speed;
-                    break;
-                case BulletDirection.back:                    
-                    direction = (Vector2)temp.transform.position - rb.position;
-                    direction.Normalize();
-                    rotateAmount = Vector3.Cross(direction, -transform.up).z;
-                    rb.angularVelocity = AngleSpeed * rotateAmount;
-                    rb.velocity = -transform.up * speed;
-                    break;
-                case BulletDirection.left:
-                    direction = (Vector2)temp.transform.position - rb.position;
-                    direction.Normalize();
-                    rotateAmount = Vector3.Cross(direction, -transform.right).z;
-                    rb.angularVelocity = AngleSpeed * rotateAmount;
-                    rb.velocity = transform.right * speed;
-                    break;
-                case BulletDirection.right:
-                    direction = (Vector2)temp.transform.position - rb.position;
-                    direction.Normalize();
-                    rotateAmount = Vector3.Cross(direction, transform.right).z;
-                    rb.angularVelocity = -AngleSpeed * rotateAmount;
-                    rb.velocity = -transform.right * speed;
-                    break;
-            }
-             
+            //transform.position = Vector3.MoveTowards(transform.position, temp.transform.position, speed*Time.deltaTime);
+            Vector3 dir = temp.transform.position - transform.position;
+            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+
+            //== 타겟 방향으로 회전함 ==//
+            transform.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
+
+
+            direction = (Vector2)temp.transform.position - rb.position;
+            direction.Normalize();
+            rotateAmount = Vector3.Cross(direction, transform.up).z;
+            rb.angularVelocity = -AngleSpeed * rotateAmount;
+            rb.velocity = transform.up * speed;
+
+            //switch (bulletDirection)
+            //{
+            //    case BulletDirection.forward:
+            //        direction = (Vector2)temp.transform.position - rb.position;
+            //        direction.Normalize();
+            //        rotateAmount = Vector3.Cross(direction, transform.up).z;
+            //        rb.angularVelocity = -AngleSpeed * rotateAmount;
+            //        rb.velocity = transform.up * speed;
+            //        break;
+            //    case BulletDirection.back:
+            //        direction = (Vector2)temp.transform.position - rb.position;
+            //        direction.Normalize();
+            //        rotateAmount = Vector3.Cross(direction, -transform.up).z;
+            //        rb.angularVelocity = -AngleSpeed * rotateAmount;
+            //        rb.velocity = -transform.up * speed;
+            //        break;
+            //    case BulletDirection.left:
+            //        direction = (Vector2)temp.transform.position - rb.position;
+            //        direction.Normalize();
+            //        rotateAmount = Vector3.Cross(direction, -transform.right).z;
+            //        rb.angularVelocity = -AngleSpeed * rotateAmount;
+            //        rb.velocity = -transform.right * speed;
+            //        break;
+            //    case BulletDirection.right:
+            //        direction = (Vector2)temp.transform.position - rb.position;
+            //        direction.Normalize();
+            //        rotateAmount = Vector3.Cross(direction, transform.right).z;
+            //        rb.angularVelocity = -AngleSpeed * rotateAmount;
+            //        rb.velocity = transform.right * speed;
+            //        break;
+            //}
 
         }
+    }
+    bool isBoomerang = false;
+    void boomerang()
+    {        
+        if (m_attackMethods[(int)GameManager.AttackMethod.boomerang])
+        {
+            boomerangTime -= Time.deltaTime;
+            if (boomerangTime <= 0 && isBoomerang == false)
+            {
+                isBoomerang = true;
+                Vector2 randPos = new Vector2();
+                switch (bulletDirection)
+                {
+                    case BulletDirection.forward:
+                        randPos =new Vector2(Random.Range(-transform.right.x/2f, transform.right.x/2f), Random.Range(-transform.right.y/2f, transform.right.y/2f));
+                        break;
+                    case BulletDirection.back:
+                        randPos = new Vector2(Random.Range(-transform.right.x/2f, transform.right.x/2f), Random.Range(-transform.right.y, transform.right.y/2f));
+                        break;
+                    case BulletDirection.left:
+                        randPos = new Vector2(Random.Range(-transform.up.x/2f, transform.up.x/2f), Random.Range(-transform.up.y/2f, transform.up.y/2f));
+                        break;
+                    case BulletDirection.right:
+                        randPos = new Vector2(Random.Range(-transform.up.x/2f, transform.up.x/2f), Random.Range(-transform.up.y/2f, transform.up.y/2f));
+                        break;
+                }
+                float randVelocity = Random.Range(1, 2f);
+                rb.velocity = -rb.velocity* randVelocity + randPos;
+                boomerangTime = defaultboomerangTime;
+            }
+        }        
     }
     public void EndAnimation()
     {
