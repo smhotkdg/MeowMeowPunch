@@ -118,17 +118,11 @@ public class ShootController : MonoBehaviour
                 if (m_attackTypes[(int)GameManager.AttackType.back])
                 {
                     bool canBack = false;
-                    if (GameManager.Instance.luck == 0)
+                    double BackProbability = (GameManager.Instance.luck * 0.1d) + 0.5d;
+                    if (GameManager.Instance.FindProbability(BackProbability))
                     {
-                        if (Random.Range(0, 2) == 0)
-                        {
-                            canBack = true;
-                        }
-                    }
-                    else if (Random.Range(GameManager.Instance.luck + 5, 11) >= Random.Range(0, 11))
-                    {
-                        canBack = true;
-                    }
+                        canBack = true;                       
+                    }                    
                     if (canBack)
                     {
                         Transform object_transfrom_back = EZ_PoolManager.Spawn(Bullet.transform, BulletPos.transform.position, Quaternion.AngleAxis(angle - range_temp, Vector3.forward));
@@ -147,7 +141,8 @@ public class ShootController : MonoBehaviour
                 if (m_attackTypes[(int)GameManager.AttackType.cross])
                 {
                     bool canCross = false;
-                    if (Random.Range(25 + (GameManager.Instance.luck * 5), 101) >= Random.Range(0, 101))
+                    double CrossProbability = (GameManager.Instance.luck * 0.05d) + 0.25d;
+                    if (GameManager.Instance.FindProbability(CrossProbability))
                     {
                         canCross = true;
                     }

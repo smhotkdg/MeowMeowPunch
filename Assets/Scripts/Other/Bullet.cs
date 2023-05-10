@@ -7,6 +7,7 @@ using System.Linq;
 
 public class Bullet : DamageColider
 {
+  
     public Color SlowColor;
     public Color PosionColor;
     public Color CriticalColor;
@@ -220,40 +221,29 @@ public class Bullet : DamageColider
     {
         bool isStern = false;
 
-        if (GameManager.Instance.luck == 0)
+        double sternProbability = (GameManager.Instance.luck * 0.033d) + 0.1d;
+        if (GameManager.Instance.FindProbability(sternProbability))
         {
-            if (Random.Range(0, 101f) <= 10f)
-            {
-                isStern = true;
-            }
-        }
-        else if (Random.Range(0, 101f) <= 10f + (GameManager.Instance.luck * 3.461f))
-        {
-            isStern = true;
-        }
+            isStern = true;            
+        }      
         return isStern;
     }
     bool CheckFascination()
     {
         bool isFascination = false;
-        if (GameManager.Instance.luck == 0)
-        {
-            if (Random.Range(0, 101f) <= 10f)
-            {
-                isFascination = true;
-            }
-        }
-        else if (Random.Range(0, 101f) <= 10f +(GameManager.Instance.luck *3.461f))
-        {
-            isFascination = true;
-        }
+        double FascinationProbability = (GameManager.Instance.luck * 0.033d) + 0.1d;
+        if (GameManager.Instance.FindProbability(FascinationProbability))
+        {          
+            isFascination = true;            
+        }        
         return isFascination;
     }
 
     bool CheckCritical()
     {
-        bool isCirtical= false;      
-        if (Random.Range(GameManager.Instance.luck + 1, 11) >= Random.Range(0, 11))
+        bool isCirtical= false;
+        double criticlaValue = (GameManager.Instance.luck+1) * 0.1d;
+        if (GameManager.Instance.FindProbability(criticlaValue))
         {
             isCirtical = true;
         }
@@ -262,33 +252,21 @@ public class Bullet : DamageColider
     bool CheckPosion()
     {
         bool isPosion = false;
-        if (GameManager.Instance.luck == 0)
+        double PosionProbability = (GameManager.Instance.luck * 0.05d) + 0.625d;
+        if (GameManager.Instance.FindProbability(PosionProbability))
         {
-            if (Random.Range(0, 5) == 0)
-            {
-                isPosion = true;                
-            }
-        }
-        else if (Random.Range(GameManager.Instance.luck + 5, 21) >= Random.Range(0, 21))
-        {            
-            isPosion = true;
+            isPosion = true;                            
         }
         return isPosion;
     }
     bool CheckSlow()
     {
         bool isSlow = false;
-        if (GameManager.Instance.luck == 0)
+        double slowProbability = (GameManager.Instance.luck * 0.05d) + 0.25d;
+        if (GameManager.Instance.FindProbability(slowProbability))
         {
-            if (Random.Range(0, 5) == 0)
-            {
-                isSlow = true;                
-            }
-        }
-        else if (Random.Range(GameManager.Instance.luck + 5, 21) >= Random.Range(0, 21))
-        {            
-            isSlow = true;
-        }
+            isSlow = true;                           
+        }        
         return isSlow;
     }
     public void SetSpeed(float _speed)
@@ -300,7 +278,15 @@ public class Bullet : DamageColider
     {
         //RandColor();
         boomerangTime = defaultboomerangTime;
-        SetColor(new Color(1, 1, 1, 1));
+        if(bulletType == BulletType.player)
+        {
+            SetColor(new Color(1, 1, 1, 1));
+        }
+        else if(bulletType == BulletType.monster)
+        {
+            SetColor(new Color(1, 0, 0, 1));
+        }
+        
         boxCollider.enabled = true;
         initPos = transform.position;
         transform.localScale = initScale;

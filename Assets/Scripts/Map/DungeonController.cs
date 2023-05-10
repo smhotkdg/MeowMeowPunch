@@ -20,6 +20,13 @@ public class DungeonController : MonoBehaviour
         isMakeChest = false;
         FindAllMonsters();
     }
+    public void StartMonster()
+    {
+        for(int i =0; i< Monsters.Count; i++)
+        {
+            Monsters[i].gameObject.GetComponent<Monster>().isStartMonster = true; 
+        }
+    }
     void FindAllMonsters()
     {
         Transform t = transform.Find("Tiles");
@@ -28,7 +35,7 @@ public class DungeonController : MonoBehaviour
         {
             if (tr.tag == "Monster")
             {
-                tr.gameObject.GetComponent<Monster>().MonsterIndex = findIndex;
+                tr.gameObject.GetComponent<Monster>().MonsterIndex = findIndex;                
                 tr.gameObject.GetComponent<Monster>().DestoryEventHandler += DungeonController_DestoryEventHandler;
                 Monsters.Add(tr.gameObject);
                 findIndex++;

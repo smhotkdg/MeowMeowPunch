@@ -203,7 +203,7 @@ public class MapMaker : MonoBehaviour
                 GridGraph gg = data.graphs[0] as GridGraph;
 
                 gg.center = MapList[MapList.Count - 1].transform.Find("InitPos").transform.position;
-                gg.SetDimensions(15, 18, 0.2f);
+                gg.SetDimensions(13, 18, 0.2f);
                 AstarPath.active.Scan();
 
             }
@@ -218,11 +218,10 @@ public class MapMaker : MonoBehaviour
         GridGraph gg = data.graphs[0] as GridGraph;
 
         gg.center = nextMap.transform.position;
-
-        AstarPath.active.Scan();
-
+        Debug.Log(gg.width + "   " + gg.depth);        
         CmvCam.GetComponent<Cinemachine.CinemachineConfiner>().m_BoundingShape2D = nextMap.GetComponent<PolygonCollider2D>();
         Player.transform.position = Position.transform.position;
+        AstarPath.active.Scan();
     }
 
     public void MakeMap()

@@ -162,6 +162,7 @@ public class TestScript : MonoBehaviour
                 }
             }
         }
+        AstarPath.active.Scan();
     }
     private void Generator_OnGeneratorFinish(DungeonObject d)
     {
@@ -182,14 +183,12 @@ public class TestScript : MonoBehaviour
                 AstarData data = AstarPath.active.data;
                 GridGraph gg = data.graphs[0] as GridGraph;
 
-                gg.center = MapList[MapList.Count - 1].transform.Find("InitPos").transform.position;
-                gg.SetDimensions(15, 18, 0.2f);
-                AstarPath.active.Scan();
-
+                gg.center = MapList[MapList.Count - 1].transform.Find("InitPos").transform.position;                
+                //gg.SetDimensions(15, 18, 0.2f);                            
             }
         }
         StartCoroutine(MapMakeRoutine());
-       
+        
     }
     public void ChangeMap(GameObject nextMap,GameObject Position)
     {
@@ -199,8 +198,7 @@ public class TestScript : MonoBehaviour
 
         gg.center = nextMap.transform.position;
 
-        AstarPath.active.Scan();
-        
+        AstarPath.active.Scan();        
         CmvCam.GetComponent<Cinemachine.CinemachineConfiner>().m_BoundingShape2D = nextMap.GetComponent<PolygonCollider2D>();
         Player.transform.position = Position.transform.position;
     }

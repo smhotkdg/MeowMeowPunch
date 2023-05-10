@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class DamageColider : MonoBehaviour
 {
+    public enum BulletType
+    {
+        player,
+        monster
+    }
+    public BulletType bulletType = BulletType.player;
     public Monster.Status status = Monster.Status.Normal;
     public float xMargin = 0.2f;
     public bool isPenetration_object = false;
@@ -25,8 +31,11 @@ public class DamageColider : MonoBehaviour
     public float knockbackForce = 2;
     public bool isEnable = false;
     public Color DamangeColor;
+    private void OnEnable()
+    {
+        bulletType = BulletType.player;
+    }
 
-   
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (isEnable == false)
@@ -43,51 +52,80 @@ public class DamageColider : MonoBehaviour
                 EZ_Pooling.EZ_PoolManager.Despawn(transform);
             }
         }
-        if (collision.tag == "Monster" && collision.gameObject != PrevTarget)
+        if(bulletType == BulletType.player)
         {
-            float _damage = Power;
-            if(isCritical)
+            if (collision.tag == "Monster" && collision.gameObject != PrevTarget)
             {
-                _damage = Power * 3.2f;
-            }
-            Vector2 direction = (collision.transform.position- transform.position).normalized;
-            float randPower = Random.Range(1.5f, 3f);
-            Vector2 knocback = direction * randPower;            
-                        
-            if (knockbackForce > 0)
-            {
-                collision.GetComponent<Monster>().SetDamage(_damage, knocback,status, DamangeColor); 
-            }
-            else
-            {
-                collision.GetComponent<Monster>().SetDamage(_damage, new Vector2(0,0), status, DamangeColor);
-            }
-            
+                float _damage = Power;
+                if (isCritical)
+                {
+                    _damage = Power * 3.2f;
+                }
+                Vector2 direction = (collision.transform.position - transform.position).normalized;
+                float randPower = Random.Range(1.5f, 3f);
+                Vector2 knocback = direction * randPower;
 
-            UIManager.Instance.SetDamageNumber(collision.gameObject, _damage);
+                if (knockbackForce > 0)
+                {
+                    collision.GetComponent<Monster>().SetDamage(_damage, knocback, status, DamangeColor);
+                }
+                else
+                {
+                    collision.GetComponent<Monster>().SetDamage(_damage, new Vector2(0, 0), status, DamangeColor);
+                }
 
-            if (isSplit)
-            {   
-                Split(collision.gameObject);
-                isSplit = false;
+
+                UIManager.Instance.SetDamageNumber(collision.gameObject, _damage);
+
+                if (isSplit)
+                {
+                    Split(collision.gameObject);
+                    isSplit = false;
+                }
+                if (isDisable == true && isPenetation_monster == false)
+                {
+                    EZ_Pooling.EZ_PoolManager.Despawn(transform);
+                }
             }
-            if (isDisable==true && isPenetation_monster ==false)
+            if (collision.tag == "Obstacle" && collision.gameObject != PrevTarget)
             {
-                EZ_Pooling.EZ_PoolManager.Despawn(transform);
-            }   
+                if (isSplit)
+                {
+                    Split(collision.gameObject);
+                    isSplit = false;
+                }
+                if (isDisable == true && isPenetration_object == false)
+                {
+                    EZ_Pooling.EZ_PoolManager.Despawn(transform);
+                }
+            }
         }
-        if (collision.tag == "Obstacle" && collision.gameObject != PrevTarget)
+        else
         {
-            if (isSplit)
+            if (collision.tag == "Player")
             {
-                Split(collision.gameObject);
-                isSplit = false;
+                int _damagePlayer = (int)Power;
+              
+                Vector2 direction = (collision.transform.position - transform.position).normalized;
+                float randPower = Random.Range(1.5f, 3f);
+                Vector2 knocback = direction * randPower;
+
+                collision.gameObject.GetComponent<PlayerController>().Knockback(transform.position, -_damagePlayer);
+
+                if (isDisable == true)
+                {
+                    EZ_Pooling.EZ_PoolManager.Despawn(transform);
+                }
             }
-            if (isDisable ==true && isPenetration_object==false)
+            if (collision.tag == "Obstacle" )
             {               
-                EZ_Pooling.EZ_PoolManager.Despawn(transform);
+                if (isDisable == true && isPenetration_object == false)
+                {
+                    EZ_Pooling.EZ_PoolManager.Despawn(transform);
+                }
             }
         }
+        
     } 
   
     Vector2 SetLIner(GameObject target,float margin)

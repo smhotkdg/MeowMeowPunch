@@ -21,8 +21,6 @@ public class PlayerController : MonoBehaviour
     public ShootType shootType = ShootType.normal;
     public ChainLightning chainLightning;
 
-    public TestScript testScript;
-
     public ShootController shootController;
 
     [SerializeField]
@@ -426,7 +424,7 @@ public class PlayerController : MonoBehaviour
                     if(GameManager.Instance.Key >=1)
                     {
                         collision.transform.parent.GetComponent<Rule>().NextMap.gameObject.GetComponent<DungeonController>().isCome = true;
-                        testScript.ChangeMap(collision.transform.parent.GetComponent<Rule>().NextMap, collision.transform.parent.GetComponent<Rule>().NextPosition);
+                        MapMaker.Instance.ChangeMap(collision.transform.parent.GetComponent<Rule>().NextMap, collision.transform.parent.GetComponent<Rule>().NextPosition);
                         GameManager.Instance.Key -= 1;
                         UIManager.Instance.SetKeyText();
                     }
@@ -434,8 +432,9 @@ public class PlayerController : MonoBehaviour
                 else
                 {
                     collision.transform.parent.GetComponent<Rule>().NextMap.gameObject.GetComponent<DungeonController>().isCome = true;
-                    testScript.ChangeMap(collision.transform.parent.GetComponent<Rule>().NextMap, collision.transform.parent.GetComponent<Rule>().NextPosition);
-                }                
+                    MapMaker.Instance.ChangeMap(collision.transform.parent.GetComponent<Rule>().NextMap, collision.transform.parent.GetComponent<Rule>().NextPosition);
+                }
+                collision.transform.parent.GetComponent<Rule>().NextMap.gameObject.GetComponent<DungeonController>().StartMonster();
             }
         }
     }   
