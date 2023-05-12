@@ -9,6 +9,7 @@ public class DamageColider : MonoBehaviour
         player,
         monster
     }
+    public Rigidbody2D rb;
     public BulletType bulletType = BulletType.player;
     public Monster.Status status = Monster.Status.Normal;
     public float xMargin = 0.2f;
@@ -31,25 +32,43 @@ public class DamageColider : MonoBehaviour
     public float knockbackForce = 2;
     public bool isEnable = false;
     public Color DamangeColor;
+    public Animator animator;
+    public Transform bulletTransform;
+    public bool TriggerEnter = false;
     private void OnEnable()
     {
         bulletType = BulletType.player;
+        TriggerEnter = false;
+        //Vector2 dir = transform.GetComponent<Rigidbody2D>().velocity;
+        //float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        //transform.transform.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (isEnable == false)
             return;
+        TriggerEnter = true;
         if (collision.gameObject.tag == "wall" || collision.gameObject.tag == "Room_wall")
-        {            
+        {
+            
             if (isSplit)
             {
                 Split(collision.gameObject);
                 isSplit = false;
             }
             if (isDisable == true)
-            {
-                EZ_Pooling.EZ_PoolManager.Despawn(transform);
+            {   
+                if(animator !=null)
+                {
+                    rb.velocity = new Vector2(0, 0);
+                    animator.SetTrigger("Hit");
+                }
+                else
+                {
+                    EZ_Pooling.EZ_PoolManager.Despawn(transform);
+                }
+                
             }
         }
         if(bulletType == BulletType.player)
@@ -84,7 +103,16 @@ public class DamageColider : MonoBehaviour
                 }
                 if (isDisable == true && isPenetation_monster == false)
                 {
-                    EZ_Pooling.EZ_PoolManager.Despawn(transform);
+                    if (animator != null)
+                    {
+                        rb.velocity = new Vector2(0, 0);
+                        animator.SetTrigger("Hit");
+                    }
+                    else
+                    {
+                        EZ_Pooling.EZ_PoolManager.Despawn(transform);
+                    }
+                    //EZ_Pooling.EZ_PoolManager.Despawn(transform);
                 }
             }
             if (collision.tag == "Obstacle" && collision.gameObject != PrevTarget)
@@ -96,7 +124,16 @@ public class DamageColider : MonoBehaviour
                 }
                 if (isDisable == true && isPenetration_object == false)
                 {
-                    EZ_Pooling.EZ_PoolManager.Despawn(transform);
+                    if (animator != null)
+                    {
+                        rb.velocity = new Vector2(0, 0);
+                        animator.SetTrigger("Hit");
+                    }
+                    else
+                    {
+                        EZ_Pooling.EZ_PoolManager.Despawn(transform);
+                    }
+                    //EZ_Pooling.EZ_PoolManager.Despawn(transform);
                 }
             }
         }
@@ -106,7 +143,7 @@ public class DamageColider : MonoBehaviour
             {
                 int _damagePlayer = (int)Power;
               
-                Vector2 direction = (collision.transform.position - transform.position).normalized;
+                Vector2 direction = (collision.transform.position - GameManager.Instance.Player.transform.position).normalized;
                 float randPower = Random.Range(1.5f, 3f);
                 Vector2 knocback = direction * randPower;
 
@@ -114,14 +151,32 @@ public class DamageColider : MonoBehaviour
 
                 if (isDisable == true)
                 {
-                    EZ_Pooling.EZ_PoolManager.Despawn(transform);
+                    if (animator != null)
+                    {
+                        rb.velocity = new Vector2(0, 0);
+                        animator.SetTrigger("Hit");
+                    }
+                    else
+                    {
+                        EZ_Pooling.EZ_PoolManager.Despawn(transform);
+                    }
+                    //EZ_Pooling.EZ_PoolManager.Despawn(transform);
                 }
             }
             if (collision.tag == "Obstacle" )
             {               
                 if (isDisable == true && isPenetration_object == false)
                 {
-                    EZ_Pooling.EZ_PoolManager.Despawn(transform);
+                    if (animator != null)
+                    {
+                        rb.velocity = new Vector2(0, 0);
+                        animator.SetTrigger("Hit");
+                    }
+                    else
+                    {
+                        EZ_Pooling.EZ_PoolManager.Despawn(transform);
+                    }
+                    //EZ_Pooling.EZ_PoolManager.Despawn(transform);
                 }
             }
         }
@@ -172,25 +227,37 @@ public class DamageColider : MonoBehaviour
                 direction_split = bullet.transform.up / randDiv;
                 break;
         }
+
+        Vector3 moveVec = direction + direction_split;
+        
         Transform temp =  EZ_Pooling.EZ_PoolManager.Spawn(bullet.transform, target.transform.position, new Quaternion());
         temp.GetComponent<Bullet>().SetAttackMethods(GetComponent<Bullet>().m_attackMethods, GetComponent<Bullet>().m_Target);
         temp.GetComponent<Bullet>().bulletDirection = GetComponent<Bullet>().bulletDirection;
         temp.GetComponent<Bullet>().SetSplit(target);
         temp.GetComponent<Bullet>().isSplit = false;
-        temp.transform.localScale = temp.transform.localScale / 2;
-        
-        Vector2 moveVec = direction + direction_split;
+        temp.transform.localScale = temp.transform.localScale / 2;    
         temp.GetComponent<Rigidbody2D>().velocity = moveVec * GetComponent<Bullet>().speed;
 
+        Vector2 dir = temp.GetComponent<Rigidbody2D>().velocity;
+        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        temp.transform.rotation = Quaternion.AngleAxis(angle-90, Vector3.forward);
 
-        Transform temp_2 = EZ_Pooling.EZ_PoolManager.Spawn(bullet.transform, target.transform.position, new Quaternion());
+
+
+
+        moveVec = direction - direction_split;
+
+        Transform temp_2 = EZ_Pooling.EZ_PoolManager.Spawn(bullet.transform, target.transform.position, Quaternion.AngleAxis(angle - 90, Vector3.forward));
         temp_2.GetComponent<Bullet>().SetAttackMethods(GetComponent<Bullet>().m_attackMethods, GetComponent<Bullet>().m_Target);
         temp_2.GetComponent<Bullet>().bulletDirection = GetComponent<Bullet>().bulletDirection;
-        temp_2.GetComponent<Bullet>().SetSplit(target);        
-        moveVec = direction - direction_split;
+        temp_2.GetComponent<Bullet>().SetSplit(target);               
         
         temp_2.transform.localScale = temp_2.transform.localScale / 2;
         temp_2.GetComponent<Bullet>().isSplit = false;
         temp_2.GetComponent<Rigidbody2D>().velocity = moveVec * GetComponent<Bullet>().speed;
+
+        dir = temp_2.GetComponent<Rigidbody2D>().velocity;
+        angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        temp_2.transform.rotation = Quaternion.AngleAxis(angle-90, Vector3.forward);
     }
 }

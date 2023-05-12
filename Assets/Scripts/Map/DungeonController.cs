@@ -24,8 +24,18 @@ public class DungeonController : MonoBehaviour
     {
         for(int i =0; i< Monsters.Count; i++)
         {
-            Monsters[i].gameObject.GetComponent<Monster>().isStartMonster = true; 
+            Monsters[i].gameObject.GetComponent<Monster>().isStartMonster = true;
+            Monsters[i].gameObject.GetComponent<Monster>().pObject = this.gameObject;
         }
+    }
+    int findMaxIndex;
+    public void AddObject(GameObject monsterObj)
+    {
+        Monsters.Add(monsterObj);
+        MonsterDestory.Add(false);
+        monsterObj.GetComponent<Monster>().MonsterIndex = findMaxIndex;
+        monsterObj.GetComponent<Monster>().DestoryEventHandler += DungeonController_DestoryEventHandler;
+        findMaxIndex++;
     }
     void FindAllMonsters()
     {
@@ -35,10 +45,10 @@ public class DungeonController : MonoBehaviour
         {
             if (tr.tag == "Monster")
             {
-                tr.gameObject.GetComponent<Monster>().MonsterIndex = findIndex;                
+                tr.gameObject.GetComponent<Monster>().MonsterIndex = findMaxIndex;                
                 tr.gameObject.GetComponent<Monster>().DestoryEventHandler += DungeonController_DestoryEventHandler;
                 Monsters.Add(tr.gameObject);
-                findIndex++;
+                findMaxIndex++;
                 MonsterDestory.Add(false);
             }
             if(isBossRoom)

@@ -11,12 +11,14 @@ GameObject:
   - component: {fileID: 6864012239227758176}
   - component: {fileID: 2184331687158097952}
   - component: {fileID: 9031490437057076447}
-  - component: {fileID: 118045673638574294}
   - component: {fileID: 7134645457029532581}
   - component: {fileID: 1886751429709243638}
   - component: {fileID: 6217937330324209208}
   - component: {fileID: 4088019242112763543}
   - component: {fileID: 146091361341722316}
+  - component: {fileID: 1024274452340675757}
+  - component: {fileID: 1550340201006558403}
+  - component: {fileID: -6989689267591958380}
   m_Layer: 0
   m_Name: BulletEnemy
   m_TagString: Untagged
@@ -33,7 +35,7 @@ Transform:
   m_GameObject: {fileID: 5917518549968756677}
   m_LocalRotation: {x: -0, y: -0, z: 0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.25, y: 0.25, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -80,9 +82,9 @@ SpriteRenderer:
   m_SortingLayerID: 961700441
   m_SortingLayer: 5
   m_SortingOrder: 0
-  m_Sprite: {fileID: -480345357925113464, guid: ec19d8bd9dd0a594bb9323db1ab56202,
+  m_Sprite: {fileID: -2270882643199285716, guid: 18aeac7e8351ff044bd14e70ecba91ed,
     type: 3}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -104,7 +106,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d609756e1207d984cb35782e7a5bde1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletType: 0
+  rb: {fileID: 0}
+  bulletType: 1
   status: 0
   xMargin: 0.2
   isPenetration_object: 0
@@ -118,6 +121,8 @@ MonoBehaviour:
   knockbackForce: 1
   isEnable: 0
   DamangeColor: {r: 0, g: 0, b: 0, a: 0}
+  animator: {fileID: 0}
+  bulletTransform: {fileID: 0}
   SlowColor: {r: 1, g: 0.504717, b: 0.504717, a: 1}
   PosionColor: {r: 0, g: 1, b: 0, a: 1}
   CriticalColor: {r: 1, g: 0.8742013, b: 0, a: 1}
@@ -132,37 +137,11 @@ MonoBehaviour:
   m_attackMethods: 
   LifeTime: 3
   speed: 1
-  boomerangTime: 1
+  boomerangTime: 2
   bulletDirection: 0
   AngleSpeed: 500
   hormingTime: 1
   trees: []
---- !u!61 &118045673638574294
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5917518549968756677}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.0051843897}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.26, y: 0.26}
-    newSize: {x: 0.26, y: 0.26}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 0.16564426, y: 0.069214776}
-  m_EdgeRadius: 0
 --- !u!50 &7134645457029532581
 Rigidbody2D:
   serializedVersion: 4
@@ -386,3 +365,53 @@ MonoBehaviour:
   CheckInterval: 0.05
   InitialBufferSize: 20
   DynamicallyIncreaseBufferSize: 1
+--- !u!95 &1024274452340675757
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5917518549968756677}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 7379b50a39abe9f43936344e3d4eeb38, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &1550340201006558403
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5917518549968756677}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93065975824d3fd4e8e1ce371dfb476e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isDespawn: 1
+  DestoryTime: 100
+--- !u!70 &-6989689267591958380
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5917518549968756677}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -0.00484991, y: 0.0032332684}
+  m_Size: {x: 0.069234654, y: 0.16623406}
+  m_Direction: 0

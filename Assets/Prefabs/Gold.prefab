@@ -56,6 +56,7 @@ MonoBehaviour:
   isGrounded: 1
   sprite: {fileID: 3888134355439009675}
   shadow: {fileID: 8885729451715603884}
+  isMovePlayer: 0
 --- !u!58 &4345244369148043847
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -182,7 +183,7 @@ SpriteRenderer:
   m_SortingLayerID: 47421343
   m_SortingLayer: 4
   m_SortingOrder: 0
-  m_Sprite: {fileID: 8637757628924375902, guid: b44720a42d085c949a4020a68cefe3d2,
+  m_Sprite: {fileID: 4555579745618328813, guid: b8339d68171d3dc40a8c7f184e025094,
     type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -301,7 +302,7 @@ SpriteRenderer:
   m_SortingLayerID: 1603220759
   m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: -7001589416284689869, guid: f4eaf86f2ffa7174aabdb86a683989ad,
+  m_Sprite: {fileID: 4555579745618328813, guid: b8339d68171d3dc40a8c7f184e025094,
     type: 3}
   m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_FlipX: 0

@@ -161,7 +161,7 @@ public class ShootController : MonoBehaviour
 
 
 
-                        Transform object_transfrom_Right = EZ_PoolManager.Spawn(Bullet.transform, BulletPos.transform.position, Quaternion.AngleAxis(angle - range_temp, Vector3.forward));
+                        Transform object_transfrom_Right = EZ_PoolManager.Spawn(Bullet.transform, BulletPos.transform.position, Quaternion.AngleAxis(angle, Vector3.forward));
                         object_transfrom_Right.gameObject.SetActive(false);
                         object_transfrom_Right.GetComponent<Bullet>().SetAttackType(m_attackTypes);
                         object_transfrom_Right.GetComponent<Bullet>().SetAttackMethods(m_attackMethods,Target);
@@ -169,10 +169,10 @@ public class ShootController : MonoBehaviour
                         object_transfrom_Right.GetComponent<Bullet>().Power = Damage;
                         object_transfrom_Right.gameObject.SetActive(true);
                         object_transfrom_Right.GetComponent<Rigidbody2D>().AddForce(BulletPos.transform.right * speed, ForceMode2D.Impulse);
-                        object_transfrom_Right.GetComponent<Bullet>().bulletDirection = global::Bullet.BulletDirection.right;
+                        object_transfrom_Right.GetComponent<Bullet>().bulletDirection = global::Bullet.BulletDirection.back;
                         object_transfrom_Right.GetComponent<Bullet>().SetVelocity();
 
-                        Transform object_transfrom_Left = EZ_PoolManager.Spawn(Bullet.transform, BulletPos.transform.position, Quaternion.AngleAxis(angle - range_temp, Vector3.forward));
+                        Transform object_transfrom_Left = EZ_PoolManager.Spawn(Bullet.transform, BulletPos.transform.position, Quaternion.AngleAxis(angle - 180, Vector3.forward));
                         object_transfrom_Left.gameObject.SetActive(false);
                         object_transfrom_Left.GetComponent<Bullet>().SetAttackType(m_attackTypes);
                         object_transfrom_Left.GetComponent<Bullet>().SetAttackMethods(m_attackMethods,Target);
@@ -180,7 +180,7 @@ public class ShootController : MonoBehaviour
                         object_transfrom_Left.GetComponent<Bullet>().Power = Damage;
                         object_transfrom_Left.gameObject.SetActive(true);
                         object_transfrom_Left.GetComponent<Rigidbody2D>().AddForce(-BulletPos.transform.right * speed, ForceMode2D.Impulse);
-                        object_transfrom_Left.GetComponent<Bullet>().bulletDirection = global::Bullet.BulletDirection.left;
+                        object_transfrom_Left.GetComponent<Bullet>().bulletDirection = global::Bullet.BulletDirection.back;
                         object_transfrom_Left.GetComponent<Bullet>().SetVelocity();
                     }
                 }

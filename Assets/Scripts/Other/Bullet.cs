@@ -19,7 +19,7 @@ public class Bullet : DamageColider
     public List<bool> m_attackTypes_Bullets = new List<bool>();
     public List<bool> m_attackTypes_Bullets_before = new List<bool>();
     [SerializeField]
-    BoxCollider2D boxCollider;
+    CapsuleCollider2D boxCollider;
     public GameObject m_Target;
 
     public List<bool> m_attackMethods = new List<bool>();
@@ -28,7 +28,7 @@ public class Bullet : DamageColider
 
     public float speed = 5;
 
-    private Rigidbody2D rb;
+    
     public float boomerangTime = 1f;
     Material material;
     float deltaTime;
@@ -46,10 +46,12 @@ public class Bullet : DamageColider
     public BulletDirection bulletDirection = BulletDirection.forward;
     float defaultSpeed;
     Vector2 initScale;
-
+    
     float defaultKncokback;
+ 
     private void Awake()
     {
+        animator = GetComponent<Animator>();
         m_attackMethods.Clear();
         m_attackTypes.Clear();
         m_attackTypes_Bullets_before.Clear();
@@ -61,7 +63,7 @@ public class Bullet : DamageColider
         defaultKncokback = knockbackForce;
         initScale = transform.localScale;
         defaultSpeed = speed;
-        boxCollider = GetComponent<BoxCollider2D>();
+        boxCollider = GetComponent<CapsuleCollider2D>();
         rb = GetComponent<Rigidbody2D>();
         isDisable = true;
         for (int i = 0; i < System.Enum.GetValues(typeof(GameManager.AttackType)).Length; i++)
@@ -75,7 +77,7 @@ public class Bullet : DamageColider
         {
             m_attackMethods.Add(false);
         }
-
+        bulletTransform = transform;
     }
     
     public void SetAttackType(List<bool> _attackType)
@@ -290,7 +292,7 @@ public class Bullet : DamageColider
         boxCollider.enabled = true;
         initPos = transform.position;
         transform.localScale = initScale;
-        boxCollider.enabled = true;
+        boxCollider.enabled = true;        
         deltaTime = LifeTime;
         CheckAttackType();
         hormingTime = defaultHorming;
@@ -305,11 +307,11 @@ public class Bullet : DamageColider
     }
     void Update()
     {     
-        deltaTime -= Time.deltaTime;
-        if(deltaTime <=0)
-        {
-            EZ_PoolManager.Despawn(transform);
-        }
+        //deltaTime -= Time.deltaTime;
+        //if(deltaTime <=0)
+        //{
+        //    EZ_PoolManager.Despawn(transform);
+        //}
         Homing();
         boomerang();
     }
@@ -347,6 +349,10 @@ public class Bullet : DamageColider
     }
     void Homing()
     {
+        if(TriggerEnter)
+        {
+            return;
+        }
         if(m_attackMethods[(int)GameManager.AttackMethod.homing])
         {
             float rotateAmount = 0;
@@ -390,40 +396,7 @@ public class Bullet : DamageColider
             direction.Normalize();
             rotateAmount = Vector3.Cross(direction, transform.up).z;
             rb.angularVelocity = -AngleSpeed * rotateAmount;
-            rb.velocity = transform.up * speed;
-
-            //switch (bulletDirection)
-            //{
-            //    case BulletDirection.forward:
-            //        direction = (Vector2)temp.transform.position - rb.position;
-            //        direction.Normalize();
-            //        rotateAmount = Vector3.Cross(direction, transform.up).z;
-            //        rb.angularVelocity = -AngleSpeed * rotateAmount;
-            //        rb.velocity = transform.up * speed;
-            //        break;
-            //    case BulletDirection.back:
-            //        direction = (Vector2)temp.transform.position - rb.position;
-            //        direction.Normalize();
-            //        rotateAmount = Vector3.Cross(direction, -transform.up).z;
-            //        rb.angularVelocity = -AngleSpeed * rotateAmount;
-            //        rb.velocity = -transform.up * speed;
-            //        break;
-            //    case BulletDirection.left:
-            //        direction = (Vector2)temp.transform.position - rb.position;
-            //        direction.Normalize();
-            //        rotateAmount = Vector3.Cross(direction, -transform.right).z;
-            //        rb.angularVelocity = -AngleSpeed * rotateAmount;
-            //        rb.velocity = -transform.right * speed;
-            //        break;
-            //    case BulletDirection.right:
-            //        direction = (Vector2)temp.transform.position - rb.position;
-            //        direction.Normalize();
-            //        rotateAmount = Vector3.Cross(direction, transform.right).z;
-            //        rb.angularVelocity = -AngleSpeed * rotateAmount;
-            //        rb.velocity = transform.right * speed;
-            //        break;
-            //}
-
+            rb.velocity = transform.up * speed;      
         }
     }
     bool isBoomerang = false;
@@ -454,9 +427,14 @@ public class Bullet : DamageColider
                 float randVelocity = Random.Range(1, 2f);
                 rb.velocity = -rb.velocity* randVelocity + randPos;
                 boomerangTime = defaultboomerangTime;
+
+                Vector2 dir = rb.velocity;
+                float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+                transform.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
             }
         }        
     }
+    
     public void EndAnimation()
     {
         EZ_PoolManager.Despawn(transform);

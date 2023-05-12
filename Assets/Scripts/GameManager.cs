@@ -178,16 +178,16 @@ public class GameManager : MonoBehaviour
     public bool AddMaxHp(int index)
     {
         bool canAddLife = true;
-        if (MaxHp >= 10)
+        if (MaxHp >= 20)
         {            
             canAddLife = false;
         }
         else
         {
             MaxHp += index;
-            if (MaxHp >= 10)
+            if (MaxHp >= 20)
             {
-                MaxHp = 10;
+                MaxHp = 20;
             }            
         }
         UIManager.Instance.SetHp();

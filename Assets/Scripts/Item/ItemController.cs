@@ -44,7 +44,7 @@ public class ItemController : MonoBehaviour
 
     ItemController itemController;
     public delegate void OnChangeDamage(float damage,float tps,int shootCount,List<GameManager.AttackMethod> attackMethod,List<GameManager.AttackType> attackTypes,
-        float range,float shootSpeed,float moveSpeed, List<GameManager.ItemOthers> ItemOthers);
+        float range,float shootSpeed,float moveSpeed, List<GameManager.ItemOthers> ItemOthers,bool _fly);
     public event OnChangeDamage OnChangeDamageEvnetHandler;
     private static ItemController _instance = null;
     public static ItemController Instance
@@ -206,10 +206,15 @@ public class ItemController : MonoBehaviour
     {
         return items.Count;
     }
+    public bool CanMakeItem(int itemIndex)
+    {
+        return items[itemIndex].use;
+    }
     public void MakeItem(int itemIndex,Vector3 position,Transform pTransfrom)
     {
         //int rand = Random.Range(0, items.Count);
-        int rand = itemIndex;
+        int rand = itemIndex;  
+        
         GameObject temp = Instantiate(ItemPrefab);
         Item temp_item =  temp.GetComponent<Item>();
         {
@@ -269,6 +274,7 @@ public class ItemController : MonoBehaviour
         float moveSpeed = 0;
         float luck = 0;
         bool isMoneyPower = false;
+        bool isFly = false;
         List<GameManager.AttackType> attackType= new List<GameManager.AttackType>();
         List<GameManager.AttackMethod> attackMethod = new List<GameManager.AttackMethod>();
         List<GameManager.ItemOthers> itemOthers = new List<GameManager.ItemOthers>();
@@ -291,7 +297,10 @@ public class ItemController : MonoBehaviour
                         case "hit_drop_item": itemOthers.Add(GameManager.ItemOthers.hit_drop_item); break;
                     }
                 }
-                
+                if(GetItems[i].flying)
+                {
+                    isFly = GetItems[i].flying;
+                }
                 luck += GetItems[i].luck;
                 if (GetItems[i].range>0)
                 {
@@ -423,7 +432,7 @@ public class ItemController : MonoBehaviour
         GameManager.Instance.luck = luck;
         Debug.Log("Damage = "+v2+ "     dps = " + dps + "     tps = " + rof);
 
-        OnChangeDamageEvnetHandler?.Invoke(v2, effectiveDelay, shootCount, attackMethod, attackType, range,shootSpeed,moveSpeed, itemOthers);
+        OnChangeDamageEvnetHandler?.Invoke(v2, effectiveDelay, shootCount, attackMethod, attackType, range,shootSpeed,moveSpeed, itemOthers, isFly);
         return v2;
     }
 }

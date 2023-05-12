@@ -8,6 +8,11 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    public bool isFly = false;
+    [SerializeField]
+    Vector2 NormalGunPos;
+    [SerializeField]
+    Vector2 FlyGunPos;
     public GameObject MagnetObj;
     public GameObject ShieldObject;
     public enum ShootType
@@ -50,8 +55,10 @@ public class PlayerController : MonoBehaviour
     private Animator GunAnim;
     float defaultSpeed;
     IEnumerator CheckShieldRoutine;
+    CapsuleCollider2D capsuleCollider;
     private void Awake()
     {
+        capsuleCollider = GetComponent<CapsuleCollider2D>();
         defaultSpeed = speed;       
         animator = GetComponent<Animator>();
         targetFollow = Target.GetComponent<TargetFollow>();
@@ -66,6 +73,22 @@ public class PlayerController : MonoBehaviour
         }        
         ItemController.Instance.OnChangeDamageEvnetHandler += ItemController_OnChangeDamageEvnetHandler;
         ItemController.Instance.GetDamage();
+        SetFly();
+    }
+    
+    void SetFly()
+    {
+        if (isFly)
+        {
+            GunObject.transform.localPosition = FlyGunPos;
+            animator.Play("Fly");
+        }
+        else
+        {
+            GunObject.transform.localPosition = NormalGunPos;
+            animator.Play("Noraml");
+        }
+        
     }
     private void OnEnable()
     {
@@ -99,8 +122,10 @@ public class PlayerController : MonoBehaviour
 
     public List<bool> m_ItemOthers = new List<bool>();
     private void ItemController_OnChangeDamageEvnetHandler(float damage,float tps, int shootCount, List<GameManager.AttackMethod> attackMethod, 
-        List<GameManager.AttackType> attackTypes,float range,float shootSpeed,float moveSpeed,List<GameManager.ItemOthers> ItemOthers)
+        List<GameManager.AttackType> attackTypes,float range,float shootSpeed,float moveSpeed,List<GameManager.ItemOthers> ItemOthers,bool fly)
     {
+        isFly = fly;
+        SetFly();
         Damage = damage;
         defaultAttackDelay = tps /20;
         shootController.BulletCount = shootCount;
@@ -260,25 +285,25 @@ public class PlayerController : MonoBehaviour
             Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 
             GunObject.transform.rotation = Quaternion.Lerp(GunObject.transform.rotation, rotation, Time.deltaTime * GunRotationSpeed);
-            //gunsprite.flipY = !spriteRenderer.flipX;
-            if(spriteRenderer.flipX)
-            {
-                GunObject.transform.localScale = new Vector3(-1, -1, 1);
-            }
-            else
+            //gunsprite.flipY = !spriteRenderer.flipX;            
+            if (spriteRenderer.flipX)
             {
                 GunObject.transform.localScale = new Vector3(-1, 1, 1);
+            }
+            else
+            {                
+                GunObject.transform.localScale = new Vector3(-1, -1, 1);
             }
             gunsprite.flipX = false;
         }
         else
         {
-
+            GunAnim.Play("idle");
             Quaternion rotation = Quaternion.AngleAxis(180, Vector3.forward);
             GunObject.transform.rotation = Quaternion.Lerp(GunObject.transform.rotation, rotation, Time.deltaTime * 8);
             gunsprite.flipX = spriteRenderer.flipX;
             //gunsprite.flipY = true;
-            GunObject.transform.localScale = new Vector3(-1, 1, 1);
+            GunObject.transform.localScale = new Vector3(1, 1, 1);
         }
         
 
@@ -376,12 +401,12 @@ public class PlayerController : MonoBehaviour
                     if (isFlip == false)
                     {
                         //transform.localScale = new Vector3(-1, 1, 1);
-                        spriteRenderer.flipX = true;
+                        spriteRenderer.flipX = false;
                     }
                     else
                     {
                         //transform.localScale = new Vector3(1, 1, 1);
-                        spriteRenderer.flipX = false;
+                        spriteRenderer.flipX = true;
                     }
                 }
                 else
@@ -389,12 +414,12 @@ public class PlayerController : MonoBehaviour
                     if (isFlip == false)
                     {
                         //transform.localScale = new Vector3(1, 1, 1);
-                        spriteRenderer.flipX = false;
+                        spriteRenderer.flipX = true;
                     }
                     else
                     {
                         //transform.localScale = new Vector3(-1, 1, 1);
-                        spriteRenderer.flipX = true;
+                        spriteRenderer.flipX = false;
                     }
                 }
             }
@@ -404,12 +429,12 @@ public class PlayerController : MonoBehaviour
             if(enemy.transform.position.x < transform.position.x)
             {
                 //transform.localScale = new Vector3(1, 1, 1);
-                spriteRenderer.flipX = false;
+                spriteRenderer.flipX = true;
             }
             else
             {
                 //transform.localScale = new Vector3(-1, 1, 1);
-                spriteRenderer.flipX = true;
+                spriteRenderer.flipX = false;
             }
         }
     }
@@ -435,6 +460,13 @@ public class PlayerController : MonoBehaviour
                     MapMaker.Instance.ChangeMap(collision.transform.parent.GetComponent<Rule>().NextMap, collision.transform.parent.GetComponent<Rule>().NextPosition);
                 }
                 collision.transform.parent.GetComponent<Rule>().NextMap.gameObject.GetComponent<DungeonController>().StartMonster();
+            }
+        }
+        if(collision.gameObject.tag == "Obstacle")
+        {
+            if(isFly)
+            {
+                Physics2D.IgnoreCollision(capsuleCollider, collision.collider);
             }
         }
     }   

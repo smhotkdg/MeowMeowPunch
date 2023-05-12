@@ -193,7 +193,7 @@ public class MapMaker : MonoBehaviour
         for (int i = 0; i < temp.transform.childCount; i++)
         {
             MapList.Add(temp.transform.GetChild(i).gameObject);
-            if (temp.transform.GetChild(i).gameObject.name == "init")
+            if (temp.transform.GetChild(i).gameObject.name == "Spawn")
             {
                 CmvCam.GetComponent<Cinemachine.CinemachineConfiner>().m_BoundingShape2D = MapList[MapList.Count - 1].GetComponent<PolygonCollider2D>();
                 Player.transform.position = MapList[MapList.Count - 1].transform.Find("InitPos").transform.position;

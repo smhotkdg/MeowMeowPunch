@@ -9,19 +9,15 @@ public class PositionRendererSorter : MonoBehaviour
 
     float timer;
     float timerMax = 1;
-    Renderer myRenderer;
+    Renderer spriteRenderer;
 
     private void Awake()
     {
-        myRenderer = gameObject.GetComponent<Renderer>();
+        spriteRenderer = gameObject.GetComponent<Renderer>();
     }
     private void LateUpdate()
     {
-        timer -= Time.deltaTime;
-        //if (timer <= 0f)
-        {
-            timer = timerMax;
-            myRenderer.sortingOrder = (int)(srotingOrderBase - transform.position.y - offset);
-        }
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer.sortingOrder = transform.GetSortingOrder();
     }
 }

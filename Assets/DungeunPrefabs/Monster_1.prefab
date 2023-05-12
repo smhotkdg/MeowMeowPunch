@@ -1112,16 +1112,21 @@ MonoBehaviour:
   infinityTracking: 1
   wiatTIme: 0.2
   MaxWait: 2
-  attackType: 0
+  attackType: 1
   isRandomAttack: 0
   BulletCount: 1
+  DealyEachBullet: 0
   BulletRange: 30
   BulletPos: {fileID: 6309194826123335913}
   Shootspeed: 1
-  Bullet: {fileID: 6864012239227758176, guid: d7e1962dd7718ba419f68be49e291f66, type: 3}
-  ShootTimer: 1.5
+  MonsterBulletDamage: 1
+  Bullet: {fileID: 6864012239227758176, guid: b0abe4816ec49ae4a96e3cc62c93f5c3, type: 3}
+  defaultShootTImer: 2
   GunObject: {fileID: 7896946450188128977}
   InfinityAttack: 0
+  dontNeedTarget: 0
+  patternType: 0
+  deathType: 0
   BaseHp: 20
   StageHp: 5
   Hp: 10
@@ -1130,6 +1135,7 @@ MonoBehaviour:
   Target: {fileID: 0}
   enableKncokBack: 1
   MonsterIndex: 0
+  ShootTimer: 1.5
   capsuleCollider: {fileID: 0}
   healthBar: {fileID: 6880479903649659797}
   healthBarPrev: {fileID: 8188308901697392614}

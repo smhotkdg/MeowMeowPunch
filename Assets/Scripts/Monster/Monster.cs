@@ -10,6 +10,8 @@ using EZ_Pooling;
 
 public class Monster : MonoBehaviour
 {
+    public bool IsAnimationAttack = true;
+    public GameObject pObject;
     public int MonsterHitDamage = 1;
     private readonly int OutLineColor = Shader.PropertyToID("_OutlineColor");
     private readonly int OutLineAlpha = Shader.PropertyToID("_OutlineAlpha");
@@ -28,6 +30,7 @@ public class Monster : MonoBehaviour
     [Title("이동 타입")]
     public enum MovementType
     {
+        None,
         //추적
         Tracking,
         //대각선
@@ -53,33 +56,78 @@ public class Monster : MonoBehaviour
         None,
         //미사일
         Missile,
+        patternMissile,
         //장판
-        Floor
+        Floor,
+        SpawnMonster,
     }
+    public enum PatternType
+    {
+        cross,
+        directions_6,
+        directions_8
+    }
+
     public AttackType attackType;
     [ShowIf("attackType", AttackType.Missile)]
     public bool isRandomAttack = false;
     [ShowIf("attackType", AttackType.Missile)]
     public int BulletCount = 1;
+    [ShowIf("@(BulletCount >1 && attackType == AttackType.Missile) || attackType == AttackType.patternMissile")]
+    public bool isSIngleWay = false;
+    [ShowIf("@(BulletCount >1 && attackType == AttackType.Missile) || attackType == AttackType.patternMissile")]
+    public float DealyEachBullet = 0.1f;
     [ShowIf("attackType", AttackType.Missile)]
     public int BulletRange = 30;
     [ShowIf("attackType", AttackType.Missile)]
     public Transform BulletPos;
-    [ShowIf("attackType", AttackType.Missile)]
+    [ShowIf("@attackType == AttackType.Missile || attackType == AttackType.patternMissile")]
     public float Shootspeed = 1;
-    [ShowIf("attackType", AttackType.Missile)]
+
+    [ShowIf("@attackType == AttackType.Missile || attackType == AttackType.patternMissile")]
+    public int MonsterBulletDamage= 1;
+
+    [ShowIf("@attackType == AttackType.Missile || attackType == AttackType.patternMissile")]
     public Transform Bullet;
-    [ShowIf("attackType", AttackType.Missile)]
-    public float ShootTimer;
+    //[ShowIf("@attackType == AttackType.Missile || attackType == AttackType.patternMissile")]
+    
+    [ShowIf("@attackType == AttackType.Missile || attackType == AttackType.patternMissile")]
+    public float defaultShootTImer;
     [ShowIf("attackType", AttackType.Missile)]
     public GameObject GunObject;
-    [ShowIf("attackType", AttackType.Missile)]
+    [ShowIf("@attackType == AttackType.Missile || attackType == AttackType.patternMissile")]
     public bool InfinityAttack = false;
-    [ShowIf("attackType", AttackType.Missile)]
+    [ShowIf("@attackType == AttackType.Missile || attackType == AttackType.patternMissile")]
     public bool dontNeedTarget = false;
+
+    [ShowIf("attackType", AttackType.SpawnMonster)]
+    public GameObject SpawanObject;
+    [ShowIf("attackType", AttackType.SpawnMonster)]
+    public float SpawnTime;
+
+
+
+    [ShowIf("attackType", AttackType.patternMissile)]
+    public PatternType patternType = PatternType.cross;
+
+
+    [Title("사망 타입")]
+    public enum DeathType
+    {
+        None,
+        SpawnMonster,
+        patternMissile,
+    }
+
+    public DeathType deathType = DeathType.None;
+
+    [ShowIf("deathType", DeathType.SpawnMonster)]
+    public List<GameObject> DeathSpawnMonsterList = new List<GameObject>();
+    [ShowIf("deathType", DeathType.SpawnMonster)]
+    public int DeathSpawnCount;
+    [ShowIf("@deathType==DeathType.SpawnMonster && DeathSpawnCount>0")]
+    public bool DeathSpawnRandom =false;
     [Title("================================")]
-
-
     public float BaseHp =10;
     public float StageHp =0;
 
@@ -97,7 +145,7 @@ public class Monster : MonoBehaviour
     private Animator animator;
     public delegate void DestoryEvent(int position);
     public event DestoryEvent DestoryEventHandler;
-
+    public float ShootTimer;
     public CapsuleCollider2D capsuleCollider;
     public Transform healthBar;
     public Transform healthBarPrev;
@@ -112,10 +160,13 @@ public class Monster : MonoBehaviour
     List<GameObject> StatusTemp = new List<GameObject>();
     AILerp iLerp;
     GameObject RandomSpawn;
-    float defaultShootTImer;
+    float spawnDeltaTime;
     SpriteRenderer spriteRenderer;
+    IEnumerator CheckMoveRoutine;
     private void Awake()
     {
+        spawnDeltaTime = SpawnTime;
+        ShootTimer = defaultShootTImer;
         spriteRenderer = GetComponent<SpriteRenderer>();
         defaultShootTImer = ShootTimer;
         RandomSpawn = transform.Find("RandomSpawn").gameObject;
@@ -125,8 +176,31 @@ public class Monster : MonoBehaviour
         material = GetComponent<SpriteRenderer>().material;
         Aisetter = GetComponent<AIDestinationSetter>();
         iLerp = GetComponent<AILerp>();
+        CheckMoveRoutine = CheckMoveCoRoutine();
+        StartCoroutine(CheckMoveRoutine);
     }
-  
+    private void OnDisable()
+    {
+        StopCoroutine(CheckMoveRoutine);
+    }
+    bool isMove =false;
+    IEnumerator CheckMoveCoRoutine()
+    {        
+        while (true)
+        {
+            Vector3 lastPos = transform.position;
+            yield return new WaitForSeconds(0.1f);
+            if(lastPos == transform.position)
+            {
+                isMove = false;
+            }
+            else
+            {
+                if(forceAttack ==false)
+                    isMove = true;
+            }            
+        }
+    }
     private void Start()
     {
         SetHP();
@@ -307,6 +381,7 @@ public class Monster : MonoBehaviour
         SetBarSize(Hp / defaultHp);
         if (Hp<=0)
         {
+            Death();
             DestoryEventHandler?.Invoke(MonsterIndex);
             Destroy(this.gameObject);
         }
@@ -341,12 +416,34 @@ public class Monster : MonoBehaviour
         CheckStatus();
         //UpdateBulletPos();
         FindAttackTarget();
-        CheckAttack();
-        
-    }    
+        if(status != Status.Stren)
+        {
+            if (attackType == AttackType.Missile || attackType == AttackType.patternMissile)
+            {
+                CheckAttack();
+            }                
+            if(attackType == AttackType.SpawnMonster)
+            {
+                CheckSpwan();
+            }            
+        }   
+    }
+    private void FixedUpdate()
+    {       
+        if(isMove)
+        {
+            animator.SetFloat("MotionX", 1);
+            animator.SetFloat("MotionY", 1);
+        }
+        else
+        {
+            animator.SetFloat("MotionX", 0);
+            animator.SetFloat("MotionY", 0);
+        }
+    }
     void FindAttackTarget()
     {
-        if(attackType == AttackType.Missile)
+        if(attackType == AttackType.Missile || attackType == AttackType.patternMissile)
         {
             if (attackSensor.DetectedObjects.Count <= 0)
             {
@@ -372,7 +469,7 @@ public class Monster : MonoBehaviour
                 }
             }
             AttackTarget = attackTarget;
-        }
+        }       
     }
     void UpdateBulletPos()
     {
@@ -406,6 +503,120 @@ public class Monster : MonoBehaviour
         }
     }
     bool shoot = false;
+    void Shoot(float angle, bool isSingleShoot, bool randomShoot)
+    {
+        if (isSingleShoot)
+        {
+            for (int i = 0; i < BulletCount; i++)
+            {
+                float range = 90;
+                float rangle_bullet = 0;
+                if (i % 2 == 0)
+                {
+                    range = 90 + (BulletRange * ((i + 1) / 2) * (1));
+                    rangle_bullet = ((i + 1) / 2) * (1);
+                }
+                else
+                {
+                    range = 90 + (BulletRange * ((i + 1) / 2) * (-1));
+                    rangle_bullet = ((i + 1) / 2) * (-1);
+                }
+
+                // 90 110 70 130 50 
+                Vector2 moveVec = (BulletPos.transform.up + (BulletPos.transform.right * rangle_bullet / 2)) * Shootspeed;
+                Transform object_transfrom;
+                if (randomShoot)
+                {
+                    float range_temp = 90;
+                    range_temp = UnityEngine.Random.Range(0f, 361);
+                    GunObject.transform.rotation = Quaternion.Euler(0, 0, UnityEngine.Random.Range(0.0f, 360.0f));
+                    object_transfrom = EZ_PoolManager.Spawn(Bullet.transform, BulletPos.transform.position, Quaternion.AngleAxis(range_temp, Vector3.forward));
+                }
+                else
+                {
+                    object_transfrom = EZ_PoolManager.Spawn(Bullet.transform, BulletPos.transform.position, Quaternion.AngleAxis(angle - range, Vector3.forward));
+                }
+                object_transfrom.gameObject.SetActive(false);
+                object_transfrom.GetComponent<Bullet>().bulletType = DamageColider.BulletType.monster;
+                object_transfrom.GetComponent<Bullet>().SetSpeed(Shootspeed);
+                object_transfrom.GetComponent<Bullet>().Power = MonsterBulletDamage;
+
+                //object_transfrom.GetComponent<Rigidbody2D>().velocity = BulletPos.transform.up * speed;
+                object_transfrom.gameObject.SetActive(true);
+                object_transfrom.GetComponent<Rigidbody2D>().velocity = moveVec;
+                object_transfrom.GetComponent<Bullet>().bulletDirection = global::Bullet.BulletDirection.forward;
+                object_transfrom.GetComponent<Bullet>().SetVelocity();               
+
+                Vector2 dir = object_transfrom.GetComponent<Rigidbody2D>().velocity;
+                float angle_reset = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+                object_transfrom.transform.rotation = Quaternion.AngleAxis(angle_reset - 90, Vector3.forward);
+               
+            }
+        }
+        else
+        {           
+            StartCoroutine(BulletDelayRoutine(randomShoot,angle));            
+        }
+    }
+    IEnumerator BulletDelayRoutine(bool randomShoot,float angle)
+    {
+        for (int i = 0; i < BulletCount; i++)
+        {
+            if (status == Status.Stren)
+            {
+                break;
+            }
+            float range = 90;
+            float rangle_bullet = 0;
+            if (isSIngleWay == false)
+            {
+                if (i % 2 == 0)
+                {
+                    range = 90 + (BulletRange * ((i + 1) / 2) * (1));
+                    rangle_bullet = ((i + 1) / 2) * (1);
+                }
+                else
+                {
+                    range = 90 + (BulletRange * ((i + 1) / 2) * (-1));
+                    rangle_bullet = ((i + 1) / 2) * (-1);
+                }
+            }          
+            
+            // 90 110 70 130 50 
+            Vector2 moveVec = (BulletPos.transform.up + (BulletPos.transform.right * rangle_bullet / 2)) * Shootspeed;
+            Transform object_transfrom;
+            if (randomShoot)
+            {
+                float range_temp = 90;
+                range_temp = UnityEngine.Random.Range(0f, 361);
+                GunObject.transform.rotation = Quaternion.Euler(0, 0, UnityEngine.Random.Range(0.0f, 360.0f));
+                object_transfrom = EZ_PoolManager.Spawn(Bullet.transform, BulletPos.transform.position, Quaternion.AngleAxis(range_temp, Vector3.forward));
+            }
+            else
+            {
+                object_transfrom = EZ_PoolManager.Spawn(Bullet.transform, BulletPos.transform.position, Quaternion.AngleAxis(angle - range, Vector3.forward));
+            }
+            object_transfrom.gameObject.SetActive(false);
+            object_transfrom.GetComponent<Bullet>().bulletType = DamageColider.BulletType.monster;
+            object_transfrom.GetComponent<Bullet>().SetSpeed(Shootspeed);
+            object_transfrom.GetComponent<Bullet>().Power = MonsterBulletDamage;
+
+            //object_transfrom.GetComponent<Rigidbody2D>().velocity = BulletPos.transform.up * speed;
+            object_transfrom.gameObject.SetActive(true);
+            object_transfrom.GetComponent<Rigidbody2D>().velocity = moveVec;
+            object_transfrom.GetComponent<Bullet>().bulletDirection = global::Bullet.BulletDirection.forward;
+            object_transfrom.GetComponent<Bullet>().SetVelocity();
+            if(randomShoot)
+            {
+
+                Vector2 dir = object_transfrom.GetComponent<Rigidbody2D>().velocity;
+                float angle_reset = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+                object_transfrom.transform.rotation = Quaternion.AngleAxis(angle_reset - 90, Vector3.forward);
+            }
+            yield return new WaitForSeconds(DealyEachBullet);
+        }
+    }
+    bool forceAttack = false;
     void CheckAttack()
     {
         if(shoot ==false)
@@ -417,12 +628,115 @@ public class Monster : MonoBehaviour
             shoot = true;
             ShootTimer = defaultShootTImer;
         }
+        if (shoot)
+        {
+            shoot = false;            
+            if (IsAnimationAttack)
+            {
+                iLerp.canMove = false;
+                forceAttack = true;
+                animator.SetTrigger("Attack");
+            }
+            else
+            {
+                AnimAttack();                
+            }
+        }      
+    }
+    IEnumerator PatternBulletDelayRoutine(float count)
+    {
+        float range_temp = 360f/count;        
+        for (int i = 0; i < count; i++)
+        {
+            if (status == Status.Stren)
+            {
+                break;
+            }
+            float rangle_bullet = 0;
+            float gunAngle = range_temp * i;
+            GunObject.transform.rotation = Quaternion.Euler(0, 0, gunAngle);
+
+            Vector2 moveVec = (BulletPos.transform.up + (BulletPos.transform.right * rangle_bullet / 2)) * Shootspeed;
+            Transform object_transfrom;                      
+            
+            object_transfrom = EZ_PoolManager.Spawn(Bullet.transform, BulletPos.transform.position, Quaternion.AngleAxis(0,new Vector3(0,0,0)));
+           
+          
+            object_transfrom.gameObject.SetActive(false);
+            object_transfrom.GetComponent<Bullet>().bulletType = DamageColider.BulletType.monster;
+            object_transfrom.GetComponent<Bullet>().SetSpeed(Shootspeed);
+            object_transfrom.GetComponent<Bullet>().Power = MonsterBulletDamage;
+
+            //object_transfrom.GetComponent<Rigidbody2D>().velocity = BulletPos.transform.up * speed;
+            object_transfrom.gameObject.SetActive(true);
+            object_transfrom.GetComponent<Rigidbody2D>().velocity = moveVec;
+            object_transfrom.GetComponent<Bullet>().bulletDirection = global::Bullet.BulletDirection.forward;
+            object_transfrom.GetComponent<Bullet>().SetVelocity();
+
+
+            Vector2 dir = object_transfrom.GetComponent<Rigidbody2D>().velocity;
+            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+            object_transfrom.transform.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
+
+            yield return new WaitForSeconds(DealyEachBullet);
+        }
+    }
+    void PatternShot()
+    {
+        shoot = false;
+        Vector3 TargetVec;
+        TargetVec = new Vector3(0, 0, 0);
+        //TargetVec.x += AttackTarget.transform.position.x;
+        //TargetVec.y += AttackTarget.transform.position.y;
+        if (!dontNeedTarget)
+        {
+            if(AttackTarget !=null)
+            {
+                TargetVec.x += AttackTarget.transform.position.x;
+                TargetVec.y += AttackTarget.transform.position.y;
+            }
+            else
+            {
+                return;
+            }
+        }
+        
+       
+        Vector2 direction = TargetVec - transform.position;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+        
+        if (GunObject.transform.localScale.y < 0)
+        {
+            BulletPos.transform.localEulerAngles = new Vector3(0, 0, -90);
+        }
+        else
+        {
+            BulletPos.transform.localEulerAngles = new Vector3(0, 0, 90);
+        }
+        
+        switch (patternType)
+        {
+            case PatternType.cross:
+                StartCoroutine(PatternBulletDelayRoutine(4));
+                break;
+            case PatternType.directions_6:
+                StartCoroutine(PatternBulletDelayRoutine(6));
+                break;
+            case PatternType.directions_8:
+                StartCoroutine(PatternBulletDelayRoutine(8));
+                break;
+        }
+        
+    }
+    void NoramlMisslie()
+    {
         if (AttackTarget != null)
         {
             Vector3 TargetVec;
-           
-            TargetVec = new Vector3(0, 0, 0);            
-            
+
+            TargetVec = new Vector3(0, 0, 0);
+
             TargetVec.x += AttackTarget.transform.position.x;
             TargetVec.y += AttackTarget.transform.position.y;
             Vector2 direction = TargetVec - transform.position;
@@ -438,74 +752,73 @@ public class Monster : MonoBehaviour
             else
             {
                 BulletPos.transform.localEulerAngles = new Vector3(0, 0, 90);
-            }
-            if (shoot)
-            {                
-                shoot = false;
-                if(isRandomAttack ==false)
+            }                          
+            if (isRandomAttack == false)
+            {
+                UpdateBulletPos();
+                if (BulletCount == 1)
                 {
-                    UpdateBulletPos();
-                    for (int i = 0; i < BulletCount; i++)
-                    {
-                        float range = 90;
-                        float rangle_bullet = 0;
-                        if (i % 2 == 0)
-                        {
-                            range = 90 + (BulletRange * ((i + 1) / 2) * (1));
-                            rangle_bullet = ((i + 1) / 2) * (1);
-                        }
-                        else
-                        {
-                            range = 90 + (BulletRange * ((i + 1) / 2) * (-1));
-                            rangle_bullet = ((i + 1) / 2) * (-1);
-                        }
-
-                        // 90 110 70 130 50 
-                        Vector2 moveVec = (BulletPos.transform.up + (BulletPos.transform.right * rangle_bullet / 2)) * Shootspeed;
-
-                        Transform object_transfrom = EZ_PoolManager.Spawn(Bullet.transform, BulletPos.transform.position, Quaternion.AngleAxis(angle - range, Vector3.forward));
-                        object_transfrom.gameObject.SetActive(false);
-                        object_transfrom.GetComponent<Bullet>().bulletType = DamageColider.BulletType.monster;
-                        object_transfrom.GetComponent<Bullet>().SetSpeed(Shootspeed);
-                        object_transfrom.GetComponent<Bullet>().Power = 1;
-
-                        //object_transfrom.GetComponent<Rigidbody2D>().velocity = BulletPos.transform.up * speed;
-                        object_transfrom.gameObject.SetActive(true);
-                        object_transfrom.GetComponent<Rigidbody2D>().velocity = moveVec;
-                        object_transfrom.GetComponent<Bullet>().bulletDirection = global::Bullet.BulletDirection.forward;
-                        object_transfrom.GetComponent<Bullet>().SetVelocity();
-                    }
+                    Shoot(angle, true, false);
                 }
                 else
                 {
-                    for (int i = 0; i < BulletCount; i++)
-                    {
-                                             
-                        float range_temp = 90;
-                        range_temp = UnityEngine.Random.Range(0f, 361);
-                        Vector2 moveVec = (BulletPos.transform.up) * Shootspeed;
-
-                        //GunObject.transform.rotation = Quaternion.Lerp(GunObject.transform.rotation, rotation, Time.deltaTime * 5000);
-                        GunObject.transform.rotation = Quaternion.Euler(0, 0, UnityEngine.Random.Range(0.0f, 360.0f)); 
-                        Transform object_transfrom = EZ_PoolManager.Spawn(Bullet.transform, BulletPos.transform.position, Quaternion.AngleAxis(range_temp, Vector3.forward));
-                        object_transfrom.gameObject.SetActive(false);
-                        object_transfrom.GetComponent<Bullet>().bulletType = DamageColider.BulletType.monster;
-                        object_transfrom.GetComponent<Bullet>().SetSpeed(Shootspeed);
-                        object_transfrom.GetComponent<Bullet>().Power = 1;
-
-                        //object_transfrom.GetComponent<Rigidbody2D>().velocity = BulletPos.transform.up * speed;
-                        object_transfrom.gameObject.SetActive(true);
-                        object_transfrom.GetComponent<Rigidbody2D>().velocity = moveVec;
-                        object_transfrom.GetComponent<Bullet>().bulletDirection = global::Bullet.BulletDirection.forward;
-                        object_transfrom.GetComponent<Bullet>().SetVelocity();
-                    }
+                    Shoot(angle, false, false);
                 }
-              
             }
+            else
+            {
+                if (BulletCount == 1)
+                {
+                    Shoot(angle, true, true);
+                }
+                else
+                {
+                    Shoot(angle, false, true);
+                }
+            }            
         }
-        else if(dontNeedTarget)
+        else if (dontNeedTarget)
         {
+            Vector3 TargetVec;
 
+            TargetVec = new Vector3(0, 0, 0);
+            Vector2 direction = TargetVec - transform.position;
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+            Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+
+            //transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * Rotationspeed);
+            if (GunObject.transform.localScale.y < 0)
+            {
+                BulletPos.transform.localEulerAngles = new Vector3(0, 0, -90);
+            }
+            else
+            {
+                BulletPos.transform.localEulerAngles = new Vector3(0, 0, 90);
+            }          
+            if (isRandomAttack == false)
+            {
+                UpdateBulletPos();
+                if (BulletCount == 1)
+                {
+                    Shoot(angle, true, false);
+                }
+                else
+                {
+                    Shoot(angle, false, false);
+                }
+            }
+            else
+            {
+                if (BulletCount == 1)
+                {
+                    Shoot(angle, true, true);
+                }
+                else
+                {
+                    Shoot(angle, false, true);
+                }
+            }            
         }
     }
     void CheckStatus()
@@ -545,13 +858,17 @@ public class Monster : MonoBehaviour
         if(StatusBool[(int)Status.Fascination] ==false && isKnockback ==false)
         {            
             if(Target !=null)
+            {
                 Aisetter.target = Target.transform;
-            iLerp.canMove = true;            
+            }                
+            if(forceAttack ==false)
+                iLerp.canMove = true;            
         }        
     }
 
     GameObject AttackTarget;
     bool isMoveRandom = false;
+    public Vector2 RandomMoveVector;
     IEnumerator RandomMoveRoutine()
     {        
         isMoveRandom = true;
@@ -561,8 +878,8 @@ public class Monster : MonoBehaviour
         NNInfo info = AstarPath.active.GetNearest(pos);
         GraphNode node = info.node;
         
-        Vector3 randomPoint = node.RandomPointOnSurface();   
-        
+        Vector3 randomPoint = node.RandomPointOnSurface();
+        RandomMoveVector = randomPoint;
         RandomSpawn.transform.SetParent(transform.parent);
         RandomSpawn.transform.position = randomPoint;        
         Aisetter.target = RandomSpawn.transform;
@@ -593,7 +910,14 @@ public class Monster : MonoBehaviour
                 }
                 break;
             case MovementType.Tracking:
-                iLerp.SearchPath();
+                if(Target ==null)
+                {
+                    iLerp.canMove = false;
+                }
+                else
+                {
+                    iLerp.SearchPath();
+                }                
                 break;
         }
 
@@ -673,5 +997,106 @@ public class Monster : MonoBehaviour
                 //healthBarPrev.parent.localScale = new Vector3(1, 1, 1);
             }
         }
+
+        if(Target ==null && AttackTarget ==null)
+        {
+            if (RandomMoveVector.x < transform.position.x)
+            {
+                spriteRenderer.flipX = true;  
+            }
+            else
+            {
+                spriteRenderer.flipX = false;             
+            }
+        }
+    }
+    bool isSpawn =false;
+    void CheckSpwan()
+    {
+        if (isSpawn == false)
+        {
+            spawnDeltaTime -= Time.deltaTime;
+        }
+        if (spawnDeltaTime <= 0)
+        {
+            isSpawn = true;
+            spawnDeltaTime = SpawnTime;
+        }
+        if (isSpawn)
+        {
+            isSpawn = false;
+            if (IsAnimationAttack)
+            {
+                iLerp.canMove = false;
+                forceAttack = true;
+                animator.SetTrigger("Attack");
+            }
+            else
+            {
+                Spawn();
+            }
+        }
+    }
+    void Death()
+    {
+        RandomSpawn.transform.SetParent(transform);
+        switch (deathType)
+        {
+            case DeathType.SpawnMonster:               
+                for(int i =0; i< DeathSpawnCount; i++)
+                {
+                    int randomCount = i;
+                    if (DeathSpawnRandom)
+                    {
+                        randomCount = UnityEngine.Random.Range(0, DeathSpawnMonsterList.Count);
+                    }
+                    GameObject temp = Instantiate(DeathSpawnMonsterList[randomCount]);
+
+                    temp.transform.SetParent(transform.parent);
+                    temp.transform.localScale = new Vector3(1, 1, 1);
+                    temp.transform.position = new Vector3(UnityEngine.Random.Range(transform.position.x - 0.3f, transform.position.x + 0.3f),
+                        UnityEngine.Random.Range(transform.position.y - 0.3f, transform.position.y + 0.3f));
+                    temp.GetComponent<Monster>().isStartMonster = true;
+                    if (pObject != null)
+                    {
+                        pObject.GetComponent<DungeonController>().AddObject(temp);
+                    }
+                }                 
+                
+                break;
+        }
+    }
+    void Spawn()
+    {
+        GameObject temp = Instantiate(SpawanObject);
+        temp.transform.SetParent(transform.parent);
+        temp.transform.localScale = new Vector3(1, 1, 1);
+        temp.transform.position = new Vector3(UnityEngine.Random.Range(transform.position.x - 0.3f, transform.position.x + 0.3f),
+            UnityEngine.Random.Range(transform.position.y - 0.3f, transform.position.y + 0.3f));
+        temp.GetComponent<Monster>().isStartMonster = true;
+        if (pObject != null)
+        {
+            pObject.GetComponent<DungeonController>().AddObject(temp);
+        }
+    }
+    public void AnimAttack()
+    {        
+        switch (attackType)
+        {
+            case AttackType.Missile:
+                NoramlMisslie();
+                break;
+            case AttackType.patternMissile:
+                PatternShot();
+                break;
+            case AttackType.SpawnMonster:
+              
+                break;
+        }        
+    }
+    public void EndAttack()
+    {
+        forceAttack = false;
+        iLerp.canMove = true;
     }
 }
