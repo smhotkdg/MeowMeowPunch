@@ -156,7 +156,38 @@ namespace DungeonMaker
 			}
 		}
 
-		private void Build(Map map)
+        private void Shuffle(List<GameObject> list)
+        {
+            Random rng = new Random();
+            int n = list.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = rng.Next(n + 1);
+                GameObject value = list[k];
+                list[k] = list[n];
+                list[n] = value;
+            }
+        }
+        private bool FindProbability(double chance)
+        {
+            // convert chance
+            int target = (int)(chance * 1000f);
+
+            // random value
+            int random = Random.Next(1, 1000);
+
+            // compare to probability range
+            if (random >= 1 && random <= target)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        private void Build(Map map)
 		{
 			N[,] matrix = map.matrix;
 			RoomObject[,] m = new RoomObject[matrix.GetLength(0), matrix.GetLength(1)];
@@ -181,7 +212,45 @@ namespace DungeonMaker
 					if (o == null)
 					{
 						os = n.room.rooms.GetSet(RoomType.NONE);
-						o = GeneratorUtils.RandomObject(os);
+                        //여기서 가중치 랜덤
+                        List<GameObject> weightNormalList = new List<GameObject>();
+                        List<GameObject> weightList = new List<GameObject>();
+                        if (os.Count >1)
+                        {
+                            for(int i=0; i< os.Count; i++)
+                            {
+                                if(os[i].GetComponent<DungeonController>().weight >=1)
+                                {                                    
+                                    weightNormalList.Add(os[i]);                                    
+                                }
+                                else
+                                {
+                                    weightList.Add(os[i]);
+                                }
+                            }
+                            if(weightList.Count >0)
+                            {
+                                Shuffle(weightList);
+                                if(FindProbability(weightList[0].GetComponent<DungeonController>().weight))
+                                {
+                                    o = weightList[0];
+                                }
+                                else
+                                {
+                                    o = GeneratorUtils.RandomObject(weightNormalList);
+                                }
+                            }
+                            else
+                            {
+                                o = GeneratorUtils.RandomObject(weightNormalList);
+                            }
+                            
+                        }
+                        else
+                        {
+                            o = GeneratorUtils.RandomObject(os);
+                        }
+						
 					}
 
 					if (o != null)

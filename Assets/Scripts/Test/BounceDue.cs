@@ -5,6 +5,7 @@ using UnityEngine.Events;
 
 public class BounceDue : MonoBehaviour
 {
+    
     public int maxBounce;
     public float xForce;
     public float yForce;
@@ -67,6 +68,7 @@ public class BounceDue : MonoBehaviour
     }
     private void OnEnable()
     {
+        
         isMovePlayer = false;
         currentBounce = 0;
         currentHeight = Random.Range(yForce - 1, yForce);

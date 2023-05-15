@@ -12,6 +12,8 @@ public class ShootController : MonoBehaviour
     private float BulletRange = 20;
     [SerializeField]
     private float Rotationspeed = 1;
+    [SerializeField]
+    float rangle_bullet = 0;
     public float speed;
     [SerializeField]
     
@@ -78,23 +80,35 @@ public class ShootController : MonoBehaviour
             
             if (shoot)
             {
+                //float BulletRand = Random.Range(-0.5f, 0.5f);
+                //BulletRand += BulletRange;
                 for (int i = 0; i < BulletCount; i++)
                 {
-                    float range = 90;                    
-                    float rangle_bullet = 0;
+                    float range = 90;
+                    
                     if (i % 2 == 0)
                     {
                         range = 90 + (BulletRange * ((i + 1) / 2) * (1));
-                        rangle_bullet = ((i + 1) / 2) * (1);
+                        rangle_bullet = (BulletRange * (i + 1) / 2) * (1);
                     }
                     else
                     {
                         range = 90 + (BulletRange * ((i + 1) / 2) * (-1));
-                        rangle_bullet = ((i + 1) / 2) * (-1);
+                        rangle_bullet = (BulletRange * (i + 1) / 2) * (-1);
                     }
 
                     // 90 110 70 130 50 
-                    Vector2 moveVec = (BulletPos.transform.up + (BulletPos.transform.right * rangle_bullet / 2))*speed;
+                    Vector2 moveVec;
+                    //Vector2 moveVec = (BulletPos.transform.up + (BulletPos.transform.right * rangle_bullet / 2))*speed;
+                    if(i >0)
+                    {
+                        moveVec = (BulletPos.transform.up + (BulletPos.transform.right * rangle_bullet / 2)) * speed;
+                    }
+                    else
+                    {
+                        moveVec = (BulletPos.transform.up) * speed;
+                    }
+                    
 
                     Transform object_transfrom =  EZ_PoolManager.Spawn(Bullet.transform, BulletPos.transform.position, Quaternion.AngleAxis(angle - range, Vector3.forward));
                     object_transfrom.gameObject.SetActive(false);
@@ -108,6 +122,11 @@ public class ShootController : MonoBehaviour
                     object_transfrom.GetComponent<Rigidbody2D>().velocity = moveVec;
                     object_transfrom.GetComponent<Bullet>().bulletDirection = global::Bullet.BulletDirection.forward;
                     object_transfrom.GetComponent<Bullet>().SetVelocity();
+
+                    Vector2 dir = object_transfrom.GetComponent<Rigidbody2D>().velocity;
+                    float angle_bullets = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+                    object_transfrom.transform.rotation = Quaternion.AngleAxis(angle_bullets - 90, Vector3.forward);
+
                     if (m_attackTypes[(int)GameManager.AttackType.plus_2_random])
                     {
                         StartCoroutine(ShootPlus(rangle_bullet, angle, range));

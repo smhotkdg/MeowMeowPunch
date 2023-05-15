@@ -152,6 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93065975824d3fd4e8e1ce371dfb476e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isDespawn: 1
   DestoryTime: 0.2
 --- !u!114 &-4638617407186664550
 MonoBehaviour:
@@ -168,4 +169,4 @@ MonoBehaviour:
   LineLenght: 0
   startline: {x: 0, y: 0, z: 0}
   direction: {x: 0, y: 0, z: 0}
-  MaxIndex: 0
+  MaxIndex: 10

@@ -21,16 +21,19 @@ public class ChainLightning : MonoBehaviour{
     public float Power;
 	private List<LightningBolt> LightningBolts{get; set;}
     public List<int> minCounts = new List<int>();
-	private List<Vector2> Targets{get; set;}
+	private List<Vector3> Targets{get; set;}
 
     float disableTime_Delta;
 	void Awake(){
 		LightningBolts=new List<LightningBolt>();
-		Targets=new List<Vector2>();
+		Targets=new List<Vector3>();
         playerController = GetComponent<PlayerController>();
-
+        for (int i = 0; i < System.Enum.GetValues(typeof(GameManager.AttackMethod)).Length; i++)
+        {
+            m_attackMethods.Add(false);
+        }
         //BuildChain();
-      
+
     }
     private void Start()
     {
@@ -45,8 +48,22 @@ public class ChainLightning : MonoBehaviour{
             Targets.Add(TargetList[i]);
         }
         
-    }   
- 
+    }
+    public List<bool> m_attackMethods = new List<bool>();
+    public void SetMethodType(List<GameManager.AttackMethod> attackMethods)
+    {
+        for (int i = 0; i < attackMethods.Count; i++)
+        {
+            m_attackMethods[(int)attackMethods[i]] = true;
+        }
+    }
+    Vector2 GetLinePoint(Vector2 p1,Vector2 p2,int _x)
+    {
+        Vector2 newPoint = new Vector2();
+        newPoint.y = (p2.y - p1.y) / (p2.x - p1.x) * _x + (p2.x * p1.y - p1.x * p2.y) / (p2.x - p1.x);
+        newPoint.x = _x;
+        return newPoint;
+    }
     public void BuildChain(List<Vector2> TargetList){
         //Build a chain, in a real project this might be enemies ;)
         bInit = false;
@@ -59,11 +76,12 @@ public class ChainLightning : MonoBehaviour{
         lightningColider.Power = Power;
         for (int i=0;i< TargetList.Count; i++)
         {
-
             minCounts.Add(1000);
             tmpLightningBolt = new LightningBolt(segmentLength, i);
             tmpLightningBolt.isOkEventHandler += TmpLightningBolt_isOkEventHandler;
+            
             tmpLightningBolt.Init(lightnings, lineRendererPrefab, lightRendererPrefab, TargetList[i], lightningColider,i,GetComponent<ChainLightning>());
+            //tmpLightningBolt.Init(lightnings, lineRendererPrefab, lightRendererPrefab, NewLinePoint, lightningColider, i, GetComponent<ChainLightning>());
 
             LightningBolts.Add(tmpLightningBolt);           
             Targets.Add(TargetList[i]);            
@@ -83,9 +101,11 @@ public class ChainLightning : MonoBehaviour{
             }
             if(minCounts.Count == LightningBolts.Count)
             {
+                
                 for (int i = 0; i < LightningBolts.Count; i++)
                 {
-                    LightningBolts[i].SetMinIndex(minCounts[0]);
+                    if(minCounts[0] >0)
+                        LightningBolts[i].SetMinIndex(minCounts[0]);
                 }
             }            
         }     
@@ -126,17 +146,54 @@ public class ChainLightning : MonoBehaviour{
         }
         if (Time.time > nextRefresh)
         { 
-            for (int i = 0; i < Targets.Count; i++)
+            if(Targets.Count ==1)
             {
-                if (i == 0)
+                Vector3 pos = playerController.shootController.transform.position;
+                Vector3 dir = (playerController.shootController.transform.position - Targets[0]).normalized;
+                Vector3 newLInePoint = pos + dir * -3;
+                LightningBolts[0].DrawLightning(playerController.shootController.transform.position, newLInePoint, 0);
+            }
+            else
+            {
+                for (int i = 0; i < Targets.Count; i++)
                 {
-                    LightningBolts[i].DrawLightning(playerController.shootController.transform.position, Targets[i], i);
-                }
-                else
-                {
-                    LightningBolts[i].DrawLightning(Targets[i - 1], Targets[i], i);
+                    if (i == 0)
+                    {
+                        if (m_attackMethods[(int)GameManager.AttackMethod.homing])
+                        {
+                            //if(Targets.Count >1)
+                            {
+                                LightningBolts[i].DrawLightning(playerController.shootController.transform.position, Targets[i], i);
+                            }
+                            //else
+                            //{
+                            //    Vector3 pos = playerController.shootController.transform.position;
+                            //    Vector3 dir = (playerController.shootController.transform.position - Targets[i]).normalized;
+                            //    Vector3 newLInePoint = pos + dir * -3;
+                            //    LightningBolts[i].DrawLightning(playerController.shootController.transform.position, newLInePoint, i);
+                            //}
+
+                        }
+                        else
+                        {
+                            Vector3 pos = playerController.shootController.transform.position;
+                            Vector3 dir = (playerController.shootController.transform.position - Targets[i]).normalized;
+                            Vector3 newLInePoint = pos + dir * -3;
+
+                            LightningBolts[i].DrawLightning(playerController.shootController.transform.position, newLInePoint, i);
+                        }
+
+                    }
+                    else
+                    {
+                        if (m_attackMethods[(int)GameManager.AttackMethod.homing])
+                        {
+                            LightningBolts[i].DrawLightning(Targets[i - 1], Targets[i], i);
+                        }
+                    }
                 }
             }
+           
             nextRefresh = Time.time + 0.01f;
             InitDraw();
         }

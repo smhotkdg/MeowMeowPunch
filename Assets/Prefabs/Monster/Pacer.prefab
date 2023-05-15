@@ -200,8 +200,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.002526477, y: -0.013665624}
-  m_Size: {x: 0.11692801, y: 0.119987205}
+  m_Offset: {x: -0.007186666, y: -0.013665624}
+  m_Size: {x: 0.1363543, y: 0.1363543}
   m_Direction: 0
 --- !u!50 &65107613929829235
 Rigidbody2D:
@@ -291,6 +291,9 @@ MonoBehaviour:
   SpawnTime: 10
   patternType: 0
   deathType: 0
+  DeathSpawnMonsterList: []
+  DeathSpawnCount: 0
+  DeathSpawnRandom: 0
   BaseHp: 10
   StageHp: 1
   Hp: 10
@@ -310,6 +313,7 @@ MonoBehaviour:
   - {fileID: 1339823364969561354}
   - {fileID: 3809932743253889648}
   moveSpeed: 0.3
+  RandomMoveVector: {x: 0, y: 0}
 --- !u!114 &1207982183884038042
 MonoBehaviour:
   m_ObjectHideFlags: 0

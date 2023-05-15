@@ -10,11 +10,16 @@ public class LightningColider : DamageColider
 
 
     
+    private void OnDisable()
+    {
+        
+    }
+
     private void Awake()
     {
         edgeCollider = GetComponent<EdgeCollider2D>();
         OnObstacleEnterEventHandler += LightningColider_OnObstacleEnterEventHandler;
-        edgeCollider.enabled = false;
+        edgeCollider.enabled = false;        
     }
 
     private void LightningColider_OnObstacleEnterEventHandler(Vector3 collisionPos)
@@ -30,7 +35,7 @@ public class LightningColider : DamageColider
         edges.Clear();
         edgeCollider.SetPoints(edges);
         mylineRenderers.Clear();
-        edgeCollider.enabled = false;
+        edgeCollider.enabled = false;        
     }
 
     private void FixedUpdate()

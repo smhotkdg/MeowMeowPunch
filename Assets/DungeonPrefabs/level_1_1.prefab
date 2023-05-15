@@ -11817,6 +11817,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3edebb83256ef5d4ab90308453a62e94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  weight: 1
   MinimapGFX: {fileID: 1299305537248757035}
   isCome: 0
   IsOpen: 0

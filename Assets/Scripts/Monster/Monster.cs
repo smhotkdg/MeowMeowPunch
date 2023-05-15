@@ -850,7 +850,10 @@ public class Monster : MonoBehaviour
         }
         if (StatusBool[(int)Status.Fascination])
         {
-            transform.position = Vector3.MoveTowards(transform.position, GameManager.Instance.Player.transform.position, -moveSpeed/2 * Time.deltaTime);
+            if(movementType != MovementType.None)
+            {
+                transform.position = Vector3.MoveTowards(transform.position, GameManager.Instance.Player.transform.position, -moveSpeed / 2 * Time.deltaTime);
+            }            
             //iLerp.SearchPath();
             iLerp.canMove = false;
         }       

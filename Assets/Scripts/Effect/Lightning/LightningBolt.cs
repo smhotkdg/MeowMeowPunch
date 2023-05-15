@@ -36,7 +36,9 @@ public class LightningBolt : MonoBehaviour {
             lineRenderer[i] = EZ_PoolManager.Spawn(lineRendererPrefab.transform,
                 new Vector3(0, 0, 0), Quaternion.AngleAxis(0, new Vector3(0, 0, 0))).gameObject.GetComponent<LineRenderer>();            
             lineRenderer[i].enabled=false;
-		}
+            
+
+        }
         IsActive =false;
 	}
 

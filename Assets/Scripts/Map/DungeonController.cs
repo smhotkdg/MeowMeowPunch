@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class DungeonController : MonoBehaviour
 {
+    public double weight;
     public GameObject MinimapGFX;
     public bool isCome =false;
     public bool IsOpen = false;

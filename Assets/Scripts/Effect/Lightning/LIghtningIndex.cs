@@ -9,7 +9,7 @@ public class LIghtningIndex : MonoBehaviour
     LineRenderer lineRenderer;    
     public Vector3 startline;
     public Vector3 direction;
-    private float SegmentLength = 0.2f;
+    public float SegmentLength = 0.2f;
     public int MaxIndex =1000;
     public delegate void isOk(bool flag,bool isDisable, int index);
     public event isOk isOkEventHandler;
@@ -18,9 +18,11 @@ public class LIghtningIndex : MonoBehaviour
     {
         lineRenderer = GetComponent<LineRenderer>();
         MaxIndex = 1000;
+        
     }
     Vector3 dir;
     bool isDrawEnd = false;
+    
     public void SetLine(Vector3 sPos,Vector3 dPos,int index)
     {
         startline = sPos;

@@ -134,6 +134,7 @@ public class PlayerController : MonoBehaviour
         chainLightning.Power = Damage;
         shootController.SetBulletAttackType(attackTypes);
         shootController.SetBulletMethodType(attackMethod);
+        chainLightning.SetMethodType(attackMethod);
         for (int i = 0; i < ItemOthers.Count; i++)
         {
             m_ItemOthers[(int)ItemOthers[i]] = true;
@@ -285,6 +286,7 @@ public class PlayerController : MonoBehaviour
             Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 
             GunObject.transform.rotation = Quaternion.Lerp(GunObject.transform.rotation, rotation, Time.deltaTime * GunRotationSpeed);
+            //GunObject.transform.rotation = rotation;
             //gunsprite.flipY = !spriteRenderer.flipX;            
             if (spriteRenderer.flipX)
             {
@@ -467,6 +469,13 @@ public class PlayerController : MonoBehaviour
             if(isFly)
             {
                 Physics2D.IgnoreCollision(capsuleCollider, collision.collider);
+            }
+        }
+        if (collision.gameObject.tag == "Product" )
+        {
+            if (isFly)
+            {                
+                Physics2D.IgnoreCollision(capsuleCollider, collision.collider);                
             }
         }
     }   

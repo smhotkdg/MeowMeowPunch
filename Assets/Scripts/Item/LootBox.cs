@@ -4,14 +4,17 @@ using UnityEngine;
 
 public class LootBox : MonoBehaviour
 {
+    public LootBox pLoot;
+    public bool isTrigger;
+    public GameObject TriggerObejct;
     public Sprite CloseSprite;
     public Sprite OpenSprite;
-    BoxCollider2D boxCollider;
-    SpriteRenderer spriteRenderer;
+    
+    public SpriteRenderer spriteRenderer;
     public bool isOpen = false;
 
 
-    BounceDue bounceDue;
+    public BounceDue bounceDue;
     float canGet = 0.5f;
     private void FixedUpdate()
     {
@@ -20,61 +23,118 @@ public class LootBox : MonoBehaviour
         {
             canGet = 0;
         }
+        TriggerObejct.SetActive(GameManager.Instance.playerController.isFly);
+        TriggerObejct.transform.localPosition = new Vector3(0, 0, 0);
     }
     private void Awake()
     {
         isOpen = false;
-        boxCollider = GetComponent<BoxCollider2D>();
-        spriteRenderer = transform.Find("Box").gameObject.GetComponent<SpriteRenderer>();
-        bounceDue = GetComponent<BounceDue>();
+        //boxCollider = GetComponent<BoxCollider2D>();
+        //spriteRenderer = transform.Find("Box").gameObject.GetComponent<SpriteRenderer>();
+
         //weightItem.Add(WeightItem.normal, 96);
         ////weightItem.Add(WeightItem.normalBox, 2);
         ////weightItem.Add(WeightItem.epicBox, 2);
         //normalItem.Add(NormalItemType.coin, 65);
         //normalItem.Add(NormalItemType.hp, 25);
         //normalItem.Add(NormalItemType.key, 10);
+        if(isTrigger)
+        {
+            isOpen = pLoot.isOpen;
+            if (isOpen)
+            {
+                spriteRenderer.sprite = OpenSprite;
+            }
+            else
+            {
+                spriteRenderer.sprite = CloseSprite;
+            }
+        }
+       
     }
     private void OnEnable()
-    {
+    {        
         canGet = 0.5f;
-        isOpen = false;
-        spriteRenderer.sprite = CloseSprite;
-    }
-    
-    private void OnCollisionStay2D(Collision2D collision)
-    {
-        if (canGet >0)
+
+        if(isTrigger)
         {
-            return;
+            if (pLoot.isOpen == false)
+            {
+                isOpen = false;
+                spriteRenderer.sprite = CloseSprite;
+            }
+        }
+        else
+        {
+            isOpen = false;
+            spriteRenderer.sprite = CloseSprite;
+        }
+        
+    }
+    void GetItem()
+    {
+        isOpen = true;
+        CheckItem();
+        spriteRenderer.sprite = OpenSprite;
+    }
+    bool CheckRetrun()
+    {
+        if (isTrigger != GameManager.Instance.playerController.isFly)
+            return false;
+        if (canGet > 0)
+        {
+            return false;
         }
         if (isOpen)
         {
-            return;
+            return false;
         }
-        if (collision.gameObject.tag =="Player")
+        return true;
+    }
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if(CheckRetrun())
         {
-            isOpen = true;
-            CheckItem();
-            spriteRenderer.sprite = OpenSprite;
+            if (collision.gameObject.tag == "Player")
+            {
+                GetItem();
+            }
         }
+        
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (canGet > 0)
+        if (CheckRetrun())
         {
-            return;
+            if (collision.gameObject.tag == "Player")
+            {
+                GetItem();
+            }
         }
-        if (isOpen)
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (CheckRetrun())
         {
-            return;
+            if (collision.gameObject.tag == "Player")
+            {
+                GetItem();
+            }
         }
-        if(collision.gameObject.tag =="Player")
+    }
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (CheckRetrun())
         {
-            isOpen = true;
-            CheckItem();
-            spriteRenderer.sprite = OpenSprite;
+            if (collision.gameObject.tag == "Player")
+            {
+                GetItem();
+            }
         }
-    }    
+    }
+
+
     void GetNormalItem()
     {
         int randCount = Random.Range(2, 4);
@@ -88,13 +148,13 @@ public class LootBox : MonoBehaviour
             switch (NormalType)
             {
                 case GameManager.NormalItemType.coin:
-                    GameManager.Instance.Spawn(GameManager.SpawnType.Coin, transform.localPosition, Random.Range(1, 4));
+                    GameManager.Instance.Spawn(GameManager.SpawnType.Coin, bounceDue.gameObject.transform.localPosition, Random.Range(1, 4));
                     break;
                 case GameManager.NormalItemType.hp:
-                    GameManager.Instance.Spawn(GameManager.SpawnType.Hp, transform.localPosition, 1);
+                    GameManager.Instance.Spawn(GameManager.SpawnType.Hp, bounceDue.gameObject.transform.localPosition, 1);
                     break;
                 case GameManager.NormalItemType.key:
-                    GameManager.Instance.Spawn(GameManager.SpawnType.Key, transform.localPosition, 1);
+                    GameManager.Instance.Spawn(GameManager.SpawnType.Key, bounceDue.gameObject.transform.localPosition, 1);
                     break;
 
             }

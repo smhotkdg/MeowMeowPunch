@@ -349,10 +349,7 @@ public class Bullet : DamageColider
     }
     void Homing()
     {
-        if(TriggerEnter)
-        {
-            return;
-        }
+      
         if(m_attackMethods[(int)GameManager.AttackMethod.homing])
         {
             float rotateAmount = 0;
@@ -434,7 +431,7 @@ public class Bullet : DamageColider
             }
         }        
     }
-    
+ 
     public void EndAnimation()
     {
         EZ_PoolManager.Despawn(transform);

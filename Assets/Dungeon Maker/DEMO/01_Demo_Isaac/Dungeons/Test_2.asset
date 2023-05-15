@@ -1,37 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-6371254392883108515
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 10c4802720ac03444a9765364ce57c64, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isSelected: 0
-  nodeID: 87560
-  nodeType: 1
-  nodeRect:
-    serializedVersion: 2
-    x: 1090
-    y: 1008.125
-    width: 40
-    height: 40
-  dungeon: {fileID: 11400000}
-  room: {fileID: 11400000, guid: cbd41738e5f901e4aab4cb4d008bfeb5, type: 2}
-  connections: 8e5f00003ff90000b9700000
-  initialConnections: 8e5f00003ff90000b9700000
-  buttonRect:
-    serializedVersion: 2
-    x: 1080
-    y: 998.125
-    width: 60
-    height: 60
---- !u!114 &-5921226108004306869
+--- !u!114 &-2107516622094895500
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -44,53 +13,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSelected: 1
-  nodeID: 96562
+  nodeID: 58115
   nodeType: 1
   nodeRect:
     serializedVersion: 2
-    x: 801.25
-    y: 976.875
+    x: 876.25
+    y: 994.375
     width: 40
     height: 40
   dungeon: {fileID: 11400000}
-  room: {fileID: 11400000, guid: 86b4d765a83a10d488a8fd86b6e76dd9, type: 2}
-  connections: c45d0000
-  initialConnections: c45d0000
+  room: {fileID: 11400000, guid: f2876e735cc6cbf4c97f57d442d89534, type: 2}
+  connections: fcfa0000
+  initialConnections: 
   buttonRect:
     serializedVersion: 2
-    x: 791.25
-    y: 966.875
-    width: 60
-    height: 60
---- !u!114 &-2366830739814086095
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 10c4802720ac03444a9765364ce57c64, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isSelected: 0
-  nodeID: 28857
-  nodeType: 1
-  nodeRect:
-    serializedVersion: 2
-    x: 953.75
-    y: 855
-    width: 40
-    height: 40
-  dungeon: {fileID: 11400000}
-  room: {fileID: 11400000, guid: cbd41738e5f901e4aab4cb4d008bfeb5, type: 2}
-  connections: c45d0000d6c8000008560100
-  initialConnections: c45d0000d6c8000008560100
-  buttonRect:
-    serializedVersion: 2
-    x: 943.75
-    y: 845
+    x: 866.25
+    y: 984.375
     width: 60
     height: 60
 --- !u!114 &11400000
@@ -106,15 +44,11 @@ MonoBehaviour:
   m_Name: Test_2
   m_EditorClassIdentifier: 
   nodes:
-  - {fileID: -5921226108004306869}
-  - {fileID: 8589054155434016506}
-  - {fileID: 5393304376124139553}
-  - {fileID: -2366830739814086095}
-  - {fileID: 7272967728196180757}
-  - {fileID: 1897358849699111667}
-  - {fileID: -6371254392883108515}
+  - {fileID: 1856879092841563926}
+  - {fileID: -2107516622094895500}
+  - {fileID: 8396292034106711631}
   selectedNodes:
-  - {fileID: -5921226108004306869}
+  - {fileID: -2107516622094895500}
   currentNode: {fileID: 0}
   connectionNode: {fileID: 0}
   wantMove: 0
@@ -122,7 +56,7 @@ MonoBehaviour:
   wantDisconnect: 0
   wantSelect: 0
   showProperties: 1
---- !u!114 &1897358849699111667
+--- !u!114 &1856879092841563926
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -135,25 +69,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSelected: 0
-  nodeID: 51414
+  nodeID: 64252
   nodeType: 1
   nodeRect:
     serializedVersion: 2
-    x: 1096.875
-    y: 838.125
+    x: 854.375
+    y: 840.625
     width: 40
     height: 40
   dungeon: {fileID: 11400000}
-  room: {fileID: 11400000, guid: cbd41738e5f901e4aab4cb4d008bfeb5, type: 2}
-  connections: 3ff90000b9700000
-  initialConnections: 3ff90000b9700000
+  room: {fileID: 11400000, guid: 2903263a739ceb840ac48167b219dee2, type: 2}
+  connections: 03e300009d7a0100
+  initialConnections: 
   buttonRect:
     serializedVersion: 2
-    x: 1086.875
-    y: 828.125
+    x: 844.375
+    y: 830.625
     width: 60
     height: 60
---- !u!114 &5393304376124139553
+--- !u!114 &8396292034106711631
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -166,83 +100,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSelected: 0
-  nodeID: 24004
+  nodeID: 96925
   nodeType: 1
   nodeRect:
     serializedVersion: 2
-    x: 898.125
-    y: 926.25
+    x: 1025.625
+    y: 914.375
     width: 40
     height: 40
   dungeon: {fileID: 11400000}
-  room: {fileID: 11400000, guid: cbd41738e5f901e4aab4cb4d008bfeb5, type: 2}
-  connections: 32790100b9700000
-  initialConnections: 32790100b9700000
+  room: {fileID: 11400000, guid: 07019424036ea56408214b647215f7b0, type: 2}
+  connections: fcfa0000
+  initialConnections: 
   buttonRect:
     serializedVersion: 2
-    x: 888.125
-    y: 916.25
-    width: 60
-    height: 60
---- !u!114 &7272967728196180757
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 10c4802720ac03444a9765364ce57c64, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isSelected: 0
-  nodeID: 24462
-  nodeType: 1
-  nodeRect:
-    serializedVersion: 2
-    x: 970
-    y: 999.375
-    width: 40
-    height: 40
-  dungeon: {fileID: 11400000}
-  room: {fileID: 11400000, guid: cbd41738e5f901e4aab4cb4d008bfeb5, type: 2}
-  connections: 08560100
-  initialConnections: 08560100
-  buttonRect:
-    serializedVersion: 2
-    x: 960
-    y: 989.375
-    width: 60
-    height: 60
---- !u!114 &8589054155434016506
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 10c4802720ac03444a9765364ce57c64, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isSelected: 0
-  nodeID: 63807
-  nodeType: 1
-  nodeRect:
-    serializedVersion: 2
-    x: 1112.5
-    y: 933.125
-    width: 40
-    height: 40
-  dungeon: {fileID: 11400000}
-  room: {fileID: 11400000, guid: cbd41738e5f901e4aab4cb4d008bfeb5, type: 2}
-  connections: 08560100d6c80000
-  initialConnections: 08560100d6c80000
-  buttonRect:
-    serializedVersion: 2
-    x: 1102.5
-    y: 923.125
+    x: 1015.625
+    y: 904.375
     width: 60
     height: 60

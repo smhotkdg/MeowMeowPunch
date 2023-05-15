@@ -9,6 +9,7 @@ public class DamageColider : MonoBehaviour
         player,
         monster
     }
+    
     public Rigidbody2D rb;
     public BulletType bulletType = BulletType.player;
     public Monster.Status status = Monster.Status.Normal;
@@ -34,25 +35,26 @@ public class DamageColider : MonoBehaviour
     public Color DamangeColor;
     public Animator animator;
     public Transform bulletTransform;
-    public bool TriggerEnter = false;
+    
+    
     private void OnEnable()
     {
         bulletType = BulletType.player;
-        TriggerEnter = false;
+        
         //Vector2 dir = transform.GetComponent<Rigidbody2D>().velocity;
         //float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
         //transform.transform.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
     }
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (isEnable == false)
-            return;
-        TriggerEnter = true;
+            return;        
+      
         if (collision.gameObject.tag == "wall" || collision.gameObject.tag == "Room_wall")
         {
-            
-            if (isSplit)
+
+            if (isSplit && GameManager.Instance.playerController.shootType ==
+                     PlayerController.ShootType.normal)
             {
                 Split(collision.gameObject);
                 isSplit = false;
@@ -67,8 +69,7 @@ public class DamageColider : MonoBehaviour
                 else
                 {
                     EZ_Pooling.EZ_PoolManager.Despawn(transform);
-                }
-                
+                }                
             }
         }
         if(bulletType == BulletType.player)
@@ -95,8 +96,9 @@ public class DamageColider : MonoBehaviour
 
 
                 UIManager.Instance.SetDamageNumber(collision.gameObject, _damage);
-
-                if (isSplit)
+             
+                if (isSplit && GameManager.Instance.playerController.shootType==
+                     PlayerController.ShootType.normal)
                 {
                     Split(collision.gameObject);
                     isSplit = false;
@@ -112,12 +114,14 @@ public class DamageColider : MonoBehaviour
                     {
                         EZ_Pooling.EZ_PoolManager.Despawn(transform);
                     }
-                    //EZ_Pooling.EZ_PoolManager.Despawn(transform);
+                    //EZ_Pooling.EZ_PoolManager.Despawn(transform);                    
                 }
             }
+      
             if (collision.tag == "Obstacle" && collision.gameObject != PrevTarget)
             {
-                if (isSplit)
+                if (isSplit && GameManager.Instance.playerController.shootType ==
+                     PlayerController.ShootType.normal)
                 {
                     Split(collision.gameObject);
                     isSplit = false;
@@ -133,7 +137,7 @@ public class DamageColider : MonoBehaviour
                     {
                         EZ_Pooling.EZ_PoolManager.Despawn(transform);
                     }
-                    //EZ_Pooling.EZ_PoolManager.Despawn(transform);
+                    //EZ_Pooling.EZ_PoolManager.Despawn(transform);                    
                 }
             }
         }

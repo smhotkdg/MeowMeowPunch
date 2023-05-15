@@ -17,6 +17,7 @@ MonoBehaviour:
   rooms:
     DEFAULT:
     - {fileID: 3477779364476938593, guid: 64531544a28617d4b9ce5407c6640323, type: 3}
+    - {fileID: 3477779364476938593, guid: 44e3c39518d913b429fbaaf845370116, type: 3}
     TBLR: []
     TB: []
     LR: []
