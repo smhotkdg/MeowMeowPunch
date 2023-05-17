@@ -264,7 +264,6 @@ MonoBehaviour:
   DamangeColor: {r: 0, g: 0, b: 0, a: 0}
   animator: {fileID: 0}
   bulletTransform: {fileID: 0}
-  TriggerEnter: 0
   SlowColor: {r: 1, g: 0.504717, b: 0.504717, a: 1}
   PosionColor: {r: 0, g: 1, b: 0, a: 1}
   CriticalColor: {r: 1, g: 0.8742013, b: 0, a: 1}
@@ -502,7 +501,7 @@ MonoBehaviour:
   SensorRange: 0.15
   DetectsOnLayers:
     serializedVersion: 2
-    m_Bits: 8192
+    m_Bits: 134225920
   SensorUpdateMode: 0
   CheckInterval: 0.05
   InitialBufferSize: 20

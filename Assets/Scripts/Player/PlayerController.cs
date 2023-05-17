@@ -23,8 +23,7 @@ public class PlayerController : MonoBehaviour
     
     public GameObject GunObject;
 
-    public ShootType shootType = ShootType.normal;
-    public ChainLightning chainLightning;
+    public ShootType shootType = ShootType.normal;    
 
     public ShootController shootController;
 
@@ -124,17 +123,26 @@ public class PlayerController : MonoBehaviour
     private void ItemController_OnChangeDamageEvnetHandler(float damage,float tps, int shootCount, List<GameManager.AttackMethod> attackMethod, 
         List<GameManager.AttackType> attackTypes,float range,float shootSpeed,float moveSpeed,List<GameManager.ItemOthers> ItemOthers,bool fly)
     {
+        shootType = ShootType.normal;   
         isFly = fly;
         SetFly();
         Damage = damage;
         defaultAttackDelay = tps /20;
         shootController.BulletCount = shootCount;
-        chainLightning.lightnings = shootCount;
+        
         ChangeRange(range);
-        chainLightning.Power = Damage;
+        
         shootController.SetBulletAttackType(attackTypes);
         shootController.SetBulletMethodType(attackMethod);
-        chainLightning.SetMethodType(attackMethod);
+        for(int i=0;i< attackMethod.Count; i++)
+        {
+            if (attackMethod[i] == GameManager.AttackMethod.laser)
+            {
+                shootType = ShootType.laser;
+            }
+        }
+        
+        
         for (int i = 0; i < ItemOthers.Count; i++)
         {
             m_ItemOthers[(int)ItemOthers[i]] = true;
@@ -267,12 +275,7 @@ public class PlayerController : MonoBehaviour
         }
         moveValue = Joystick.Horizontal + Joystick.Vertical;
         
-        CheckAttack();
-        //if(moveValue >0)
-        //{
-        //    animator.Play("Blend Tree");
-        //}
-        UpdateChainEnemy();
+        CheckAttack();  
         UpdateGun();
     }
     public float GunRotationSpeed = 10f;
@@ -357,23 +360,13 @@ public class PlayerController : MonoBehaviour
                 }
                 break;
             case ShootType.laser:
-                ChainIndex = -1;
-                chainLightning.Power = Damage;
-                chainLightning.BuildChain(EnmeyVecList);
+              
                 break;
         }
     }
     int ChainIndex = -1;
     public bool isExitObstacles = false;
-   
-    void UpdateChainEnemy()
-    {        
-        if (EnmeyVecList.Count > 0)
-        {
-            chainLightning.UpdateChain(EnmeyVecList);
-        }      
-        
-    }
+
     public void Attack()
     {
         //animator.SetTrigger("Attack");       

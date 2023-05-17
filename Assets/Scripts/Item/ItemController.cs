@@ -386,6 +386,7 @@ public class ItemController : MonoBehaviour
                     {
                         case "homing": attackMethod.Add(GameManager.AttackMethod.homing);  break;
                         case "boomerang": attackMethod.Add(GameManager.AttackMethod.boomerang); break;
+                        case "laser":attackMethod.Add(GameManager.AttackMethod.laser); break;
                     }
                 }
               

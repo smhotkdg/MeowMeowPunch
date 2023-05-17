@@ -24,7 +24,8 @@ public class GameManager : MonoBehaviour
     public enum AttackMethod
     {        
         homing,
-        boomerang
+        boomerang,
+        laser
     }
     public enum ItemOthers
     {

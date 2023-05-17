@@ -37,7 +37,7 @@
 55,Mom's eye(엄마의 눈알),0,0,0,0,0,0,0,0,0,0,0,back,normal,1,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
 56,Charm of the Vampire(흡혈귀의 부적),0.3,0,0,0,0,0,0,0,0,0,0,normal,normal,1,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
 64,Steam Sale(스팀 세일),0,0,0,0,0,0,0,0,0,0,0,normal,normal,2,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,price_50
-68,Technology(기계 장치),0,0,0,0,0,0,0,0,0,0,0,normal,laser,3,0,0,0,0,0,FALSE,FALSE,FALSE,0,FALSE,normal
+68,Technology(기계 장치),0,0,0,0,0,0,0,0,0,0,0,normal,laser,3,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
 70,Growth Hormones(성장 호르몬),1,0,0,0,0,0,0,0,0,0,0.2,normal,normal,3,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
 71,Mini Mush(미니 버섯),0,0,0,0,1.5,0,0,0,0,0,0.3,normal,normal,2,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
 72,Rosary(묵주),0,0,0.5,0,0,0,0,0,0,0,0,normal,normal,2,3,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
