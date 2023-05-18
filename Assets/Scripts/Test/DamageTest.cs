@@ -8,12 +8,29 @@ public class DamageTest : MonoBehaviour
     public List<GameObject> Coins = new List<GameObject>();
     public ItemController itemController;
     public GameObject Player;
+    public GameObject TargetObject;
+    public GameObject AngleObject;
     private void Start()
     {
         //TestItem(30, new Vector3(-0.5f, 0f, 0));
         //TestItem(4, new Vector3(0, 0f, 0));
         //TestItem(46, new Vector3(0, 0.5f, 0));
         //TestItem(2, new Vector3(0.5f, 0.5f, 0));
+    }
+    public Vector2 GetRotateVector(Vector2 v, Vector2 pPos, float degrees)
+    {
+        //Vector2 newRotateVector = new Vector2();
+        //newRotateVector.x = pPos.x * Mathf.Cos(Mathf.Deg2Rad*degrees) - pPos.y * Mathf.Sin(Mathf.Deg2Rad * degrees);
+        //newRotateVector.y = pPos.x * Mathf.Sin(Mathf.Deg2Rad * degrees) + pPos.y + Mathf.Cos(Mathf.Deg2Rad * degrees);
+        //return newRotateVector;
+        float _x = v.x * Mathf.Cos(Mathf.Deg2Rad * degrees) - v.y * Mathf.Sin(Mathf.Deg2Rad * degrees);
+        float _y = v.x * Mathf.Sin(Mathf.Deg2Rad * degrees) + v.y * Mathf.Cos(Mathf.Deg2Rad * degrees);
+        return new Vector2(_x, _y);
+    }
+    [Button]
+    public void AngleTest(float angle)
+    {
+        AngleObject.transform.position = GetRotateVector(TargetObject.transform.position,Player.GetComponent<PlayerController>().shootController.transform.position,angle);
     }
     [Button]
     public void CheckProbablity(double chnace)

@@ -15,9 +15,7 @@ public class Bullet : DamageColider
     public Color FascinationColor;
     public Color SternColor;
     private readonly int ColorGradient = Shader.PropertyToID("_GradTopLeftCol");
-    public List<bool> m_attackTypes = new List<bool>();
-    public List<bool> m_attackTypes_Bullets = new List<bool>();
-    public List<bool> m_attackTypes_Bullets_before = new List<bool>();
+
     [SerializeField]
     CapsuleCollider2D boxCollider;
     public GameObject m_Target;
@@ -45,9 +43,9 @@ public class Bullet : DamageColider
     }   
     public BulletDirection bulletDirection = BulletDirection.forward;
     float defaultSpeed;
-    Vector2 initScale;
     
-    float defaultKncokback;
+    
+   
  
     private void Awake()
     {
@@ -95,182 +93,132 @@ public class Bullet : DamageColider
         m_attackMethods = _attackMethod;
         m_Target = target;
     }
-    bool CheckAllFalse = false;
+    
     public void CheckAttackType()
     {
-        status = Monster.Status.Normal;
-        knockbackForce = defaultKncokback;
-        isPenetration_object = false;
-        isSplit = false;
-        isCritical = false;
-        for (int i = 0; i < m_attackTypes.Count; i++)
-        {            
-            if (m_attackTypes[i] == true)
-            {
-                switch (i)
-                {                    
-                    case (int)GameManager.AttackType.critical:
-                        m_attackTypes_Bullets[(int)GameManager.AttackType.critical] = false;
-                        if (CheckCritical())
-                        {
-                            m_attackTypes_Bullets[(int)GameManager.AttackType.critical] = true;
-                        }
-                        break;                    
-                    case (int)GameManager.AttackType.fascination:
-                        m_attackTypes_Bullets[(int)GameManager.AttackType.fascination] = false;
-                        if (CheckFascination())
-                        {
-                            m_attackTypes_Bullets[(int)GameManager.AttackType.fascination] = true;
-                        }
-                        break;
-                    case (int)GameManager.AttackType.penetration_object: isPenetration_object = true; break;
-                    case (int)GameManager.AttackType.plus_2_random:
-                        m_attackTypes_Bullets[(int)GameManager.AttackType.plus_2_random] = false;                      
-                        m_attackTypes_Bullets[(int)GameManager.AttackType.plus_2_random] = true;                      
-                        break;
-                    case (int)GameManager.AttackType.posion:
-                        m_attackTypes_Bullets[(int)GameManager.AttackType.posion] = false;
-                        if (CheckPosion())
-                        {                            
-                            m_attackTypes_Bullets[(int)GameManager.AttackType.posion] = true;
-                        }                        
-                        break;
-                    case (int)GameManager.AttackType.slow:
-                        m_attackTypes_Bullets[(int)GameManager.AttackType.slow] = false;
-                        if (CheckSlow())
-                        {
-                            m_attackTypes_Bullets[(int)GameManager.AttackType.slow] = true;
-                        }                        
-                        break;
-                    case (int)GameManager.AttackType.split: isSplit = true; break;
-                    case (int)GameManager.AttackType.stern:
-                        m_attackTypes_Bullets[(int)GameManager.AttackType.stern] = false;
-                        if (CheckStern())
-                        {
-                            m_attackTypes_Bullets[(int)GameManager.AttackType.stern] = true;
-                        }
-                        break;
-                    case (int)GameManager.AttackType.Poly: transform.localScale = initScale * 2; break;
-                    case (int)GameManager.AttackType.penetration_monster: isPenetation_monster = true; knockbackForce = 0; break;
-                }
-            }
-        }
-        for (int i = 0; i < m_attackTypes_Bullets.Count; i++)
-        {
-            if (m_attackTypes_Bullets[i] == true)
-            {
-                if (m_attackTypes_Bullets_before[i])
-                {
-                    CheckAllFalse = true;
-                }
-                else
-                {
-                    CheckAllFalse = false;
-                }
-            }
-        }
-        if (CheckAllFalse)
-        {
-            for (int i = 0; i < m_attackTypes_Bullets_before.Count; i++)
-            {
-                m_attackTypes_Bullets_before[i] = false;
-            }
-        }
-        for (int i = 0; i < m_attackTypes_Bullets.Count; i++)
-        {
-            if (m_attackTypes_Bullets[i] == true)
-            {               
-                if (i == (int)GameManager.AttackType.posion && m_attackTypes_Bullets_before[i] == false)
-                {
-                    status = Monster.Status.Posion;                    
-                    m_attackTypes_Bullets_before[i] = true;
-                    SetColor(PosionColor);                    
-                    return;
-                }
-                if (i == (int)GameManager.AttackType.slow && m_attackTypes_Bullets_before[i] == false)
-                {
-                    status = Monster.Status.Slow;                    
-                    m_attackTypes_Bullets_before[i] = true;
-                    SetColor(SlowColor);                    
-                    return;
-                }
-                if (i == (int)GameManager.AttackType.critical && m_attackTypes_Bullets_before[i] == false)
-                {
-                    isCritical = true;
-                    SetColor(CriticalColor);
-                    return;
-                }
-                if (i == (int)GameManager.AttackType.fascination && m_attackTypes_Bullets_before[i] == false)
-                {       
-                    status = Monster.Status.Fascination;                    
-                    m_attackTypes_Bullets_before[i] = true;
-                    SetColor(FascinationColor);
-                    return;
-                }
-                if (i == (int)GameManager.AttackType.stern && m_attackTypes_Bullets_before[i] == false)
-                {
-                    status = Monster.Status.Stren;
-                    m_attackTypes_Bullets_before[i] = true;
-                    SetColor(SternColor);
-                    return;
-                }
+        CheckEffectBullet();
+        //status = Monster.Status.Normal;
+        //knockbackForce = defaultKncokback;
+        //isPenetration_object = false;
+        //isSplit = false;
+        //isCritical = false;
+        //for (int i = 0; i < m_attackTypes.Count; i++)
+        //{            
+        //    if (m_attackTypes[i] == true)
+        //    {
+        //        switch (i)
+        //        {                    
+        //            case (int)GameManager.AttackType.critical:
+        //                m_attackTypes_Bullets[(int)GameManager.AttackType.critical] = false;
+        //                if (CheckCritical())
+        //                {
+        //                    m_attackTypes_Bullets[(int)GameManager.AttackType.critical] = true;
+        //                }
+        //                break;                    
+        //            case (int)GameManager.AttackType.fascination:
+        //                m_attackTypes_Bullets[(int)GameManager.AttackType.fascination] = false;
+        //                if (CheckFascination())
+        //                {
+        //                    m_attackTypes_Bullets[(int)GameManager.AttackType.fascination] = true;
+        //                }
+        //                break;
+        //            case (int)GameManager.AttackType.penetration_object: isPenetration_object = true; break;
+        //            case (int)GameManager.AttackType.plus_2_random:
+        //                m_attackTypes_Bullets[(int)GameManager.AttackType.plus_2_random] = false;                      
+        //                m_attackTypes_Bullets[(int)GameManager.AttackType.plus_2_random] = true;                      
+        //                break;
+        //            case (int)GameManager.AttackType.posion:
+        //                m_attackTypes_Bullets[(int)GameManager.AttackType.posion] = false;
+        //                if (CheckPosion())
+        //                {                            
+        //                    m_attackTypes_Bullets[(int)GameManager.AttackType.posion] = true;
+        //                }                        
+        //                break;
+        //            case (int)GameManager.AttackType.slow:
+        //                m_attackTypes_Bullets[(int)GameManager.AttackType.slow] = false;
+        //                if (CheckSlow())
+        //                {
+        //                    m_attackTypes_Bullets[(int)GameManager.AttackType.slow] = true;
+        //                }                        
+        //                break;
+        //            case (int)GameManager.AttackType.split: isSplit = true; break;
+        //            case (int)GameManager.AttackType.stern:
+        //                m_attackTypes_Bullets[(int)GameManager.AttackType.stern] = false;
+        //                if (CheckStern())
+        //                {
+        //                    m_attackTypes_Bullets[(int)GameManager.AttackType.stern] = true;
+        //                }
+        //                break;
+        //            case (int)GameManager.AttackType.Poly: transform.localScale = initScale * 2; break;
+        //            case (int)GameManager.AttackType.penetration_monster: isPenetation_monster = true; knockbackForce = 0; break;
+        //        }
+        //    }
+        //}
+        //for (int i = 0; i < m_attackTypes_Bullets.Count; i++)
+        //{
+        //    if (m_attackTypes_Bullets[i] == true)
+        //    {
+        //        if (m_attackTypes_Bullets_before[i])
+        //        {
+        //            CheckAllFalse = true;
+        //        }
+        //        else
+        //        {
+        //            CheckAllFalse = false;
+        //        }
+        //    }
+        //}
+        //if (CheckAllFalse)
+        //{
+        //    for (int i = 0; i < m_attackTypes_Bullets_before.Count; i++)
+        //    {
+        //        m_attackTypes_Bullets_before[i] = false;
+        //    }
+        //}
+        //for (int i = 0; i < m_attackTypes_Bullets.Count; i++)
+        //{
+        //    if (m_attackTypes_Bullets[i] == true)
+        //    {               
+        //        if (i == (int)GameManager.AttackType.posion && m_attackTypes_Bullets_before[i] == false)
+        //        {
+        //            status = Monster.Status.Posion;                    
+        //            m_attackTypes_Bullets_before[i] = true;
+        //            SetColor(PosionColor);                    
+        //            return;
+        //        }
+        //        if (i == (int)GameManager.AttackType.slow && m_attackTypes_Bullets_before[i] == false)
+        //        {
+        //            status = Monster.Status.Slow;                    
+        //            m_attackTypes_Bullets_before[i] = true;
+        //            SetColor(SlowColor);                    
+        //            return;
+        //        }
+        //        if (i == (int)GameManager.AttackType.critical && m_attackTypes_Bullets_before[i] == false)
+        //        {
+        //            isCritical = true;
+        //            SetColor(CriticalColor);
+        //            return;
+        //        }
+        //        if (i == (int)GameManager.AttackType.fascination && m_attackTypes_Bullets_before[i] == false)
+        //        {       
+        //            status = Monster.Status.Fascination;                    
+        //            m_attackTypes_Bullets_before[i] = true;
+        //            SetColor(FascinationColor);
+        //            return;
+        //        }
+        //        if (i == (int)GameManager.AttackType.stern && m_attackTypes_Bullets_before[i] == false)
+        //        {
+        //            status = Monster.Status.Stren;
+        //            m_attackTypes_Bullets_before[i] = true;
+        //            SetColor(SternColor);
+        //            return;
+        //        }
 
-            }
-        }
+        //    }
+        //}
 
     }
-    bool CheckStern()
-    {
-        bool isStern = false;
-
-        double sternProbability = (GameManager.Instance.luck * 0.033d) + 0.1d;
-        if (GameManager.Instance.FindProbability(sternProbability))
-        {
-            isStern = true;            
-        }      
-        return isStern;
-    }
-    bool CheckFascination()
-    {
-        bool isFascination = false;
-        double FascinationProbability = (GameManager.Instance.luck * 0.033d) + 0.1d;
-        if (GameManager.Instance.FindProbability(FascinationProbability))
-        {          
-            isFascination = true;            
-        }        
-        return isFascination;
-    }
-
-    bool CheckCritical()
-    {
-        bool isCirtical= false;
-        double criticlaValue = (GameManager.Instance.luck+1) * 0.1d;
-        if (GameManager.Instance.FindProbability(criticlaValue))
-        {
-            isCirtical = true;
-        }
-        return isCirtical;
-    }
-    bool CheckPosion()
-    {
-        bool isPosion = false;
-        double PosionProbability = (GameManager.Instance.luck * 0.05d) + 0.625d;
-        if (GameManager.Instance.FindProbability(PosionProbability))
-        {
-            isPosion = true;                            
-        }
-        return isPosion;
-    }
-    bool CheckSlow()
-    {
-        bool isSlow = false;
-        double slowProbability = (GameManager.Instance.luck * 0.05d) + 0.25d;
-        if (GameManager.Instance.FindProbability(slowProbability))
-        {
-            isSlow = true;                           
-        }        
-        return isSlow;
-    }
+   
     public void SetSpeed(float _speed)
     {
         speed = _speed;
@@ -279,6 +227,7 @@ public class Bullet : DamageColider
     private void OnEnable()
     {
         //RandColor();
+        Hit = false;
         boomerangTime = defaultboomerangTime;
         if(bulletType == BulletType.player)
         {
@@ -348,7 +297,11 @@ public class Bullet : DamageColider
         return trees[0].gameObject;
     }
     void Homing()
-    {
+    {   
+        if(Hit)
+        {
+            return;
+        }
       
         if(m_attackMethods[(int)GameManager.AttackMethod.homing])
         {

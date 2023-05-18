@@ -8,7 +8,7 @@ public class AutoDestory : MonoBehaviour
     public bool isDespawn = true;
   
     [SerializeField]
-    float DestoryTime = 0.2f;
+    public float DestoryTime = 0.2f;
 
     float defaultTime;
     private void Awake()

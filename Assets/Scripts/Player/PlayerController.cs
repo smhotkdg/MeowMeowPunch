@@ -8,6 +8,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+
     public bool isFly = false;
     [SerializeField]
     Vector2 NormalGunPos;
@@ -20,7 +21,7 @@ public class PlayerController : MonoBehaviour
         normal,
         laser
     }
-    
+    public Transform LaserAttack;
     public GameObject GunObject;
 
     public ShootType shootType = ShootType.normal;    
@@ -55,8 +56,24 @@ public class PlayerController : MonoBehaviour
     float defaultSpeed;
     IEnumerator CheckShieldRoutine;
     CapsuleCollider2D capsuleCollider;
+
+    List<GameManager.AttackMethod> m_attackMethod;
+    List<GameManager.AttackType> m_attackTypes;
+
+    List<bool> bAttackTypes = new List<bool>();
+    List<bool> bAttackMethod = new List<bool>();
     private void Awake()
     {
+        for (int i = 0; i < System.Enum.GetValues(typeof(GameManager.AttackType)).Length; i++)
+        {
+            bAttackTypes.Add(false);
+        }
+
+        for (int i = 0; i < System.Enum.GetValues(typeof(GameManager.AttackMethod)).Length; i++)
+        {
+            bAttackMethod.Add(false);
+        }
+
         capsuleCollider = GetComponent<CapsuleCollider2D>();
         defaultSpeed = speed;       
         animator = GetComponent<Animator>();
@@ -118,18 +135,31 @@ public class PlayerController : MonoBehaviour
         CheckShieldRoutine = ShieldRoutine();
         StartCoroutine(CheckShieldRoutine);
     }
-
+    public int m_shootCount;
     public List<bool> m_ItemOthers = new List<bool>();
     private void ItemController_OnChangeDamageEvnetHandler(float damage,float tps, int shootCount, List<GameManager.AttackMethod> attackMethod, 
         List<GameManager.AttackType> attackTypes,float range,float shootSpeed,float moveSpeed,List<GameManager.ItemOthers> ItemOthers,bool fly)
     {
-        shootType = ShootType.normal;   
+        shootType = ShootType.normal;
+
+        m_attackMethod = attackMethod;
+        m_attackTypes = attackTypes;
+
+        for (int i = 0; i < m_attackTypes.Count; i++)
+        {
+            bAttackTypes[(int)m_attackTypes[i]] = true;
+        }
+        for (int i = 0; i < m_attackMethod.Count; i++)
+        {
+            bAttackMethod[(int)m_attackMethod[i]] = true;
+        }
+
         isFly = fly;
         SetFly();
         Damage = damage;
         defaultAttackDelay = tps /20;
         shootController.BulletCount = shootCount;
-        
+        m_shootCount = shootCount;
         ChangeRange(range);
         
         shootController.SetBulletAttackType(attackTypes);
@@ -163,7 +193,10 @@ public class PlayerController : MonoBehaviour
     }
     private void OnDisable()
     {
-        StopCoroutine(CheckShieldRoutine);
+        if(CheckShieldRoutine !=null)
+        {
+            StopCoroutine(CheckShieldRoutine);
+        }        
     }
     void ChangeRange(float range)
     {
@@ -289,26 +322,33 @@ public class PlayerController : MonoBehaviour
             Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 
             GunObject.transform.rotation = Quaternion.Lerp(GunObject.transform.rotation, rotation, Time.deltaTime * GunRotationSpeed);
-            //GunObject.transform.rotation = rotation;
-            //gunsprite.flipY = !spriteRenderer.flipX;            
-            if (spriteRenderer.flipX)
+          
+            if (GunObject.transform.localScale.y > 0)
             {
-                GunObject.transform.localScale = new Vector3(-1, 1, 1);
+                //gunsprite.flipX = true;
             }
             else
-            {                
-                GunObject.transform.localScale = new Vector3(-1, -1, 1);
+            {
+                gunsprite.flipX = false;
             }
-            gunsprite.flipX = false;
+
         }
         else
         {
             GunAnim.Play("idle");
             Quaternion rotation = Quaternion.AngleAxis(180, Vector3.forward);
             GunObject.transform.rotation = Quaternion.Lerp(GunObject.transform.rotation, rotation, Time.deltaTime * 8);
-            gunsprite.flipX = spriteRenderer.flipX;
+            gunsprite.flipX = !spriteRenderer.flipX;
             //gunsprite.flipY = true;
             GunObject.transform.localScale = new Vector3(1, 1, 1);
+        }
+        if (spriteRenderer.flipX)
+        {
+            GunObject.transform.localScale = new Vector3(-1, 1, 1);
+        }
+        else
+        {
+            GunObject.transform.localScale = new Vector3(-1, -1, 1);
         }
         
 
@@ -360,10 +400,74 @@ public class PlayerController : MonoBehaviour
                 }
                 break;
             case ShootType.laser:
-              
+                for(int i =0; i< m_shootCount; i++)
+                {
+                    
+                    if (i==0)
+                    {
+                        Transform tempLaser = EZ_Pooling.EZ_PoolManager.Spawn(LaserAttack, new Vector3(0, 0, 0), new Quaternion());
+                        tempLaser.GetComponent<LineAttackController>().Shoot(Damage, enemy, m_attackTypes, m_attackMethod, LineAttackController.LineType.None, false, 0);
+                    }
+                    else
+                    {
+                        float angle = 30;
+                        if (i % 2 == 0)
+                        {
+                            angle = (30 * ((i + 1) / 2) * (1));
+                        }
+                        else
+                        {
+                            angle = (30 * ((i + 1) / 2) * (-1));
+                           
+                        }
+                        Transform tempLaser2;
+                        tempLaser2 = EZ_Pooling.EZ_PoolManager.Spawn(LaserAttack, new Vector3(0, 0, 0), new Quaternion());
+                        tempLaser2.GetComponent<LineAttackController>().Shoot(Damage, enemy, m_attackTypes, 
+                            m_attackMethod, LineAttackController.LineType.None, true, angle);
+                    }
+                }
+                
+                if (bAttackTypes[(int)GameManager.AttackType.cross])
+                {
+                    bool canCross = false;
+                    double CrossProbability = (GameManager.Instance.luck * 0.05d) + 0.25d;
+                    if (GameManager.Instance.FindProbability(CrossProbability))
+                    {
+                        canCross = true;
+                    }
+                    if (canCross)
+                    {
+                        Transform tempLaser_Back = EZ_Pooling.EZ_PoolManager.Spawn(LaserAttack, new Vector3(0, 0, 0), new Quaternion());
+                        tempLaser_Back.GetComponent<LineAttackController>().Shoot(Damage, enemy, m_attackTypes, m_attackMethod, LineAttackController.LineType.Back, false, 0);
+
+                        Transform tempLaser_Left = EZ_Pooling.EZ_PoolManager.Spawn(LaserAttack, new Vector3(0, 0, 0), new Quaternion());
+                        tempLaser_Left.GetComponent<LineAttackController>().Shoot(Damage, enemy, m_attackTypes, m_attackMethod, LineAttackController.LineType.Left, false, 0);
+
+                        Transform tempLaser_Right = EZ_Pooling.EZ_PoolManager.Spawn(LaserAttack, new Vector3(0, 0, 0), new Quaternion());
+                        tempLaser_Right.GetComponent<LineAttackController>().Shoot(Damage, enemy, m_attackTypes, m_attackMethod, LineAttackController.LineType.Right, false, 0);
+                    }
+                }
+                if (bAttackTypes[(int)GameManager.AttackType.back])
+                {
+                    bool canBack = false;
+                    double BackProbability = (GameManager.Instance.luck * 0.1d) + 0.5d;
+                    if (GameManager.Instance.FindProbability(BackProbability))
+                    {
+                        canBack = true;
+                    }
+                    if (canBack)
+                    {
+                        Transform tempLaser_Back = EZ_Pooling.EZ_PoolManager.Spawn(LaserAttack, new Vector3(0, 0, 0), new Quaternion());
+                        tempLaser_Back.GetComponent<LineAttackController>().Shoot(Damage, enemy, m_attackTypes, m_attackMethod, LineAttackController.LineType.Back, false, 0);
+                    }
+                }
+
+                //TargetPosition = GetRotateVector(TargetPosition,GameManager.Instance.playerController.shootController.transform.position, angle);
+
                 break;
         }
     }
+ 
     int ChainIndex = -1;
     public bool isExitObstacles = false;
 

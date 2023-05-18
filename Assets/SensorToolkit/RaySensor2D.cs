@@ -69,6 +69,7 @@ namespace SensorToolkit
                 }
                 return detectedObjects;
             }
+            
         }
 
         // Returns a list of all detected GameObjects in order of distance from the sensor. This distance is given by the RaycastHit.dist for each GameObject.
