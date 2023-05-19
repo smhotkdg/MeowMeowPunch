@@ -30,7 +30,8 @@ public class DamageTest : MonoBehaviour
     [Button]
     public void AngleTest(float angle)
     {
-        AngleObject.transform.position = GetRotateVector(TargetObject.transform.position,Player.GetComponent<PlayerController>().shootController.transform.position,angle);
+        //AngleObject.transform.position = GetRotateVector(TargetObject.transform.position,Player.GetComponent<PlayerController>().shootController.transform.position,angle);
+        Debug.Log(angle);
     }
     [Button]
     public void CheckProbablity(double chnace)

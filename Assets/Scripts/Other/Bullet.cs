@@ -20,7 +20,7 @@ public class Bullet : DamageColider
     CapsuleCollider2D boxCollider;
     public GameObject m_Target;
 
-    public List<bool> m_attackMethods = new List<bool>();
+    //public List<bool> m_attackMethods = new List<bool>();
 
     public float LifeTime =3;
 

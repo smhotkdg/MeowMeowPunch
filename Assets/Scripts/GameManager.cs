@@ -34,7 +34,8 @@ public class GameManager : MonoBehaviour
         money_power,
         shield_7,
         pickup_up,
-        hit_drop_item
+        hit_drop_item,
+        hp_13
     }
     public Transform HpPrefab;
     public Transform MaxHpPrefab;
@@ -175,6 +176,19 @@ public class GameManager : MonoBehaviour
              
         UIManager.Instance.SetHp();
         return canAddLife;
+    }
+    int hp13Count = 0;
+    public void SetHp13Count()
+    {
+        if(playerController.m_ItemOthers[(int)ItemOthers.hp_13])
+        {
+            hp13Count++;
+            if (hp13Count >= 13)
+            {
+                Spawn(SpawnType.Hp, Player.transform.position, 1);
+                hp13Count = 0;
+            }
+        }        
     }
     public bool AddMaxHp(int index)
     {

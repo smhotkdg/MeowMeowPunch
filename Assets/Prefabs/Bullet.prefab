@@ -247,6 +247,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d609756e1207d984cb35782e7a5bde1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SternBullet: {fileID: 0}
+  initScale: {x: 0, y: 0}
+  m_attackTypes: 
+  m_attackMethods: 
+  m_attackTypes_Bullets: 
+  m_attackTypes_Bullets_before: 
+  defaultKncokback: 0
   rb: {fileID: 0}
   bulletType: 0
   status: 0
@@ -264,18 +271,15 @@ MonoBehaviour:
   DamangeColor: {r: 0, g: 0, b: 0, a: 0}
   animator: {fileID: 0}
   bulletTransform: {fileID: 0}
+  Hit: 0
   SlowColor: {r: 1, g: 0.504717, b: 0.504717, a: 1}
   PosionColor: {r: 0, g: 1, b: 0, a: 1}
   CriticalColor: {r: 1, g: 0.8742013, b: 0, a: 1}
   Plus_2_randColor: {r: 0, g: 0, b: 0, a: 0}
   FascinationColor: {r: 0.03127098, g: 0, b: 1, a: 0}
   SternColor: {r: 0.67576694, g: 0, b: 1, a: 0}
-  m_attackTypes: 
-  m_attackTypes_Bullets: 
-  m_attackTypes_Bullets_before: 
   boxCollider: {fileID: 0}
   m_Target: {fileID: 0}
-  m_attackMethods: 
   LifeTime: 3
   speed: 1
   boomerangTime: 2

@@ -127,7 +127,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   Length: 5
-  Radius: 0.1
+  Radius: 0.01
   ObstructedByLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -176,7 +176,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8215666448156330316}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 100, y: 100, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -298,6 +298,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 515ac07586088da4cb1010de4d8c4797, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SternBullet: {fileID: 0}
+  initScale: {x: 0, y: 0}
+  m_attackTypes: 
+  m_attackMethods: 
+  m_attackTypes_Bullets: 
+  m_attackTypes_Bullets_before: 
+  defaultKncokback: 0
   rb: {fileID: 0}
   bulletType: 0
   status: 0
@@ -308,12 +315,12 @@ MonoBehaviour:
   Power: 1
   isDisable: 0
   isCritical: 0
+  animator: {fileID: 0}
   PrevTarget: {fileID: 0}
   initPos: {x: 0, y: 0}
   knockbackForce: 2
   isEnable: 1
   DamangeColor: {r: 0, g: 0, b: 0, a: 0}
-  animator: {fileID: 0}
   bulletTransform: {fileID: 0}
   Hit: 0
   BulletCount: 1
@@ -391,4 +398,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isDespawn: 1
-  DestoryTime: 0.2
+  DestoryTime: 0.12

@@ -1042,6 +1042,7 @@ public class Monster : MonoBehaviour
     }
     void Death()
     {
+        GameManager.Instance.SetHp13Count();
         RandomSpawn.transform.SetParent(transform);
         switch (deathType)
         {

@@ -36,8 +36,8 @@ public class LineAttackController : DamageColider
     Spline spline;
     GameObject m_target;
 
-    List<bool> m_attackTypes = new List<bool>();
-    List<bool> m_attackMethods = new List<bool>();
+    //List<bool> m_attackTypes = new List<bool>();
+    //List<bool> m_attackMethods = new List<bool>();
 
 
     List<Vector2> RightRandomAngle = new List<Vector2>();
@@ -45,22 +45,109 @@ public class LineAttackController : DamageColider
     EdgeCollider2D edgeCollider;
     Vector2 Init_0 = new Vector2();
     Vector2 Init_1 = new Vector2();
-    
+    bool isEffectStart = false;
     private void Awake()
     {
+        m_attackTypes_Bullets_before.Clear();
+        m_attackTypes_Bullets.Clear();
+        m_attackTypes.Clear();
+        m_attackMethods.Clear();
+        initScale = transform.localScale;
+        for (int i = 0; i < System.Enum.GetValues(typeof(GameManager.AttackMethod)).Length; i++)
+        {
+            m_attackMethods.Add(false);
+        }
+        for (int i = 0; i < System.Enum.GetValues(typeof(GameManager.AttackType)).Length; i++)
+        {
+            m_attackTypes.Add(false);
+            m_attackTypes_Bullets.Add(false);
+            m_attackTypes_Bullets_before.Add(false);
+        }
+
         spline = spriteShapeController.spline;
         defalutInterval = interval;
         edgeCollider = GetComponent<EdgeCollider2D>();
         Init_0 = spline.GetPosition(0);
         Init_1 = spline.GetPosition(1);
+        GameManager.Instance.playerController.PlayerMoveEventHandler += PlayerController_PlayerMoveEventHandler;
+     
     }
+    void setInitRotate()
+    {
+        if (GameManager.Instance.playerController.enemy != null)
+        {
+            m_target = GameManager.Instance.playerController.enemy;
+            TargetPosition = m_target.transform.position;
 
+            Vector3 pos = GameManager.Instance.playerController.shootController.transform.position;
+            Vector3 dir = (GameManager.Instance.playerController.shootController.transform.position - TargetPosition).normalized;
+            switch (lineType)
+            {
+                case LineType.None:
+                    if (isRotateAngle)
+                    {
+                        dir = GetRotateVector(dir, angle_rotate);
+                        //collsionRay.transform.localRotation = Quaternion.Euler(0, 0, angle_rotate);
+                    }
+                    else
+                    {
+                        collsionRay.transform.localRotation = Quaternion.Euler(0, 0, 0);
+                    }
+                    break;
+                case LineType.Back:
+                    dir = GetRotateVector(dir, 180);
+                    //collsionRay.transform.localRotation = Quaternion.Euler(0, 0, 180);
+                    break;
+                case LineType.Left:
+                    dir = GetRotateVector(dir, 90);
+                    //collsionRay.transform.localRotation = Quaternion.Euler(0, 0, 90);
+                    break;
+                case LineType.Right:
+                    dir = GetRotateVector(dir, -90);
+                    //collsionRay.transform.localRotation = Quaternion.Euler(0, 0, -90);
+                    break;
+            }
+            Vector3 newLInePoint = pos + dir;
+            newLInePoint = pos + dir * -5;
+
+            spline.SetPosition(0, newLInePoint);
+
+            spline.SetPosition(spline.GetPointCount() - 1, GameManager.Instance.playerController.shootController.transform.position);
+
+            raySensor2D.transform.position = spline.GetPosition(spline.GetPointCount() - 1);
+            raySensor2D.Length = Vector2.Distance(spline.GetPosition(0), spline.GetPosition(spline.GetPointCount() - 1));
+            raySensor2D.Direction = (spline.GetPosition(0) - spline.GetPosition(spline.GetPointCount() - 1)).normalized;
+
+
+
+            pos = GameManager.Instance.playerController.shootController.transform.position;
+            dir = (GameManager.Instance.playerController.shootController.transform.position - m_target.transform.position).normalized;
+            newLInePoint = pos + dir * -5;
+
+            collsionRay.transform.position = pos;
+            //collsionRay.Direction = (newLInePoint - pos).normalized;
+            collsionRay.Direction = (spline.GetPosition(0) - spline.GetPosition(spline.GetPointCount() - 1)).normalized;
+            collsionRay.Length = Vector2.Distance(newLInePoint, pos);
+        }
+
+    }
+    private void PlayerController_PlayerMoveEventHandler(bool flag)
+    {
+        if(flag)
+        {
+           
+        }
+    }
 
     private void CollsionRay_OnSensorUpdate()
     {
         //collsionRay.OnSensorUpdate -= CollsionRay_OnSensorUpdate;
 
         //bInit = true;
+        //if (m_attackMethods[(int)GameManager.AttackMethod.homing])
+        //{
+        //    CheckHoming();
+        //}
         //InitShoot();
         //CheckHoming();
     }
@@ -88,23 +175,27 @@ public class LineAttackController : DamageColider
 
     }
     Vector3 TargetPosition;
+    Vector2 hitPoint;
     List<Transform> EffectList = new List<Transform>();
-    public override void OnObstacleEnterLaser(Vector3 HitPoint)
+    public override void OnObstacleEnterLaser(Vector3 _HitPoint)
     {
-        Transform tempEffect = EZ_Pooling.EZ_PoolManager.Spawn(LaserCollisionEffect, HitPoint, new Quaternion());
-        bool isSame = false;
-        for (int i = 0; i < EffectList.Count; i++)
+        if(isEffectStart)
         {
-            if (EffectList[i] == tempEffect)
+            Transform tempEffect = EZ_Pooling.EZ_PoolManager.Spawn(LaserCollisionEffect, hitPoint, new Quaternion());
+            bool isSame = false;
+            for (int i = 0; i < EffectList.Count; i++)
             {
-                isSame = true;
+                if (EffectList[i] == tempEffect)
+                {
+                    isSame = true;
+                }
             }
+            if (isSame == false)
+            {
+                EffectList.Add(tempEffect);
+            }
+            tempEffect.GetComponent<AutoDestory>().DestoryTime = GetComponent<AutoDestory>().DestoryTime;
         }
-        if (isSame == false)
-        {
-            EffectList.Add(tempEffect);
-        }
-        tempEffect.GetComponent<AutoDestory>().DestoryTime = GetComponent<AutoDestory>().DestoryTime;
     }
     
     void InitShoot()
@@ -119,7 +210,7 @@ public class LineAttackController : DamageColider
                     if (isRotateAngle)
                     {
                         dir = GetRotateVector(dir, angle_rotate);
-                        collsionRay.transform.localRotation = Quaternion.Euler(0, 0, angle_rotate);
+                        //collsionRay.transform.localRotation = Quaternion.Euler(0, 0, angle_rotate);
                     }
                     else
                     {
@@ -128,15 +219,15 @@ public class LineAttackController : DamageColider
                     break;
                 case LineType.Back:
                     dir = GetRotateVector(dir, 180);
-                    collsionRay.transform.localRotation = Quaternion.Euler(0, 0, 180);
+                    //collsionRay.transform.localRotation = Quaternion.Euler(0, 0, 180);
                     break;
                 case LineType.Left:
                     dir = GetRotateVector(dir, 90);
-                    collsionRay.transform.localRotation = Quaternion.Euler(0, 0, 90);
+                    //collsionRay.transform.localRotation = Quaternion.Euler(0, 0, 90);
                     break;
                 case LineType.Right:
                     dir = GetRotateVector(dir, -90);
-                    collsionRay.transform.localRotation = Quaternion.Euler(0, 0, -90);
+                    //collsionRay.transform.localRotation = Quaternion.Euler(0, 0, -90);
                     break;
             }   
             Vector3 newLInePoint = pos + dir;
@@ -147,10 +238,16 @@ public class LineAttackController : DamageColider
             }
             else
             {
-                newLInePoint = collsionRay.DetectedObjects[0].transform.position;
-            }          
+                //newLInePoint = collsionRay.DetectedObjects[0].transform.position;
+                RaycastHit2D raycastHit2D =  collsionRay.GetRayHit(collsionRay.DetectedObjects[0]);
+                newLInePoint  = raycastHit2D.point;
+                isEffectStart = true;
+                hitPoint = newLInePoint;
+            }
+            float distnace = Mathf.Abs(Vector2.Distance(spline.GetPosition(spline.GetPointCount() - 1), newLInePoint));
 
-          
+            if (distnace < 0.05f)
+                return;
             spline.SetPosition(0, newLInePoint);                       
         
             spline.SetPosition(spline.GetPointCount() - 1, GameManager.Instance.playerController.shootController.transform.position);
@@ -166,15 +263,20 @@ public class LineAttackController : DamageColider
             newLInePoint = pos + dir * -5;
 
             collsionRay.transform.position = pos;
-            collsionRay.Direction = (newLInePoint - pos).normalized;
-            collsionRay.Length = Vector2.Distance(newLInePoint, pos);    
+            //collsionRay.Direction = (newLInePoint - pos).normalized;
+            collsionRay.Direction = (spline.GetPosition(0) - spline.GetPosition(spline.GetPointCount() - 1)).normalized;
+            collsionRay.Length = Vector2.Distance(newLInePoint, pos);
+
+
         }
         bInit = true;
     }
+ 
     private void OnDisable()
     {
         raySensor2D.Length = 0.1f;
         collsionRay.Length = 0.1f;
+        collsionRay.transform.localRotation = Quaternion.Euler(0, 0, 0);
         removeLine();
         spline.SetPosition(0, Init_0);
         spline.SetPosition(1, Init_1);
@@ -203,12 +305,13 @@ public class LineAttackController : DamageColider
     }
     private void OnEnable()
     {
+        isEffectStart = false;
         switch (lineType)
         {
             case LineType.None:
                 if (isRotateAngle)
                 {
-                    collsionRay.transform.localRotation = Quaternion.Euler(0, 0, angle_rotate);
+                    //collsionRay.transform.localRotation = Quaternion.Euler(0, 0, angle_rotate);
                 }
                 else
                 {
@@ -216,36 +319,31 @@ public class LineAttackController : DamageColider
                 }                
                 break;
             case LineType.Back:                
-                collsionRay.transform.localRotation = Quaternion.Euler(0, 0, 180);
+                //collsionRay.transform.localRotation = Quaternion.Euler(0, 0, 180);
                 break;
             case LineType.Left:                
-                collsionRay.transform.localRotation = Quaternion.Euler(0, 0, 90);
+                //collsionRay.transform.localRotation = Quaternion.Euler(0, 0, 90);
                 break;
             case LineType.Right:                
-                collsionRay.transform.localRotation = Quaternion.Euler(0, 0, -90);
+                //collsionRay.transform.localRotation = Quaternion.Euler(0, 0, -90);
                 break;
         }
         
         collsionRay.OnSensorUpdate += CollsionRay_OnSensorUpdate;
 
-        m_attackTypes.Clear();
-        m_attackMethods.Clear();
-        for (int i = 0; i < System.Enum.GetValues(typeof(GameManager.AttackMethod)).Length; i++)
-        {
-            m_attackMethods.Add(false);
-        }
-        for (int i = 0; i < System.Enum.GetValues(typeof(GameManager.AttackType)).Length; i++)
-        {
-            m_attackTypes.Add(false);
-        }
+      
         spriteShapeController.autoUpdateCollider = true;
         EnmeyVecList.Clear();
+        transform.localScale = initScale;
+        CheckEffectBullet();
+        
     }
     bool bInit = false;
     bool isRotateAngle = false;
     float angle_rotate;
+
     public void Shoot(float _damage, GameObject _Target, List<GameManager.AttackType> attackTypes, List<GameManager.AttackMethod> attackMethods, LineType line, bool _rotate, float _rotateAngle)
-    {
+    {   
         removeLine();
         BulletCount = GameManager.Instance.playerController.m_shootCount;
         isRotateAngle = _rotate;
@@ -267,15 +365,24 @@ public class LineAttackController : DamageColider
         {
             m_attackTypes[(int)attackTypes[i]] = true;
         }
+        int mask = (1 << LayerMask.NameToLayer("Obstacles")) | (1 << LayerMask.NameToLayer("ObstaclesDoors") | (1 << LayerMask.NameToLayer("wall")));
+        if(m_attackTypes[(int)GameManager.AttackType.penetration_object])
+        {
+            mask =(1 << LayerMask.NameToLayer("ObstaclesDoors") | (1 << LayerMask.NameToLayer("wall")));
+        }
+
+        collsionRay.DetectsOnLayers = mask;
+        collsionRay.Pulse();
+        raySensor2D.Pulse();
         m_target = _Target;
         Power = _damage;
-        TargetPosition = m_target.transform.position;
+        TargetPosition = m_target.transform.position;        
         if (m_attackMethods[(int)GameManager.AttackMethod.homing])
         {
             CheckHoming();
         }
         InitShoot();
-        
+
 
     }
     public Vector2 GetRotateVector(Vector2 v, float degrees)
@@ -375,6 +482,12 @@ public class LineAttackController : DamageColider
     }
     private void Update()
     {
+        if (GameManager.Instance.playerController.enemy != null && GameManager.Instance.playerController.enemy != m_target)
+        {
+            m_target = GameManager.Instance.playerController.enemy;
+            TargetPosition = m_target.transform.position;
+        }
+        setInitRotate();
         collsionRay.Pulse();
         raySensor2D.Pulse();
         spriteShapeController.RefreshSpriteShape();
@@ -387,11 +500,14 @@ public class LineAttackController : DamageColider
             raySensor2D.Length = Vector2.Distance(spline.GetPosition(0), spline.GetPosition(spline.GetPointCount() - 1));
             raySensor2D.Direction = (spline.GetPosition(spline.GetPointCount() - 1) - spline.GetPosition(0)).normalized;
 
+            collsionRay.Direction = (spline.GetPosition(spline.GetPointCount() - 1) - spline.GetPosition(0)).normalized;
+
+
             timer = 0.0f;
         }
     
         if (bInit)
-        {
+        {          
             CheckHoming();
             InitShoot();            
         }

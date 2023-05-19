@@ -1,0 +1,4 @@
+﻿item_code,item_name,damage,tick_damage,defence,moveType,count,,tier,use,position,once,other
+8,Brother Bobby(보비 형),3.5,0,FALSE,normal,1,,1,TRUE,0,FALSE,normal
+10,Halo of Flies(파리 떼),0,0,TRUE,around,2,,2,TRUE,0,FALSE,normal
+59,Distant Admiration(짝사랑),0,5,TRUE,around,1,,2,TRUE,0,FALSE,normal

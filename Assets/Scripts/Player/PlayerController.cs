@@ -46,7 +46,7 @@ public class PlayerController : MonoBehaviour
 
     public FloatingJoystick Joystick;
 
-    private GameObject enemy;
+    public GameObject enemy;
     private Animator animator;
     private TargetFollow targetFollow;
 
@@ -62,6 +62,13 @@ public class PlayerController : MonoBehaviour
 
     List<bool> bAttackTypes = new List<bool>();
     List<bool> bAttackMethod = new List<bool>();
+
+    public delegate void PlayerMove(bool flag);
+    public event PlayerMove PlayerMoveEventHandler;
+
+    public GameObject LaserRayObject;
+
+
     private void Awake()
     {
         for (int i = 0; i < System.Enum.GetValues(typeof(GameManager.AttackType)).Length; i++)
@@ -72,8 +79,7 @@ public class PlayerController : MonoBehaviour
         for (int i = 0; i < System.Enum.GetValues(typeof(GameManager.AttackMethod)).Length; i++)
         {
             bAttackMethod.Add(false);
-        }
-
+        }        
         capsuleCollider = GetComponent<CapsuleCollider2D>();
         defaultSpeed = speed;       
         animator = GetComponent<Animator>();
@@ -90,6 +96,7 @@ public class PlayerController : MonoBehaviour
         ItemController.Instance.OnChangeDamageEvnetHandler += ItemController_OnChangeDamageEvnetHandler;
         ItemController.Instance.GetDamage();
         SetFly();
+      
     }
     
     void SetFly()
@@ -306,8 +313,15 @@ public class PlayerController : MonoBehaviour
         {
             return;
         }
-        moveValue = Joystick.Horizontal + Joystick.Vertical;
-        
+        moveValue =  Mathf.Abs(Joystick.Horizontal) +Mathf.Abs(Joystick.Vertical);
+        if(moveValue>0)
+        {
+            PlayerMoveEventHandler?.Invoke(true);
+        }
+        else
+        {
+            PlayerMoveEventHandler?.Invoke(false);
+        }
         CheckAttack();  
         UpdateGun();
     }

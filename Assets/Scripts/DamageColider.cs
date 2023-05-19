@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class DamageColider : MonoBehaviour
 {
+    public Transform SternBullet;
     public enum BulletType
     {
         player,
@@ -11,6 +12,7 @@ public class DamageColider : MonoBehaviour
     }
     public Vector2 initScale;
     public List<bool> m_attackTypes = new List<bool>();
+    public List<bool> m_attackMethods = new List<bool>();
     public List<bool> m_attackTypes_Bullets = new List<bool>();
     public List<bool> m_attackTypes_Bullets_before = new List<bool>();
     public float defaultKncokback;
@@ -26,7 +28,7 @@ public class DamageColider : MonoBehaviour
     public bool isDisable = false;
     public bool isCritical = false;
 
-
+    public Animator animator; 
     public GameObject PrevTarget;
 
     //public delegate void OnObstacleEnter(Vector3 collisionPos);
@@ -36,8 +38,7 @@ public class DamageColider : MonoBehaviour
 
     public float knockbackForce = 2;
     public bool isEnable = false;
-    public Color DamangeColor;
-    public Animator animator;
+    public Color DamangeColor;    
     public Transform bulletTransform;
     public bool Hit = false;
 
@@ -80,7 +81,7 @@ public class DamageColider : MonoBehaviour
                     EZ_Pooling.EZ_PoolManager.Despawn(transform);
                 }
             }
-            OnObstacleEnterLaser(collision.transform.position);
+            OnObstacleEnterLaser(collision.ClosestPoint(transform.position));
             Hit = true;
         }
         if (bulletType == BulletType.player)
@@ -152,7 +153,8 @@ public class DamageColider : MonoBehaviour
                     }
                     //EZ_Pooling.EZ_PoolManager.Despawn(transform);                    
                 }
-                OnObstacleEnterLaser(collision.transform.position);
+
+                OnObstacleEnterLaser(collision.ClosestPoint(transform.position));
                 Hit = true;
             }
         }
@@ -389,7 +391,16 @@ public class DamageColider : MonoBehaviour
                             m_attackTypes_Bullets[(int)GameManager.AttackType.stern] = true;
                         }
                         break;
-                    case (int)GameManager.AttackType.Poly: transform.localScale = initScale * 2; break;
+                    case (int)GameManager.AttackType.Poly:
+                        if(GameManager.Instance.playerController.shootType == PlayerController.ShootType.normal)
+                        {
+                            transform.localScale = initScale * 2;
+                        }                            
+                        else if(GameManager.Instance.playerController.shootType == PlayerController.ShootType.laser)
+                        {
+                            //transform.localScale = initScale * 4;
+                        }
+                        break;
                     case (int)GameManager.AttackType.penetration_monster: isPenetation_monster = true; knockbackForce = 0; break;
                 }
             }
@@ -449,8 +460,8 @@ public class DamageColider : MonoBehaviour
                 if (i == (int)GameManager.AttackType.stern && m_attackTypes_Bullets_before[i] == false)
                 {
                     status = Monster.Status.Stren;
-                    m_attackTypes_Bullets_before[i] = true;
-                    //SetColor(SternColor);
+                    m_attackTypes_Bullets_before[i] = true;                   
+           
                     return;
                 }
 

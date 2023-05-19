@@ -295,6 +295,7 @@ public class ItemController : MonoBehaviour
                         case "shield_7": itemOthers.Add(GameManager.ItemOthers.shield_7); break;
                         case "pickup_up": itemOthers.Add(GameManager.ItemOthers.pickup_up); break;
                         case "hit_drop_item": itemOthers.Add(GameManager.ItemOthers.hit_drop_item); break;
+                        case "hp_13": itemOthers.Add(GameManager.ItemOthers.hp_13); break;
                     }
                 }
                 if(GetItems[i].flying)
