@@ -7,7 +7,7 @@ using System.Linq;
 
 public class Bullet : DamageColider
 {
-  
+    public TrailRenderer m_TrailRenderer; 
     public Color SlowColor;
     public Color PosionColor;
     public Color CriticalColor;
@@ -227,6 +227,7 @@ public class Bullet : DamageColider
     private void OnEnable()
     {
         //RandColor();
+        m_TrailRenderer.Clear();
         Hit = false;
         boomerangTime = defaultboomerangTime;
         if(bulletType == BulletType.player)

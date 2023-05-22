@@ -182,6 +182,10 @@ public class MapMaker : MonoBehaviour
                 }
             }
         }
+        for (int i = 0; i < dungeonObject.Rooms.Count; i++)
+        {
+            dungeonObject.Rooms[i].gameObject.GetComponent<DungeonController>().SetInitDoor();
+        }
     }
     private void Generator_OnGeneratorFinish(DungeonObject d)
     {
@@ -203,9 +207,8 @@ public class MapMaker : MonoBehaviour
                 GridGraph gg = data.graphs[0] as GridGraph;
 
                 gg.center = MapList[MapList.Count - 1].transform.Find("InitPos").transform.position;
-                gg.SetDimensions(13, 18, 0.2f);
+                gg.SetDimensions(12, 15, 0.2f);
                 AstarPath.active.Scan();
-
             }
         }
         StartCoroutine(MapMakeRoutine());

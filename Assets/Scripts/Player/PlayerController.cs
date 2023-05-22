@@ -559,12 +559,12 @@ public class PlayerController : MonoBehaviour
             {
                 if (collision.transform.parent.GetComponent<Rule>().NextMap.name == "ItemRoom")
                 {
-                    if(GameManager.Instance.Key >=1)
+                    //if(GameManager.Instance.Key >=1)
                     {
                         collision.transform.parent.GetComponent<Rule>().NextMap.gameObject.GetComponent<DungeonController>().isCome = true;
                         MapMaker.Instance.ChangeMap(collision.transform.parent.GetComponent<Rule>().NextMap, collision.transform.parent.GetComponent<Rule>().NextPosition);
-                        GameManager.Instance.Key -= 1;
-                        UIManager.Instance.SetKeyText();
+                        //GameManager.Instance.Key -= 1;
+                        //UIManager.Instance.SetKeyText();
                     }
                 }
                 else

@@ -1,3 +1,4 @@
+using DungeonMaker;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,6 +6,7 @@ using UnityEngine;
 
 public class DungeonController : MonoBehaviour
 {
+    //public bool isInit = false;
     public double weight;
     public GameObject MinimapGFX;
     public bool isCome =false;
@@ -15,12 +17,36 @@ public class DungeonController : MonoBehaviour
     GameObject NextRoomObejct;
     GameObject ItemObject;
     public bool isMakeLootbox = false;
+
+    public List<Animator> DoorList;
     private void OnEnable()
     {
         IsOpen = false;
         isMakeChest = false;
+        doorOpen = true;
         FindAllMonsters();
+        for (int i = 0; i < DoorList.Count; i++)
+        {
+            DoorList[i].Play("init");                   
+        }
     }
+    public void SetInitDoor()
+    {        
+        for (int i = 0; i < DoorList.Count; i++)
+        {            
+            if (DoorList[i].gameObject.transform.parent.GetComponent<Rule>().NextMap != null)
+            {
+                if (DoorList[i].gameObject.transform.parent.GetComponent<Rule>().NextMap.name == "ItemRoom")
+                {
+                    DoorList[i].SetTrigger("Close");
+                    DoorList[i].gameObject.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0);
+                }
+            }
+        }
+        doorOpen = false;
+    }
+
+
     public void StartMonster()
     {
         for(int i =0; i< Monsters.Count; i++)
@@ -28,6 +54,15 @@ public class DungeonController : MonoBehaviour
             Monsters[i].gameObject.GetComponent<Monster>().isStartMonster = true;
             Monsters[i].gameObject.GetComponent<Monster>().pObject = this.gameObject;
         }
+        if(IsOpen ==false)
+        {
+            for (int i = 0; i < DoorList.Count; i++)
+            {
+                DoorList[i].Play("init");
+                DoorList[i].SetTrigger("Close");
+            }
+        }
+      
     }
     int findMaxIndex;
     public void AddObject(GameObject monsterObj)
@@ -91,6 +126,21 @@ public class DungeonController : MonoBehaviour
         Vector2 newPosition = new Vector3(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f),0) + transform.position;
         GameManager.Instance.Spawn(GameManager.SpawnType.NoramlLootBox, newPosition,1);
     }
+    public void DoorOpen()
+    {
+        doorOpen = true;
+        for (int i = 0; i < DoorList.Count; i++)
+        {
+            if (DoorList[i].gameObject.transform.parent.GetComponent<Rule>().NextMap != null)
+            {
+                if (DoorList[i].gameObject.transform.parent.GetComponent<Rule>().NextMap.name != "ItemRoom")
+                {
+                    DoorList[i].SetTrigger("Open");
+                }                    
+            }
+        }
+    }
+    bool doorOpen = true;
     private void FixedUpdate()
     {
         if (Monsters.Count <= 0)
@@ -105,6 +155,10 @@ public class DungeonController : MonoBehaviour
             {
                 makeChest();
                 isMakeChest = true;
+            }
+            if(doorOpen ==false)
+            {
+                DoorOpen();
             }
         }
         if(GameManager.Instance.isVisibleMap)

@@ -264,14 +264,15 @@ MonoBehaviour:
   Power: 1
   isDisable: 0
   isCritical: 0
+  animator: {fileID: 0}
   PrevTarget: {fileID: 0}
   initPos: {x: 0, y: 0}
   knockbackForce: 1
   isEnable: 0
   DamangeColor: {r: 0, g: 0, b: 0, a: 0}
-  animator: {fileID: 0}
   bulletTransform: {fileID: 0}
   Hit: 0
+  m_TrailRenderer: {fileID: 2602647503110229447}
   SlowColor: {r: 1, g: 0.504717, b: 0.504717, a: 1}
   PosionColor: {r: 0, g: 1, b: 0, a: 1}
   CriticalColor: {r: 1, g: 0.8742013, b: 0, a: 1}

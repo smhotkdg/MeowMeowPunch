@@ -398,4 +398,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isDespawn: 1
-  DestoryTime: 0.12
+  DestoryTime: 0.2

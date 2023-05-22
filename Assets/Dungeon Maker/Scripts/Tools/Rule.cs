@@ -5,8 +5,7 @@ namespace DungeonMaker
 {
 	[ExecuteInEditMode]
 	public class Rule : MonoBehaviour
-	{
-        
+	{        
         public GameObject InitPos;
         public GameObject NextPosition;
         public GameObject NextMap;
@@ -40,7 +39,7 @@ namespace DungeonMaker
 		#region Unity Methods
 		private void OnEnable()
 		{
-			Generator.OnGeneratorFinish += Init;
+			Generator.OnGeneratorFinish += Init;         
 		}
 
 		private void OnDisable()
