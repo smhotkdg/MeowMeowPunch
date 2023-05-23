@@ -26,7 +26,31 @@ public class Monster : MonoBehaviour
         Fascination,
         Stren
     }
+    [Serializable]
+    public class MyPattern_Movement
+    {
+        [TableList]
+        public MovementType movementTypes;
+        [TableList]        
+        public float Value;
+    }
+   
+
+    public enum Pattern
+    {
+        single,
+        Combination
+    }
+    [Title("몬스터 패턴")]
+    public Pattern pattern = Pattern.single;
     public Status status = Status.Normal;
+
+
+    [Title("패턴 리스트")]
+    [ShowIf("pattern", Pattern.Combination)]
+    [Searchable]
+    public List<MyPattern_Movement> myPatterns;
+
     [Title("이동 타입")]
     public enum MovementType
     {
@@ -42,9 +66,15 @@ public class Monster : MonoBehaviour
         //두더지
         mole
     }
+    [ShowIf("pattern", Pattern.single)]
     public MovementType movementType;
-    [ShowIf("movementType", MovementType.Tracking)]
+    [ShowIf("@pattern == Pattern.single &&  movementType == MovementType.Tracking")]    
     public bool infinityTracking = false;
+    [ShowIf("@pattern == Pattern.single")]
+    public bool isRush = false;
+    [ShowIf("@pattern == Pattern.single &&  isRush == true")]
+    public float Rush_WaitTIme= 1f;
+
     [ShowIf("movementType", MovementType.Random)]
     public float wiatTIme = 0.2f;
     [ShowIf("movementType", MovementType.Random)]
@@ -67,9 +97,9 @@ public class Monster : MonoBehaviour
         directions_6,
         directions_8
     }
-
-    public AttackType attackType;
-    [ShowIf("attackType", AttackType.Missile)]
+    [ShowIf("pattern",Pattern.single)]
+    public AttackType attackType;    
+    [ShowIf("@pattern == Pattern.single &&  attackType == AttackType.Missile")]
     public bool isRandomAttack = false;
     [ShowIf("attackType", AttackType.Missile)]
     public int BulletCount = 1;
@@ -118,10 +148,10 @@ public class Monster : MonoBehaviour
         SpawnMonster,
         patternMissile,
     }
-
+    [ShowIf("pattern", Pattern.single)]
     public DeathType deathType = DeathType.None;
-
-    [ShowIf("deathType", DeathType.SpawnMonster)]
+        
+    [ShowIf("@pattern == Pattern.single &&  deathType == DeathType.SpawnMonster")]
     public List<GameObject> DeathSpawnMonsterList = new List<GameObject>();
     [ShowIf("deathType", DeathType.SpawnMonster)]
     public int DeathSpawnCount;
@@ -163,8 +193,11 @@ public class Monster : MonoBehaviour
     float spawnDeltaTime;
     SpriteRenderer spriteRenderer;
     IEnumerator CheckMoveRoutine;
+
+    float defaultRushTime =0;
     private void Awake()
     {
+        defaultRushTime = Rush_WaitTIme;
         spawnDeltaTime = SpawnTime;
         ShootTimer = defaultShootTImer;
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -427,6 +460,10 @@ public class Monster : MonoBehaviour
                 CheckSpwan();
             }            
         }   
+        if(isRush)
+        {
+            Rush_WaitTIme -= Time.deltaTime;
+        }
     }
     private void FixedUpdate()
     {       
@@ -901,29 +938,54 @@ public class Monster : MonoBehaviour
         isMoveRandom = false;
         RandomSpawn.transform.SetParent(transform);
     }
+    IEnumerator RandomMoveCoRoutine;
+    void CompleteRush()
+    {
+        Rush_WaitTIme = defaultRushTime;
+        iLerp.SearchPath();
+        isStartRush = false;
+    }
+    bool isStartRush = false;
     void MoveTypeChecker()
     {
-        iLerp.speed = moveSpeed;
-        switch (movementType)
+        if (isRush == true && Rush_WaitTIme <= 0)
         {
-            case MovementType.Random:
-                if(isMoveRandom ==false)
-                {                    
-                    StartCoroutine(RandomMoveRoutine());                    
-                }
-                break;
-            case MovementType.Tracking:
-                if(Target ==null)
-                {
-                    iLerp.canMove = false;
-                }
-                else
-                {
-                    iLerp.SearchPath();
-                }                
-                break;
+            if(isStartRush ==false)
+            {
+                transform.DOMove(GameManager.Instance.Player.transform.position, Vector2.Distance(GameManager.Instance.Player.transform.position, transform.position)).SetEase(Ease.OutSine)
+             .OnComplete(CompleteRush);
+                iLerp.canMove = false;
+                CheckPlayerFlip();
+                if (RandomMoveCoRoutine != null)
+                    StopCoroutine(RandomMoveCoRoutine);
+                isStartRush = true;
+            }
+         
         }
-
+        else
+        {
+            iLerp.speed = moveSpeed;
+            switch (movementType)
+            {
+                case MovementType.Random:
+                    if (isMoveRandom == false)
+                    {
+                        RandomMoveCoRoutine = RandomMoveRoutine();
+                        StartCoroutine(RandomMoveCoRoutine);
+                    }
+                    break;
+                case MovementType.Tracking:
+                    if (Target == null)
+                    {
+                        iLerp.canMove = false;
+                    }
+                    else
+                    {
+                        iLerp.SearchPath();
+                    }
+                    break;
+            }
+        }
     }
     void TargetCheck()
     {
@@ -963,55 +1025,82 @@ public class Monster : MonoBehaviour
             Target = attackTarget;
         }
     }
+    void CheckPlayerFlip()
+    {
+      
+        if (GameManager.Instance.Player.transform.position.x < transform.position.x)
+        {
+            //transform.localScale = new Vector3(-1, 1, 1);
+            spriteRenderer.flipX = true;
+            //healthBar.parent.localScale = new Vector3(-1, 1, 1);
+            //healthBarPrev.parent.localScale = new Vector3(-1,1,1);
+        }
+        else
+        {
+            //transform.localScale = new Vector3(1, 1, 1);
+            spriteRenderer.flipX = false;
+            //healthBar.parent.localScale = new Vector3(1, 1, 1);
+            //healthBarPrev.parent.localScale = new Vector3(1, 1, 1);
+        }
+        
+    }
     void CheckFlip()
     {
-        if (Target != null)
+        if(isStartRush)
         {
-            if (Target.transform.position.x < transform.position.x)
-            {
-                //transform.localScale = new Vector3(-1, 1, 1);
-                spriteRenderer.flipX = true;
-                //healthBar.parent.localScale = new Vector3(-1, 1, 1);
-                //healthBarPrev.parent.localScale = new Vector3(-1,1,1);
-            }
-            else
-            {
-                //transform.localScale = new Vector3(1, 1, 1);
-                spriteRenderer.flipX = false; 
-                //healthBar.parent.localScale = new Vector3(1, 1, 1);
-                //healthBarPrev.parent.localScale = new Vector3(1, 1, 1);
-            }
+            CheckPlayerFlip();
         }
-
-        if (AttackTarget != null)
-        {       
-            if (AttackTarget.transform.position.x < transform.position.x)
-            {
-                //transform.localScale = new Vector3(-1, 1, 1);
-                spriteRenderer.flipX = true;
-                //healthBar.parent.localScale = new Vector3(-1, 1, 1);
-                //healthBarPrev.parent.localScale = new Vector3(-1, 1, 1);
-            }
-            else
-            {
-                //transform.localScale = new Vector3(1, 1, 1);
-                spriteRenderer.flipX = false;
-                //healthBar.parent.localScale = new Vector3(1, 1, 1);
-                //healthBarPrev.parent.localScale = new Vector3(1, 1, 1);
-            }
-        }
-
-        if(Target ==null && AttackTarget ==null)
+        else
         {
-            if (RandomMoveVector.x < transform.position.x)
+            if (Target != null)
             {
-                spriteRenderer.flipX = true;  
+                if (Target.transform.position.x < transform.position.x)
+                {
+                    //transform.localScale = new Vector3(-1, 1, 1);
+                    spriteRenderer.flipX = true;
+                    //healthBar.parent.localScale = new Vector3(-1, 1, 1);
+                    //healthBarPrev.parent.localScale = new Vector3(-1,1,1);
+                }
+                else
+                {
+                    //transform.localScale = new Vector3(1, 1, 1);
+                    spriteRenderer.flipX = false;
+                    //healthBar.parent.localScale = new Vector3(1, 1, 1);
+                    //healthBarPrev.parent.localScale = new Vector3(1, 1, 1);
+                }
             }
-            else
+
+            if (AttackTarget != null)
             {
-                spriteRenderer.flipX = false;             
+                if (AttackTarget.transform.position.x < transform.position.x)
+                {
+                    //transform.localScale = new Vector3(-1, 1, 1);
+                    spriteRenderer.flipX = true;
+                    //healthBar.parent.localScale = new Vector3(-1, 1, 1);
+                    //healthBarPrev.parent.localScale = new Vector3(-1, 1, 1);
+                }
+                else
+                {
+                    //transform.localScale = new Vector3(1, 1, 1);
+                    spriteRenderer.flipX = false;
+                    //healthBar.parent.localScale = new Vector3(1, 1, 1);
+                    //healthBarPrev.parent.localScale = new Vector3(1, 1, 1);
+                }
+            }
+
+            if (Target == null && AttackTarget == null)
+            {
+                if (RandomMoveVector.x < transform.position.x)
+                {
+                    spriteRenderer.flipX = true;
+                }
+                else
+                {
+                    spriteRenderer.flipX = false;
+                }
             }
         }
+       
     }
     bool isSpawn =false;
     void CheckSpwan()

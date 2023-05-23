@@ -352,9 +352,13 @@ MonoBehaviour:
   pObject: {fileID: 0}
   MonsterHitDamage: 1
   isStartMonster: 1
+  pattern: 0
   status: 0
+  myPatterns: []
   movementType: 1
   infinityTracking: 1
+  isRush: 0
+  Rush_WaitTIme: 1
   wiatTIme: 1
   MaxWait: 2
   attackType: 0
