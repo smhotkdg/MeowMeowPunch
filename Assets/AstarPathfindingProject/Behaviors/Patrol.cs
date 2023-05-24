@@ -31,7 +31,10 @@ namespace Pathfinding {
 			base.Awake();
 			agent = GetComponent<IAstarAI>();
 		}
-
+        public Transform GetTarget()
+        {
+            return targets[index];
+        }
 		/// <summary>Update is called once per frame</summary>
 		void Update () {
 			if (targets.Length == 0) return;

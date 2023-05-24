@@ -17,6 +17,7 @@ public class Monster : MonoBehaviour
     private readonly int OutLineAlpha = Shader.PropertyToID("_OutlineAlpha");
     public bool isStartMonster = false;
     AIDestinationSetter Aisetter;
+    Patrol patrol_Setter;
     [Title("몬스터 상태")]
     public enum Status
     {
@@ -56,13 +57,10 @@ public class Monster : MonoBehaviour
     {
         None,
         //추적
-        Tracking,
-        //대각선
-        Diagonally,
+        Tracking,        
+        patrol,
         //랜덤
-        Random,
-        //상하좌우
-        UpDown_LeftRight,
+        Random,        
         //두더지
         mole
     }
@@ -74,6 +72,16 @@ public class Monster : MonoBehaviour
     public bool isRush = false;
     [ShowIf("@pattern == Pattern.single &&  isRush == true")]
     public float Rush_WaitTIme= 1f;
+    [ShowIf("@pattern == Pattern.single &&  isRush == true")]
+    public float RushSpeed = 1f;
+
+    [ShowIf("movementType", MovementType.patrol)]
+    public float PatrolWaitTime =1f;
+    [ShowIf("movementType", MovementType.patrol)]
+    public float PatrolDelay = 1f;
+
+    [ShowIf("movementType", MovementType.patrol)]
+    public Transform[] PatrolList;
 
     [ShowIf("movementType", MovementType.Random)]
     public float wiatTIme = 0.2f;
@@ -208,6 +216,7 @@ public class Monster : MonoBehaviour
         capsuleCollider = GetComponent<CapsuleCollider2D>();
         material = GetComponent<SpriteRenderer>().material;
         Aisetter = GetComponent<AIDestinationSetter>();
+        patrol_Setter = GetComponent<Patrol>();
         iLerp = GetComponent<AILerp>();
         CheckMoveRoutine = CheckMoveCoRoutine();
         StartCoroutine(CheckMoveRoutine);
@@ -439,13 +448,17 @@ public class Monster : MonoBehaviour
         }        
         isKnockback = false;  
     }
+    private void LateUpdate()
+    {
+        CheckFlip();
+    }
     private void Update()
     {
         if (isStartMonster == false)
             return;
         TargetCheck();
         MoveObject();
-        CheckFlip();
+        
         CheckStatus();
         //UpdateBulletPos();
         FindAttackTarget();
@@ -923,6 +936,7 @@ public class Monster : MonoBehaviour
         RandomSpawn.transform.SetParent(transform.parent);
         RandomSpawn.transform.position = randomPoint;        
         Aisetter.target = RandomSpawn.transform;
+        Target = RandomSpawn;
         float endWiat = MaxWait;
         while (!iLerp.reachedDestination)
         {
@@ -939,11 +953,34 @@ public class Monster : MonoBehaviour
         RandomSpawn.transform.SetParent(transform);
     }
     IEnumerator RandomMoveCoRoutine;
-    void CompleteRush()
+    IEnumerator PatrolCoRoutine;
+    IEnumerator RushRoutine()
     {
+        // 여기를 러쉬 로
+        Vector3 pos = GameManager.Instance.Player.transform.position;    
+        NNInfo info = AstarPath.active.GetNearest(pos);
+        GraphNode node = info.node;        
+        iLerp.speed = RushSpeed;     
+        RandomSpawn.transform.SetParent(transform.parent);
+        RandomSpawn.transform.position = pos;
+        Aisetter.target = RandomSpawn.transform;
+        float endWiat = MaxWait;
+        while (!iLerp.reachedDestination)
+        {
+            endWiat -= Time.deltaTime;
+            iLerp.SearchPath();
+            if (endWiat <= 0)
+            {
+                break;
+            }
+            yield return null;
+        }
+        yield return new WaitForSeconds(wiatTIme);        
+        RandomSpawn.transform.SetParent(transform);
+        //
         Rush_WaitTIme = defaultRushTime;
         iLerp.SearchPath();
-        isStartRush = false;
+        isStartRush = false;        
     }
     bool isStartRush = false;
     void MoveTypeChecker()
@@ -952,12 +989,24 @@ public class Monster : MonoBehaviour
         {
             if(isStartRush ==false)
             {
-                transform.DOMove(GameManager.Instance.Player.transform.position, Vector2.Distance(GameManager.Instance.Player.transform.position, transform.position)).SetEase(Ease.OutSine)
-             .OnComplete(CompleteRush);
-                iLerp.canMove = false;
+                //   transform.DOMove(GameManager.Instance.Player.transform.position, Vector2.Distance(GameManager.Instance.Player.transform.position, transform.position)).SetEase(Ease.OutSine)
+                //.OnComplete(CompleteRush);
+                StartCoroutine(RushRoutine());
+                //iLerp.canMove = false;
                 CheckPlayerFlip();
                 if (RandomMoveCoRoutine != null)
+                {
                     StopCoroutine(RandomMoveCoRoutine);
+                    isMoveRandom = false;
+                }
+                if(PatrolCoRoutine !=null)
+                {
+                    Aisetter.enabled = true;
+                    patrol_Setter.enabled = false;
+                    StopCoroutine(PatrolCoRoutine);
+                    isStartPatrol = false;
+                }
+                    
                 isStartRush = true;
             }
          
@@ -967,7 +1016,13 @@ public class Monster : MonoBehaviour
             iLerp.speed = moveSpeed;
             switch (movementType)
             {
+                case MovementType.None:
+                    Aisetter.enabled = true;
+                    patrol_Setter.enabled = false;
+                    break;
                 case MovementType.Random:
+                    Aisetter.enabled = true;
+                    patrol_Setter.enabled = false;
                     if (isMoveRandom == false)
                     {
                         RandomMoveCoRoutine = RandomMoveRoutine();
@@ -975,6 +1030,8 @@ public class Monster : MonoBehaviour
                     }
                     break;
                 case MovementType.Tracking:
+                    Aisetter.enabled = true;
+                    patrol_Setter.enabled = false;
                     if (Target == null)
                     {
                         iLerp.canMove = false;
@@ -984,8 +1041,50 @@ public class Monster : MonoBehaviour
                         iLerp.SearchPath();
                     }
                     break;
+                case MovementType.patrol:
+                    if(isStartPatrol ==false)
+                    {
+                        PatrolCoRoutine = PatrolRoutine();
+                        StartCoroutine(PatrolCoRoutine);
+                    }
+                    
+                    break;
             }
         }
+    }
+    bool isStartPatrol = false;
+    
+    IEnumerator PatrolRoutine()
+    {
+        Aisetter.enabled = false;
+        patrol_Setter.enabled = true;
+        isStartPatrol = true;
+        if (PatrolList.Length >0)
+        {
+            patrol_Setter.delay = PatrolDelay;
+            patrol_Setter.targets = PatrolList;
+            
+            yield return new WaitForSeconds(PatrolWaitTime);              
+            
+            while (!iLerp.reachedDestination)
+            {                
+                iLerp.SearchPath();
+                Target = patrol_Setter.GetTarget().gameObject;
+                if (iLerp.reachedDestination)
+                {
+                    break;
+                }
+                yield return null;
+            }
+            Target = null;
+            yield return new WaitForSeconds(0.1f);                      
+            iLerp.SearchPath();            
+        }
+        
+        isStartPatrol = false;
+        Aisetter.enabled = true;
+        patrol_Setter.enabled = false;
+  
     }
     void TargetCheck()
     {
@@ -1090,14 +1189,14 @@ public class Monster : MonoBehaviour
 
             if (Target == null && AttackTarget == null)
             {
-                if (RandomMoveVector.x < transform.position.x)
-                {
-                    spriteRenderer.flipX = true;
-                }
-                else
-                {
-                    spriteRenderer.flipX = false;
-                }
+                //if (RandomMoveVector.x < transform.position.x)
+                //{
+                //    spriteRenderer.flipX = true;
+                //}
+                //else
+                //{
+                //    spriteRenderer.flipX = false;
+                //}
             }
         }
        

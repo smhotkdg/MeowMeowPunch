@@ -1009,6 +1009,7 @@ GameObject:
   - component: {fileID: 5637707811707859272}
   - component: {fileID: 5637707811707859275}
   - component: {fileID: 780456804422755261}
+  - component: {fileID: -5508631386364044556}
   m_Layer: 27
   m_Name: WalkingGut
   m_TagString: Monster
@@ -1189,9 +1190,17 @@ MonoBehaviour:
   pObject: {fileID: 0}
   MonsterHitDamage: 1
   isStartMonster: 1
+  pattern: 0
   status: 0
+  myPatterns: []
   movementType: 0
   infinityTracking: 1
+  isRush: 0
+  Rush_WaitTIme: 1
+  RushSpeed: 1
+  PatrolWaitTime: 1
+  PatrolDelay: 1
+  PatrolList: []
   wiatTIme: 1
   MaxWait: 2
   attackType: 4
@@ -1315,6 +1324,21 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &-5508631386364044556
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6780726692564950428}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22e6c29e32504465faa943c537d8029b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 1
+  targets: []
+  delay: 1
 --- !u!1 &6780726693432064556
 GameObject:
   m_ObjectHideFlags: 0
