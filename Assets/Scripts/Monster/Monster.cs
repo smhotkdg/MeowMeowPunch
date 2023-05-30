@@ -18,6 +18,8 @@ public class Monster : MonoBehaviour
     public bool isStartMonster = false;
     AIDestinationSetter Aisetter;
     Patrol patrol_Setter;
+    [Title("비행")]
+    public bool isFly = false;
     [Title("몬스터 상태")]
     public enum Status
     {
@@ -60,8 +62,8 @@ public class Monster : MonoBehaviour
         Tracking,        
         patrol,
         //랜덤
-        Random,        
-        //두더지
+        Random,
+        Reflect,
         mole
     }
     [ShowIf("pattern", Pattern.single)]
@@ -454,6 +456,7 @@ public class Monster : MonoBehaviour
     }
     private void Update()
     {
+
         if (isStartMonster == false)
             return;
         TargetCheck();
@@ -476,6 +479,10 @@ public class Monster : MonoBehaviour
         if(isRush)
         {
             Rush_WaitTIme -= Time.deltaTime;
+        }
+        if(movementType == MovementType.Reflect)
+        {            
+            transform.position = Vector2.MoveTowards(transform.position, RandomSpawn.transform.position, moveSpeed * Time.deltaTime);
         }
     }
     private void FixedUpdate()
@@ -889,7 +896,19 @@ public class Monster : MonoBehaviour
         {            
             collision.gameObject.GetComponent<PlayerController>().Knockback(transform.position,-MonsterHitDamage);
         }
+        if(movementType == MovementType.Reflect)
+        {
+            Vector3 dir = Vector3.Reflect(iLerp.velocity, collision.GetContact(0).normal);
+            dir = dir * 10;
+            RandomSpawn.transform.position = dir;            
+        }        
     }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        
+    }
+
     void MoveObject()
     {
         MoveTypeChecker();        
@@ -1046,11 +1065,36 @@ public class Monster : MonoBehaviour
                     {
                         PatrolCoRoutine = PatrolRoutine();
                         StartCoroutine(PatrolCoRoutine);
-                    }
-                    
+                    }                    
+                    break;
+                case MovementType.Reflect:
+                    if(bStartReflect ==false)
+                    {                        
+                        Aisetter.enabled = false;
+                        patrol_Setter.enabled = false;
+                        StartReflect();
+                        bStartReflect = true;
+                    }                 
+                    //iLerp.SearchPath();                    
                     break;
             }
         }
+    }
+    
+    
+    bool bStartReflect = false;
+    public void StartReflect()
+    {        
+        Vector3 pos = transform.position;
+        pos.x += UnityEngine.Random.Range(-50f, 50f);
+        pos.y += UnityEngine.Random.Range(-50f, 50f);
+
+        RandomMoveVector = pos;
+        RandomSpawn.transform.SetParent(transform.parent);
+        RandomSpawn.transform.position = pos;
+        Aisetter.target = RandomSpawn.transform;
+        Target = RandomSpawn;
+        //iLerp.SearchPath();
     }
     bool isStartPatrol = false;
     
