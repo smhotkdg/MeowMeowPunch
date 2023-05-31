@@ -31,7 +31,8 @@ public class DungeonController : MonoBehaviour
         }
     }
     public void SetInitDoor()
-    {        
+    {
+        IsOpen = false;
         for (int i = 0; i < DoorList.Count; i++)
         {            
             if (DoorList[i].gameObject.transform.parent.GetComponent<Rule>().NextMap != null)
@@ -159,8 +160,8 @@ public class DungeonController : MonoBehaviour
             if(doorOpen ==false)
             {
                 DoorOpen();
-            }
-        }
+            }            
+        }    
         if(GameManager.Instance.isVisibleMap)
         {
             MinimapGFX.SetActive(true);
