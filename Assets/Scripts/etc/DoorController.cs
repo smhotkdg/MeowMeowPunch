@@ -10,16 +10,22 @@ public class DoorController : MonoBehaviour
     {
         animator = GetComponent<Animator>();
     }
+    public bool isItem = false;
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        if (isItem == false)
+            return;
         if(collision.gameObject.tag =="Player")
-        {
+        {            
             if(GameManager.Instance.Key >=1)
-            {
+            {                
                 GameManager.Instance.Key -= 1;
                 UIManager.Instance.SetKeyText();
-                animator.SetTrigger("Open");
-                Orther.SetTrigger("Open");
+                //animator.SetTrigger("Open");
+                animator.Play("Open");
+                //Orther.SetTrigger("Open");
+                Orther.Play("Open");
+                //여기 열쇠 몇번 가져가는지 확인                
             }
         }
     }

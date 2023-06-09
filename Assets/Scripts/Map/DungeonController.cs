@@ -18,7 +18,7 @@ public class DungeonController : MonoBehaviour
     GameObject ItemObject;
     public bool isMakeLootbox = false;
 
-    public List<Animator> DoorList;
+    public List<Animator> DoorList; 
     private void OnEnable()
     {
         IsOpen = false;
@@ -39,8 +39,10 @@ public class DungeonController : MonoBehaviour
             {
                 if (DoorList[i].gameObject.transform.parent.GetComponent<Rule>().NextMap.name == "ItemRoom")
                 {
-                    DoorList[i].SetTrigger("Close");
+                    //DoorList[i].SetTrigger("Close");
+                    DoorList[i].Play("Close");
                     DoorList[i].gameObject.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0);
+                    DoorList[i].GetComponent<DoorController>().isItem = true;
                 }
             }
         }
@@ -59,8 +61,8 @@ public class DungeonController : MonoBehaviour
         {
             for (int i = 0; i < DoorList.Count; i++)
             {
-                DoorList[i].Play("init");
-                DoorList[i].SetTrigger("Close");
+                DoorList[i].Play("Close");
+                //DoorList[i].SetTrigger("Close");
             }
         }
       
@@ -136,7 +138,8 @@ public class DungeonController : MonoBehaviour
             {
                 if (DoorList[i].gameObject.transform.parent.GetComponent<Rule>().NextMap.name != "ItemRoom")
                 {
-                    DoorList[i].SetTrigger("Open");
+                    //DoorList[i].SetTrigger("Open");
+                    DoorList[i].Play("Open");
                 }                    
             }
         }

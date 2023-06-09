@@ -17,7 +17,8 @@ public class PositionRendererSorter : MonoBehaviour
     }
     private void LateUpdate()
     {
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        //spriteRenderer = GetComponent<SpriteRenderer>();
         spriteRenderer.sortingOrder = transform.GetSortingOrder();
+        
     }
 }
