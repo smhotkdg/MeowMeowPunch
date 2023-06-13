@@ -5,7 +5,7 @@ namespace DungeonMaker
 {
 	[ExecuteInEditMode]
 	public class Rule : MonoBehaviour
-	{        
+	{             
         public GameObject InitPos;
         public GameObject NextPosition;
         public GameObject NextMap;

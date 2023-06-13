@@ -6,6 +6,14 @@ using UnityEngine;
 
 public class DungeonController : MonoBehaviour
 {
+    public enum RoomType
+    {
+        Noraml,
+        Item,
+        Boss,
+        Shop
+    }
+    public RoomType roomType = RoomType.Noraml;
     //public bool isInit = false;
     public double weight;
     public GameObject MinimapGFX;
@@ -17,19 +25,25 @@ public class DungeonController : MonoBehaviour
     GameObject NextRoomObejct;
     GameObject ItemObject;
     public bool isMakeLootbox = false;
-
-    public List<Animator> DoorList; 
+        
+    public List<Animator> DoorList;
+    [SerializeField]
+    List<int> RoomIndex = new List<int>();
     private void OnEnable()
     {
+        RoomIndex.Clear();
         IsOpen = false;
         isMakeChest = false;
         doorOpen = true;
         FindAllMonsters();
         for (int i = 0; i < DoorList.Count; i++)
         {
-            DoorList[i].Play("init");                   
+            DoorList[i].Play("init");
+            RoomIndex.Add(0);
         }
+      
     }
+
     public void SetInitDoor()
     {
         IsOpen = false;
@@ -39,14 +53,29 @@ public class DungeonController : MonoBehaviour
             {
                 if (DoorList[i].gameObject.transform.parent.GetComponent<Rule>().NextMap.name == "ItemRoom")
                 {
-                    //DoorList[i].SetTrigger("Close");
-                    DoorList[i].Play("Close");
-                    DoorList[i].gameObject.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0);
+                    RoomIndex[i] = (int)RoomType.Item;
+                    //DoorList[i].Play("Treasure_Close");                    
                     DoorList[i].GetComponent<DoorController>().isItem = true;
+                }
+                else if (DoorList[i].gameObject.transform.parent.GetComponent<Rule>().NextMap.name == "Boss")
+                {
+                    RoomIndex[i] = (int)RoomType.Boss;
+                    //DoorList[i].Play("Boss_Close");                    
+                }
+                else if (DoorList[i].gameObject.transform.parent.GetComponent<Rule>().NextMap.name == "Shop")
+                {
+                    RoomIndex[i] = (int)RoomType.Shop;
+                    //DoorList[i].Play("Shop_Close");                    
+                }
+                else
+                {
+                    RoomIndex[i] = (int)RoomType.Noraml;
+                    //DoorList[i].Play("Close");                    
                 }
             }
         }
         doorOpen = false;
+        
     }
 
 
@@ -61,7 +90,42 @@ public class DungeonController : MonoBehaviour
         {
             for (int i = 0; i < DoorList.Count; i++)
             {
-                DoorList[i].Play("Close");
+                
+                if (roomType == RoomType.Noraml)
+                {
+                    if(RoomIndex[i] == (int)RoomType.Shop)
+                    {
+                        DoorList[i].Play("Shop_Close");
+                    }
+                    else if(RoomIndex[i] == (int)RoomType.Item)
+                    {
+                        DoorList[i].Play("Treasure_Close");
+                    }
+                    else if(RoomIndex[i] == (int)RoomType.Boss)
+                    {
+                        DoorList[i].Play("Boss_Close");
+                    }
+                    else
+                    {
+                        DoorList[i].Play("Close");
+                    }
+                    
+                }
+                else
+                {
+                    switch (roomType)
+                    {
+                        case RoomType.Boss:
+                            DoorList[i].Play("Boss_Close");
+                            break;
+                        case RoomType.Item:
+                            DoorList[i].Play("Treasure_Close");
+                            break;
+                        case RoomType.Shop:
+                            DoorList[i].Play("Shop_Close");
+                            break;
+                    }
+                }
                 //DoorList[i].SetTrigger("Close");
             }
         }
@@ -139,7 +203,40 @@ public class DungeonController : MonoBehaviour
                 if (DoorList[i].gameObject.transform.parent.GetComponent<Rule>().NextMap.name != "ItemRoom")
                 {
                     //DoorList[i].SetTrigger("Open");
-                    DoorList[i].Play("Open");
+                    if(roomType == RoomType.Noraml)
+                    {
+                        if (RoomIndex[i] == (int)RoomType.Shop)
+                        {
+                            DoorList[i].Play("Shop_Open");
+                        }
+                        else if (RoomIndex[i] == (int)RoomType.Item)
+                        {
+                            DoorList[i].Play("Treasure_Open");
+                        }
+                        else if (RoomIndex[i] == (int)RoomType.Boss)
+                        {
+                            DoorList[i].Play("Boss_Open");
+                        }
+                        else
+                        {
+                            DoorList[i].Play("Open");
+                        }
+                    }
+                    else
+                    {
+                        switch (roomType)
+                        {
+                            case RoomType.Boss:
+                                DoorList[i].Play("Boss_Open");
+                                break;
+                            case RoomType.Item:
+                                DoorList[i].Play("Treasure_Open");
+                                break;
+                            case RoomType.Shop:
+                                DoorList[i].Play("Shop_Open");
+                                break;
+                        }
+                    }
                 }                    
             }
         }

@@ -22,9 +22,9 @@ public class DoorController : MonoBehaviour
                 GameManager.Instance.Key -= 1;
                 UIManager.Instance.SetKeyText();
                 //animator.SetTrigger("Open");
-                animator.Play("Open");
+                animator.Play("Treasure_Open");
                 //Orther.SetTrigger("Open");
-                Orther.Play("Open");
+                Orther.Play("Treasure_Open");
                 //여기 열쇠 몇번 가져가는지 확인                
             }
         }

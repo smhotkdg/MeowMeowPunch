@@ -50,7 +50,7 @@ public class MapMaker : MonoBehaviour
     DungeonObject dungeonObject;
     IEnumerator MapMakeRoutine()
     {
-        yield return new WaitForSecondsRealtime(0.5f);
+        yield return new WaitForSecondsRealtime(0.15f);
         int roomCount = 0;
         int connectCnt = 0;
         for (int i = 0; i < dungeonObject.Rooms.Count; i++)
@@ -183,8 +183,12 @@ public class MapMaker : MonoBehaviour
             }
         }
         for (int i = 0; i < dungeonObject.Rooms.Count; i++)
-        {
+        {            
             dungeonObject.Rooms[i].gameObject.GetComponent<DungeonController>().SetInitDoor();
+            if (dungeonObject.Rooms[i].name == "Spawn")
+            {
+                dungeonObject.Rooms[i].gameObject.GetComponent<DungeonController>().StartMonster();
+            }
         }
     }
     private void Generator_OnGeneratorFinish(DungeonObject d)
