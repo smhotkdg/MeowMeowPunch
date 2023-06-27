@@ -16,7 +16,10 @@ MonoBehaviour:
   color: {r: 1, g: 1, b: 1, a: 1}
   rooms:
     DEFAULT:
+    - {fileID: 4836527644882707631, guid: dc8654f5befa1b342943fd845ddd5388, type: 3}
     - {fileID: 4836527644882707631, guid: a937d9caf94ed8047b54fd42d60a2bed, type: 3}
+    - {fileID: 4836527644882707631, guid: 755265d2f6811b54b80898e21b8e320a, type: 3}
+    - {fileID: 5994089551100045481, guid: 205eb25203c26b442b0bff6f90cde4bf, type: 3}
     TBLR: []
     TB: []
     LR: []

@@ -6,6 +6,10 @@ using Sirenix.OdinInspector;
 
 public class Item : MonoBehaviour
 {
+    public int cost = -1;
+
+    public bool isAdsItem = false; 
+    public bool isShopItem = false;
     public ItemController itemController;
     public List<int> getList = new List<int>();
     public int item_code;
@@ -53,6 +57,10 @@ public class Item : MonoBehaviour
         }
         
     }
+    private void OnDisable()
+    {
+        cost = -1;
+    }
     public void GetItem()
     {
         itemController.GetItem(GetComponent<Item>());
@@ -63,7 +71,14 @@ public class Item : MonoBehaviour
         if(collision.tag == "Player")
         {
             //GetItem();
-            UIManager.Instance.ShowItemPanel(GetComponent<Item>());
+            if(isShopItem ==false)
+            {
+                UIManager.Instance.ShowItemPanel(GetComponent<Item>());
+            }
+            else
+            {
+                UIManager.Instance.ShowShopItemPanel(GetItemPanel.ShopItemType.item, GetComponent<Item>(),cost);
+            }
         }
     }
 }

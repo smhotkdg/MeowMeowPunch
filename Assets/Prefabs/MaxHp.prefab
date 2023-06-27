@@ -67,9 +67,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 328d8d5a9db86fc46a2ccabb1c355d88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isBounce: 1
   maxBounce: 20
   xForce: 0.3
-  yForce: 7
+  yForce: 5
   gravity: 0.2
   isGrounded: 1
   sprite: {fileID: 8587591167327457523}
@@ -101,6 +102,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6972aa9474d5bac478f985043eab746c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cost: -1
+  isShopItem: 0
   TriggerObject: {fileID: 689403262035430052}
   itemType: 3
   ItemCount: 2
@@ -119,7 +122,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 0.001
+  m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 0
@@ -205,6 +208,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6972aa9474d5bac478f985043eab746c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cost: -1
+  isShopItem: 0
   TriggerObject: {fileID: 689403262035430052}
   itemType: 3
   ItemCount: 2

@@ -5,7 +5,7 @@ using UnityEngine.Events;
 
 public class BounceDue : MonoBehaviour
 {
-    
+    public bool isBounce = true;
     public int maxBounce;
     public float xForce;
     public float yForce;
@@ -68,16 +68,23 @@ public class BounceDue : MonoBehaviour
     }
     private void OnEnable()
     {
-        
+        if(isBounce ==false)
+        {
+            return;
+        }
         isMovePlayer = false;
         currentBounce = 0;
         currentHeight = Random.Range(yForce - 1, yForce);
         maxHeight = currentHeight;
         Initialize(new Vector2(Random.Range(-xForce, xForce), Random.Range(-xForce, xForce)));
         shadow.localScale = Vector2.one;
-    }
-    private void Update()
+    }   
+    private void FixedUpdate()
     {
+        if(isBounce ==false)
+        {
+            return;
+        }
         if(!isGrounded)
         {
             currentHeight += -gravity + Time.deltaTime;

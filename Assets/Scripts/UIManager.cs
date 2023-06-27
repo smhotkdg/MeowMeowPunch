@@ -5,12 +5,18 @@ using DamageNumbersPro;
 using UnityEngine.UI;
 public class UIManager : MonoBehaviour
 {
-    public Text KyeText;
+    public GameObject LobyUI;
+    public GameObject GameUI;
+    public Text GoldText;
+    public Text KeyText;
     public GameObject GetItemPanelObject;
+    public GameObject ShopItemPanelObject;
     public DamageNumber DamageNumberObject;
+
     private static UIManager _instance = null;
 
     public List<GameObject> HpList;
+
     public static UIManager Instance
     {
         get
@@ -69,11 +75,45 @@ public class UIManager : MonoBehaviour
 
     public void SetKeyText()
     {
-        KyeText.text = "+ " + GameManager.Instance.Key.ToString("N0");
+        KeyText.text = "+ " + GameManager.Instance.Key.ToString("N0");
+    }
+    public void SetGoldText()
+    {
+        GoldText.text = "+ " + GameManager.Instance.Coin.ToString("N0");
+    }
+    public void SetLobyUI()
+    {
+        LobyUI.SetActive(true);
+        GameUI.SetActive(false);
+    }
+    public void SetGameUI()
+    {
+        LobyUI.SetActive(false);
+        GameUI.SetActive(true);
     }
     public void ShowItemPanel(Item _item)
     {
         GetItemPanelObject.SetActive(true);
         GetItemPanelObject.GetComponent<GetItemPanel>().setData(_item);
     }
+    public void ShowShopItemPanel(GetItemPanel.ShopItemType shopItemType, Item item,int cost,GameObject SelectObj =null)
+    {
+        ShopItemPanelObject.SetActive(true);
+        if(item !=null)
+        {
+            ShopItemPanelObject.GetComponent<GetItemPanel>().setData(item, cost);
+        }
+        else
+        {
+            if(shopItemType == GetItemPanel.ShopItemType.Hp)
+            {
+                ShopItemPanelObject.GetComponent<GetItemPanel>().SetHp(SelectObj,cost);
+            }
+            if (shopItemType == GetItemPanel.ShopItemType.key)
+            {
+                ShopItemPanelObject.GetComponent<GetItemPanel>().SetKey(SelectObj,cost);
+            }
+        }
+    }
+ 
 }

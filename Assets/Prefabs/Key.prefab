@@ -72,8 +72,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 47421343
-  m_SortingLayer: 4
+  m_SortingLayerID: 1603220759
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: 7060903738108527876, guid: d394b1a44b2a8fd4a974c710479bbeb3,
     type: 3}
@@ -181,9 +181,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 328d8d5a9db86fc46a2ccabb1c355d88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isBounce: 1
   maxBounce: 20
   xForce: 0.3
-  yForce: 7
+  yForce: 5
   gravity: 0.2
   isGrounded: 1
   sprite: {fileID: 6966896944778912173}
@@ -215,6 +216,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6972aa9474d5bac478f985043eab746c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cost: -1
+  isShopItem: 0
   TriggerObject: {fileID: 2519132945384784861}
   itemType: 2
   ItemCount: 1
@@ -233,7 +236,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 0.001
+  m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 0
@@ -319,6 +322,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6972aa9474d5bac478f985043eab746c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cost: -1
+  isShopItem: 0
   TriggerObject: {fileID: 2519132945384784861}
   itemType: 2
   ItemCount: 1
@@ -418,8 +423,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 1603220759
-  m_SortingLayer: 3
+  m_SortingLayerID: -1998343457
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: 7060903738108527876, guid: d394b1a44b2a8fd4a974c710479bbeb3,
     type: 3}

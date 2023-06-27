@@ -11,6 +11,8 @@ public class GetItemController : MonoBehaviour
         key,
         MaxHp
     }
+    public int cost =-1;
+    public bool isShopItem = false;
     public GameObject TriggerObject;
     public GetItemType itemType = GetItemType.coin;
     public int ItemCount = 1;
@@ -22,14 +24,20 @@ public class GetItemController : MonoBehaviour
     {
         
     }
-
+    private void OnDisable()
+    {
+        cost = -1;
+    }
     private void OnEnable()
     {
         canGet = 0.5f;        
     }
     private void FixedUpdate()
     {
-
+        if(isShopItem)
+        {
+            return;
+        }
         canGet -= Time.deltaTime;
         if(canGet <=0)
         {
@@ -41,6 +49,7 @@ public class GetItemController : MonoBehaviour
             TriggerObject.transform.localPosition = new Vector3(0, 0, 0);
         }
     }
+    
 
     public void OnCollisionEnter2D(Collision2D collision)
     {
@@ -52,8 +61,11 @@ public class GetItemController : MonoBehaviour
         }
         if (collision.gameObject.tag =="Player")
         {
-            GetItme();             
-
+            if(isShopItem==false)
+            {
+                GetItme();
+            }
+            
         }
     }
     private void OnCollisionStay2D(Collision2D collision)
@@ -66,8 +78,11 @@ public class GetItemController : MonoBehaviour
         }
         if (collision.gameObject.tag == "Player")
         {
-            GetItme();
-            
+            if (isShopItem == false)
+            {
+                GetItme();
+            }          
+
         }
     }
     private void OnTriggerStay2D(Collider2D collision)
@@ -80,20 +95,42 @@ public class GetItemController : MonoBehaviour
         }
         if (collision.gameObject.tag == "Player")
         {
-            GetItme();            
+            if (isShopItem == false)
+            {
+                GetItme();
+            }
+          
         }
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (isShopItem)
+        {
+            if (MapMaker.Instance.isMakeEnd ==false)
+                return;
+            if (itemType == GetItemType.Hp)
+            {
+                UIManager.Instance.ShowShopItemPanel(GetItemPanel.ShopItemType.Hp, null, cost,this.gameObject);
+            }
+            if (itemType == GetItemType.key)
+            {
+                UIManager.Instance.ShowShopItemPanel(GetItemPanel.ShopItemType.key, null, cost,this.gameObject);
+            }
+        }
         if (isTrigger != GameManager.Instance.playerController.isFly)
             return;
+       
         if (canGet > 0)
         {
             return;
         }
         if (collision.gameObject.tag == "Player")
         {
-            GetItme();            
+            if (isShopItem == false)
+            {
+                GetItme();
+            }
+           
         }
     }
 

@@ -10,6 +10,13 @@ using EZ_Pooling;
 
 public class Monster : MonoBehaviour
 {
+    public enum MonsterParticleType {
+        Mechanic,
+        Creature
+    }    
+    public MonsterParticleType particleType = MonsterParticleType.Creature;
+
+    public RangeSpawner rangeSpawner;
     public bool IsAnimationAttack = true;
     public GameObject pObject;
     public int MonsterHitDamage = 1;
@@ -29,13 +36,91 @@ public class Monster : MonoBehaviour
         Fascination,
         Stren
     }
+    public enum BossAttackType
+    {
+        Idle,
+        Missile_Attack,
+        Jump,
+        Missile_Idle,
+        Dash
+    }    
+    public enum BossMissileType
+    {
+        None,
+        //미사일
+        missile,
+        patternMissile,
+        //장판
+        Floor,
+        SpawnMonster,
+        Random,
+    }
+    public enum BossPatternType
+    {
+        cross,
+        directions_6,
+        directions_8
+    }
     [Serializable]
     public class MyPattern_Movement
-    {
+    {        
         [TableList]
-        public MovementType movementTypes;
-        [TableList]        
-        public float Value;
+        public BossAttackType Types;
+        public bool isWaitRand = false;
+        [TableList]
+        [ShowIf("@isWaitRand == true")]
+        public float Min_WaitTime;
+        [TableList]
+        [ShowIf("@isWaitRand == true")]
+        public float Max_WaitTime;
+
+        [ShowIf("Types", BossAttackType.Missile_Attack)]
+        public BossMissileType attackType;
+
+        [ShowIf("attackType", BossAttackType.Missile_Attack)]
+        public bool isRandomAttack = false;
+        [ShowIf("attackType", BossMissileType.missile)]
+        public int BulletCount = 1;
+        [ShowIf("@(BulletCount >1 && attackType == BossMissileType.missile) || attackType == BossMissileType.patternMissile")]
+        public bool isSIngleWay = false;
+        [ShowIf("@(BulletCount >1 && attackType == BossMissileType.missile) || attackType == BossMissileType.patternMissile")]
+        public float DealyEachBullet = 0.1f;
+        [ShowIf("Types", BossAttackType.Missile_Attack)]
+        public int BulletRange = 30;
+        [ShowIf("Types", BossAttackType.Missile_Attack)]        
+        public List<Transform> BulletPosList;
+        [ShowIf("@attackType == BossMissileType.missile || attackType == BossMissileType.patternMissile || attackType == BossMissileType.Random")]
+        public float Shootspeed = 1;
+
+        [ShowIf("@attackType == BossMissileType.missile || attackType == BossMissileType.patternMissile || attackType == BossMissileType.Random")]
+        public int MonsterBulletDamage = 1;
+
+        [ShowIf("@attackType ==BossMissileType.missile || attackType == BossMissileType.patternMissile || attackType == BossMissileType.Random")]
+        public Transform Bullet;
+        //[ShowIf("@attackType == AttackType.Missile || attackType == AttackType.patternMissile")]
+
+        [ShowIf("@attackType == BossMissileType.missile || attackType == BossMissileType.patternMissile")]
+        public float defaultShootTImer;
+        [ShowIf("attackType", AttackType.Missile)]
+        public GameObject GunObject;
+        [ShowIf("@attackType == BossMissileType.missile || attackType == BossMissileType.patternMissile")]
+        public bool InfinityAttack = false;
+        [ShowIf("@attackType == BossMissileType.missile || attackType == BossMissileType.patternMissile")]
+        public bool dontNeedTarget = false;
+        [ShowIf("@attackType == BossMissileType.Random")]
+        public float RandomWaitTime = 0.1f;
+
+        [ShowIf("attackType",BossMissileType.patternMissile)]
+        public BossPatternType patternType = BossPatternType.cross;
+
+        [ShowIf("attackType", BossMissileType.Random)]
+        public int randomShootCount = 10;
+
+        [ShowIf("@Types == BossAttackType.Dash")]
+        public float Rush_WaitTIme = 1f;
+        [ShowIf("@Types == BossAttackType.Dash")]
+        public float RushSpeed = 1f;
+
     }
    
 
@@ -48,10 +133,12 @@ public class Monster : MonoBehaviour
     public Pattern pattern = Pattern.single;
     public Status status = Status.Normal;
 
-
+    [Title("보스 몬스터")]
+    public bool isBossMonster = false;
     [Title("패턴 리스트")]
     [ShowIf("pattern", Pattern.Combination)]
     [Searchable]
+    [ListDrawerSettings(ShowIndexLabels =true,ShowPaging =true,Expanded =true,ShowItemCount =true)]
     public List<MyPattern_Movement> myPatterns;
 
     [Title("이동 타입")]
@@ -86,7 +173,7 @@ public class Monster : MonoBehaviour
     public Transform[] PatrolList;
 
     [ShowIf("movementType", MovementType.Random)]
-    public float wiatTIme = 0.2f;
+    public float waitTIme = 0.2f;
     [ShowIf("movementType", MovementType.Random)]
     public float MaxWait = 2f;
 
@@ -100,6 +187,7 @@ public class Monster : MonoBehaviour
         //장판
         Floor,
         SpawnMonster,
+        Random,
     }
     public enum PatternType
     {
@@ -201,12 +289,12 @@ public class Monster : MonoBehaviour
     AILerp iLerp;
     GameObject RandomSpawn;
     float spawnDeltaTime;
-    SpriteRenderer spriteRenderer;
+    public SpriteRenderer spriteRenderer;
     IEnumerator CheckMoveRoutine;
 
-    float defaultRushTime =0;
+    float defaultRushTime =0;    
     private void Awake()
-    {
+    {        
         defaultRushTime = Rush_WaitTIme;
         spawnDeltaTime = SpawnTime;
         ShootTimer = defaultShootTImer;
@@ -221,7 +309,7 @@ public class Monster : MonoBehaviour
         patrol_Setter = GetComponent<Patrol>();
         iLerp = GetComponent<AILerp>();
         CheckMoveRoutine = CheckMoveCoRoutine();
-        StartCoroutine(CheckMoveRoutine);
+        StartCoroutine(CheckMoveRoutine);        
     }
     private void OnDisable()
     {
@@ -255,7 +343,9 @@ public class Monster : MonoBehaviour
     }
     private void OnEnable()
     {
+        isStartBoss = false;
         isStartMonster = false;
+        bossPatternIndex = 0;
     }
     [Button]
     public void SetHP()
@@ -454,11 +544,220 @@ public class Monster : MonoBehaviour
     {
         CheckFlip();
     }
+    IEnumerator BossRandomWaitRoutine()
+    {
+        yield return new WaitForSeconds(UnityEngine.Random.Range(myPatterns[bossPatternIndex].Min_WaitTime, myPatterns[bossPatternIndex].Max_WaitTime));
+        bossPatternIndex++;
+        BossMonsterPattern();
+    }
+    GameObject BossShadow;
+    bool followPlayer = false;
+    IEnumerator BossJumpRoutine()
+    {
+        yield return new WaitForSeconds(UnityEngine.Random.Range(myPatterns[bossPatternIndex].Min_WaitTime, myPatterns[bossPatternIndex].Max_WaitTime));
+        healthBar.transform.parent.gameObject.SetActive(false);
+        healthBarPrev.transform.parent.gameObject.SetActive(false);
+        capsuleCollider.enabled = false;
+        float valueY = transform.position.y + 10;
+        transform.DOMoveY(valueY, 1);
+        animator.Play("jump");
+        BossShadow = transform.Find("BossShadow").gameObject;
+        BossShadow.SetActive(true);
+        followPlayer = true;
+        BossShadow.transform.SetParent(transform.parent);
+        yield return new WaitForSeconds(2f);
+        animator.Play("landing");
+        followPlayer = false;
+        Vector2 randomPos = BossShadow.transform.position;
+        Vector2 JumpRandomPos = randomPos;        
+        JumpRandomPos.y = JumpRandomPos.y + 10;
+        transform.position = JumpRandomPos;
+        transform.DOMoveY(randomPos.y, 0.5f).OnComplete(CompleteJump);        
+        
+    }
+    void CompleteJump()
+    {
+        animator.Play("landing_finish");
+        capsuleCollider.enabled = true;
+        healthBar.transform.parent.gameObject.SetActive(true);
+        healthBarPrev.transform.parent.gameObject.SetActive(true);
+        BossShadow.SetActive(false);
+        BossShadow.transform.SetParent(transform);
+        bossPatternIndex++;
+        BossMonsterPattern();
+    }
+    int bossPatternIndex = 0;
+    public void BossAttack()
+    {
+        switch (myPatterns[bossPatternIndex].attackType)
+        {
+            case BossMissileType.patternMissile:
+                switch(myPatterns[bossPatternIndex].patternType)
+                {
+                    case BossPatternType.directions_8:
+                        StartCoroutine(BossPatternBulletDelayRoutine(8, myPatterns[bossPatternIndex]));
+                        break;
+                    case BossPatternType.directions_6:
+                        StartCoroutine(BossPatternBulletDelayRoutine(6, myPatterns[bossPatternIndex]));
+                        break;
+                    case BossPatternType.cross:
+                        StartCoroutine(BossPatternBulletDelayRoutine(4, myPatterns[bossPatternIndex]));
+                        break;
+                }
+                
+                break;
+            case BossMissileType.Random:
+                StartCoroutine(BossRandomAttack(myPatterns[bossPatternIndex].randomShootCount, myPatterns[bossPatternIndex]));
+                break;
+        }
+        bossPatternIndex++;
+    }
+
+    IEnumerator BossPatternBulletDelayRoutine(float count, MyPattern_Movement myPattern_)
+    {
+        float range_temp = 360f / count;
+        for (int i = 0; i < count; i++)
+        {
+            if (status == Status.Stren)
+            {
+                break;
+            }
+            float rangle_bullet = 0;
+            float gunAngle = range_temp * i;
+            GunObject.transform.rotation = Quaternion.Euler(0, 0, gunAngle);
+
+            Transform _bulltPos = myPattern_.BulletPosList[UnityEngine.Random.Range(0, myPattern_.BulletPosList.Count)];
+            Vector2 moveVec = (_bulltPos.transform.up + (_bulltPos.transform.right * rangle_bullet / 2)) * myPattern_.Shootspeed;
+            Transform object_transfrom;
+
+            object_transfrom = EZ_PoolManager.Spawn(myPattern_.Bullet.transform, _bulltPos.transform.position, Quaternion.AngleAxis(0, new Vector3(0, 0, 0)));
+
+
+            object_transfrom.gameObject.SetActive(false);
+            object_transfrom.GetComponent<Bullet>().bulletType = DamageColider.BulletType.monster;
+            object_transfrom.GetComponent<Bullet>().SetSpeed(myPattern_.Shootspeed);
+            object_transfrom.GetComponent<Bullet>().Power =myPattern_.MonsterBulletDamage;
+
+            //object_transfrom.GetComponent<Rigidbody2D>().velocity = BulletPos.transform.up * speed;
+            object_transfrom.gameObject.SetActive(true);
+            object_transfrom.GetComponent<Rigidbody2D>().velocity = moveVec;
+            object_transfrom.GetComponent<Bullet>().bulletDirection = global::Bullet.BulletDirection.forward;
+            object_transfrom.GetComponent<Bullet>().SetVelocity();
+
+
+            Vector2 dir = object_transfrom.GetComponent<Rigidbody2D>().velocity;
+            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+            object_transfrom.transform.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
+
+            yield return new WaitForSeconds(myPattern_.DealyEachBullet);
+        }
+    }
+    IEnumerator BossRandomAttack(int count, MyPattern_Movement myPattern_)
+    {
+        for(int  i=0;i< count; i++)
+        {
+            yield return new WaitForSeconds(myPattern_.RandomWaitTime);
+            Transform _bulltPos = myPattern_.BulletPosList[UnityEngine.Random.Range(0, myPattern_.BulletPosList.Count)];
+            Transform temp =  EZ_PoolManager.Spawn(myPattern_.Bullet.transform, _bulltPos.transform.position,new Quaternion());
+            temp.GetComponent<Bullet>().SetSpeed(myPattern_.Shootspeed);
+            temp.GetComponent<Bullet>().Power = myPattern_.MonsterBulletDamage;
+            if (rangeSpawner ==null)
+            {
+                Debug.Log("rangeSpawner Null");
+            }
+            else
+            {
+                temp.gameObject.GetComponent<Bullet>().SetTargeting(rangeSpawner.GetRandomPosition());
+            }
+            
+        }
+    }
+    IEnumerator BossDashRoutine(MyPattern_Movement myPattern_)
+    {
+        Vector3 pos = GameManager.Instance.Player.transform.position;
+        NNInfo info = AstarPath.active.GetNearest(pos);
+        GraphNode node = info.node;
+        iLerp.speed = myPattern_.RushSpeed;
+        RandomSpawn.transform.SetParent(transform.parent);
+        RandomSpawn.transform.position = pos;
+        Aisetter.target = RandomSpawn.transform;
+        float endWiat= MaxWait;
+        while (!iLerp.reachedDestination)
+        {
+            endWiat -= Time.deltaTime;
+            iLerp.SearchPath();
+            if (endWiat <= 0)
+            {
+                break;
+            }
+            yield return null;
+        }
+        animator.Play("crash");
+        yield return new WaitForSeconds(1f);
+        RandomSpawn.transform.SetParent(transform);       
+        iLerp.SearchPath();
+        bossPatternIndex++;
+        BossMonsterPattern();
+
+    }
+
+    public void BossMonsterPattern()
+    {
+        if(bossPatternIndex >= myPatterns.Count)
+        {
+            bossPatternIndex = 0;
+        }
+        switch(myPatterns[bossPatternIndex].Types)
+        {
+            case BossAttackType.Idle:
+                animator.Play("idle");
+                if(myPatterns[bossPatternIndex].isWaitRand)
+                {
+                    StartCoroutine(BossRandomWaitRoutine());
+                }
+                break;
+            case BossAttackType.Jump:
+                animator.Play("jump_ready");
+                if (myPatterns[bossPatternIndex].isWaitRand)
+                {
+                    StartCoroutine(BossJumpRoutine());
+                }
+                break;
+            case BossAttackType.Missile_Attack:
+                animator.Play("Missile_Attack");
+                break;
+            case BossAttackType.Missile_Idle:
+                animator.Play("Missile_ready");
+                if (myPatterns[bossPatternIndex].isWaitRand)
+                {
+                    StartCoroutine(BossRandomWaitRoutine());
+                }
+                break;
+            case BossAttackType.Dash:
+                animator.Play("rush");
+                StartCoroutine(BossDashRoutine(myPatterns[bossPatternIndex]));
+                break;
+        }
+     
+    }
+    bool isStartBoss =false;
     private void Update()
     {
-
+        if(followPlayer)
+        {
+            BossShadow.transform.position = Vector2.Lerp(BossShadow.transform.position, GameManager.Instance.Player.transform.position, Time.deltaTime); 
+        }
         if (isStartMonster == false)
             return;
+        if(isBossMonster)
+        {
+            if(isStartBoss ==false)
+            {
+                BossMonsterPattern();
+                isStartBoss = true;
+            }
+            return;
+        }
         TargetCheck();
         MoveObject();
         
@@ -967,7 +1266,7 @@ public class Monster : MonoBehaviour
             }
             yield return null;
         }
-        yield return new WaitForSeconds(wiatTIme);
+        yield return new WaitForSeconds(waitTIme);
         isMoveRandom = false;
         RandomSpawn.transform.SetParent(transform);
     }
@@ -994,7 +1293,7 @@ public class Monster : MonoBehaviour
             }
             yield return null;
         }
-        yield return new WaitForSeconds(wiatTIme);        
+        yield return new WaitForSeconds(waitTIme);        
         RandomSpawn.transform.SetParent(transform);
         //
         Rush_WaitTIme = defaultRushTime;
@@ -1137,6 +1436,7 @@ public class Monster : MonoBehaviour
         {
             return;
         }
+
         if (targetSensor.DetectedObjects.Count <= 0)
         {
             if(infinityTracking == false)
@@ -1274,6 +1574,9 @@ public class Monster : MonoBehaviour
     }
     void Death()
     {
+        int randParticle = UnityEngine.Random.Range(5, 10);
+        GameManager.Instance.SpawnMonsterParticle(transform.position, randParticle, particleType);
+        
         GameManager.Instance.SetHp13Count();
         RandomSpawn.transform.SetParent(transform);
         switch (deathType)

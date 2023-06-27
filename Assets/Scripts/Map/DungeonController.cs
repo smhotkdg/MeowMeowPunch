@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class DungeonController : MonoBehaviour
 {
+    public BossController bossController;
     public enum RoomType
     {
         Noraml,
@@ -13,6 +14,7 @@ public class DungeonController : MonoBehaviour
         Boss,
         Shop
     }
+    public RangeSpawner rangeSpawner;
     public RoomType roomType = RoomType.Noraml;
     //public bool isInit = false;
     public double weight;
@@ -31,6 +33,29 @@ public class DungeonController : MonoBehaviour
     List<int> RoomIndex = new List<int>();
     private void OnEnable()
     {
+        if(isBossRoom)
+        {
+            bossController.onCompleteEnableHandler += BossController_onCompleteEnableHandler;
+        }
+        else
+        {
+            RoomIndex.Clear();
+            IsOpen = false;
+            isMakeChest = false;
+            doorOpen = true;
+            FindAllMonsters();
+            for (int i = 0; i < DoorList.Count; i++)
+            {
+                DoorList[i].Play("init");
+                RoomIndex.Add(0);
+            }
+        }
+    
+      
+    }
+
+    private void BossController_onCompleteEnableHandler()
+    {
         RoomIndex.Clear();
         IsOpen = false;
         isMakeChest = false;
@@ -41,7 +66,6 @@ public class DungeonController : MonoBehaviour
             DoorList[i].Play("init");
             RoomIndex.Add(0);
         }
-      
     }
 
     public void SetInitDoor()
@@ -83,6 +107,7 @@ public class DungeonController : MonoBehaviour
     {
         for(int i =0; i< Monsters.Count; i++)
         {
+            Monsters[i].gameObject.GetComponent<Monster>().rangeSpawner = rangeSpawner;
             Monsters[i].gameObject.GetComponent<Monster>().isStartMonster = true;
             Monsters[i].gameObject.GetComponent<Monster>().pObject = this.gameObject;
         }
@@ -237,7 +262,14 @@ public class DungeonController : MonoBehaviour
                                 break;
                         }
                     }
-                }                    
+                }
+                else
+                {
+                    if(DoorList[i].gameObject.transform.parent.GetComponent<Rule>().NextMap.gameObject.GetComponent<DungeonController>().isCome==true)
+                    {
+                        DoorList[i].Play("Treasure_Open");
+                    }
+                }
             }
         }
     }

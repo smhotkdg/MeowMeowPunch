@@ -47,6 +47,7 @@ public class MapMaker : MonoBehaviour
     {
         Generator.OnGeneratorFinish += Generator_OnGeneratorFinish;
     }
+    public bool isMakeEnd = false;
     DungeonObject dungeonObject;
     IEnumerator MapMakeRoutine()
     {
@@ -190,6 +191,7 @@ public class MapMaker : MonoBehaviour
                 dungeonObject.Rooms[i].gameObject.GetComponent<DungeonController>().StartMonster();
             }
         }
+        isMakeEnd = true;
     }
     private void Generator_OnGeneratorFinish(DungeonObject d)
     {
@@ -233,8 +235,9 @@ public class MapMaker : MonoBehaviour
 
     public void MakeMap()
     {
+        isMakeEnd = false;
         GameManager.Instance.RemoveItems();
-        DungeonData dungeonData = generator.dungeons[0];
+        DungeonData dungeonData = generator.dungeons[GameManager.Instance.Stage-1];
         generator.Generate(dungeonData);
 
         foreach (RoomNode node in generator.correlator.dungeon.nodes)
@@ -245,5 +248,11 @@ public class MapMaker : MonoBehaviour
 
             }
         }
+        UIManager.Instance.SetGameUI();
+        if(GameManager.Instance.Stage ==1)
+        {
+            GameManager.Instance.AddKey(1);
+        }
+        GameManager.Instance.MonsterParticleRemoveAll();
     }
 }

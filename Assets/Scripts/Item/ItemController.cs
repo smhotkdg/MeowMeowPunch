@@ -210,7 +210,7 @@ public class ItemController : MonoBehaviour
     {
         return items[itemIndex].use;
     }
-    public void MakeItem(int itemIndex,Vector3 position,Transform pTransfrom)
+    public GameObject MakeItem(int itemIndex,Vector3 position,Transform pTransfrom)
     {
         //int rand = Random.Range(0, items.Count);
         int rand = itemIndex;  
@@ -250,6 +250,7 @@ public class ItemController : MonoBehaviour
             temp.transform.SetParent(pTransfrom);
         temp.transform.localPosition = position;
         temp_item.SetIcon();
+        return temp;
     }
     public float GetDamage()
     {

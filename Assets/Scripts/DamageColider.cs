@@ -98,7 +98,7 @@ public class DamageColider : MonoBehaviour
                 Vector2 knocback = direction * randPower;
 
                 if (knockbackForce > 0)
-                {
+                {                    
                     collision.GetComponent<Monster>().SetDamage(_damage, knocback, status, DamangeColor);
                 }
                 else

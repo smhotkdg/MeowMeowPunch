@@ -1,24 +1,77 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 public class GetItemPanel : MonoBehaviour
 {
+    public enum ShopItemType
+    {
+        item,
+        key,
+        Hp
+    }
+    public ShopItemType itemType = ShopItemType.key;
+    public bool isShop = false;
+    public TextMeshProUGUI CostText;
     public Image Icon;
     public Text TItle;
     public Text Info;
-
+    int m_cost;
     Item selectItem;
+    GameObject SelectObj;
     private void OnEnable()
     {
         Time.timeScale = 0;
+        
     }
     private void OnDisable()
     {
         Time.timeScale = 1;
     }
-    public void setData(Item _item)
+    public void SetHp(GameObject itemObj, int cost)
     {
+        itemType = ShopItemType.Hp;
+        SelectObj = itemObj;
+        if (CostText!=null)
+        {
+            CostText.text = cost.ToString();
+            m_cost = cost;
+        }
+        if (Resources.Load<Sprite>("ItemIcon/Hp") as Sprite)
+        {
+            Icon.sprite = Resources.Load<Sprite>("ItemIcon/Hp") as Sprite;
+        }
+        else
+        {
+            Icon.sprite = Resources.Load<Sprite>("ItemIcon/icon_1") as Sprite;
+        }
+        TItle.text = "Hp";
+        Info.text = "Hp +1";
+    }
+    public void SetKey(GameObject itemObj,int cost)
+    {
+        itemType = ShopItemType.key;
+        SelectObj = itemObj;
+        if (CostText != null)
+        {
+            CostText.text = cost.ToString();
+            m_cost = cost;
+        }
+        if (Resources.Load<Sprite>("ItemIcon/Key") as Sprite)
+        {
+            Icon.sprite = Resources.Load<Sprite>("ItemIcon/Key") as Sprite;
+        }
+        else
+        {
+            Icon.sprite = Resources.Load<Sprite>("ItemIcon/icon_1") as Sprite;
+        }
+        TItle.text = "Key";
+        Info.text = "Key +1";
+    }
+    public void setData(Item _item,int cost =0)
+    {
+        itemType = ShopItemType.item;
         selectItem = _item;
         string spriteStr = "icon_" + _item.item_code;
         if (Resources.Load<Sprite>("ItemIcon/" + spriteStr) as Sprite)
@@ -70,11 +123,47 @@ public class GetItemPanel : MonoBehaviour
         
         
         Info.text = strinfo;
+        if (CostText != null)
+        {
+            CostText.text = cost.ToString();
+            m_cost = cost;
+        }
     }
     public void GetItme()
     {
-        selectItem.itemController.GetItem(selectItem);
-        
-        Destroy(selectItem.gameObject);
+        if(isShop ==false)
+        {
+            selectItem.itemController.GetItem(selectItem);
+            Destroy(selectItem.gameObject);
+        }
+        else
+        {
+            if(GameManager.Instance.Coin>= m_cost)
+            {
+                GameManager.Instance.Coin -= m_cost;
+                UIManager.Instance.SetGoldText();
+                switch (itemType)
+                {
+                    case ShopItemType.item:
+                        selectItem.itemController.GetItem(selectItem);
+                        Destroy(selectItem.gameObject);
+                        break;
+                    case ShopItemType.Hp:
+                        GameManager.Instance.Spawn(GameManager.SpawnType.Hp, SelectObj.transform.position, 1);
+                        Destroy(SelectObj);
+                        break;
+                    case ShopItemType.key:
+                        GameManager.Instance.Spawn(GameManager.SpawnType.Key, SelectObj.transform.position, 1);
+                        Destroy(SelectObj);
+                        break;
+                }
+            }
+            else
+            {
+                Debug.Log("µ·¾øÀ½");
+            }
+           
+
+        }
     }
 }

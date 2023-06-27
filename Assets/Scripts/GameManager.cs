@@ -37,6 +37,7 @@ public class GameManager : MonoBehaviour
         hit_drop_item,
         hp_13
     }
+    public Transform MonsterParticle;
     public Transform HpPrefab;
     public Transform MaxHpPrefab;
     public Transform CoinPrefab;
@@ -44,6 +45,7 @@ public class GameManager : MonoBehaviour
     public Transform NormalLootBox;
     public Transform EpicLootBox;
     public Transform GetEffect;
+    
     private static GameManager _instance = null;
     public static GameManager Instance
     {
@@ -227,6 +229,7 @@ public class GameManager : MonoBehaviour
         {
             ItemController.Instance.GetDamage();
         }
+        UIManager.Instance.SetGoldText();
         return canAddLife;
     }
     public bool AddKey(int index)
@@ -306,7 +309,25 @@ public class GameManager : MonoBehaviour
         }
         DungeonItems.Clear();
     }
+    public List<GameObject> MonsterParticleList = new List<GameObject>();
     public List<GameObject> DungeonItems = new List<GameObject>();
+    public void SpawnMonsterParticle(Vector3 InitPos, int SpawnCount,Monster.MonsterParticleType monsterParticleType)
+    {
+        for(int i=0; i< SpawnCount; i++)
+        {
+            GameObject temp = EZ_PoolManager.Spawn(MonsterParticle, InitPos, new Quaternion()).gameObject;
+            temp.GetComponent<MonsterParticleController>().SetMonster(monsterParticleType);
+            MonsterParticleList.Add(temp);
+        }
+    }
+    public void MonsterParticleRemoveAll()
+    {
+        for(int i =0; i< MonsterParticleList.Count; i++)
+        {
+            EZ_PoolManager.Despawn(MonsterParticleList[i].transform);
+        }
+        MonsterParticleList.Clear();
+    }
     IEnumerator SpawnRoutine(SpawnType spawnType, Vector3 InitPos, int SpawnCount)
     {
         Transform tempObject;        

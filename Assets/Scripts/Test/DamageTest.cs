@@ -5,6 +5,22 @@ using UnityEngine;
 
 public class DamageTest : MonoBehaviour
 {
+    public Transform Particle;
+    [Button]
+    public void SetParticle()
+    {
+        for(int i =0; i< 10; i++)
+        {
+            Transform t= EZ_Pooling.EZ_PoolManager.Spawn(Particle, new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f)), new Quaternion());
+            t.GetComponent<MonsterParticleController>().SetMonster(Monster.MonsterParticleType.Creature);
+        }
+        
+    }
+    [Button]
+    public void Disbaleparticle()
+    {
+        EZ_Pooling.EZ_PoolManager.Despawn(Particle);
+    }
     public List<GameObject> Coins = new List<GameObject>();
     public ItemController itemController;
     public GameObject Player;
@@ -91,5 +107,14 @@ public class DamageTest : MonoBehaviour
             initPos.x = i * 0.5f;
             itemController.MakeItem(i, initPos,null);
         }
+    }
+    [Button]
+    public void MakeMaker()
+    {
+        MapMaker.Instance.MakeMap();
+    }
+    public void MakeLaser()
+    {
+        itemController.MakeItem(38,GameManager.Instance.Player.transform.position,null);
     }
 }

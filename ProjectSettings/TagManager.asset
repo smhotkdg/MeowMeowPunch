@@ -23,7 +23,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - PostProcessing
   - 
   - Obstacles
   - Ground
@@ -45,7 +45,7 @@ TagManager:
   - wall
   - Shield
   - stopEnemies
-  - 
+  - outBlock
   - 
   - 
   - 

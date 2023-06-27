@@ -62,8 +62,7 @@ public class LineAttackController : DamageColider
             m_attackTypes.Add(false);
             m_attackTypes_Bullets.Add(false);
             m_attackTypes_Bullets_before.Add(false);
-        }
-
+        }        
         spline = spriteShapeController.spline;
         defalutInterval = interval;
         edgeCollider = GetComponent<EdgeCollider2D>();
@@ -281,7 +280,7 @@ public class LineAttackController : DamageColider
         spline.SetPosition(0, Init_0);
         spline.SetPosition(1, Init_1);
         spriteShapeController.RefreshSpriteShape();
-        spriteShapeController.autoUpdateCollider = false;
+        //spriteShapeController.autoUpdateCollider = false;
 
         raySensor2D.transform.position = spline.GetPosition(spline.GetPointCount() - 1);        
         raySensor2D.Direction = (spline.GetPosition(0) - spline.GetPosition(spline.GetPointCount() - 1)).normalized;       
@@ -332,7 +331,7 @@ public class LineAttackController : DamageColider
         collsionRay.OnSensorUpdate += CollsionRay_OnSensorUpdate;
 
       
-        spriteShapeController.autoUpdateCollider = true;
+        //spriteShapeController.autoUpdateCollider = true;
         EnmeyVecList.Clear();
         transform.localScale = initScale;
         CheckEffectBullet();

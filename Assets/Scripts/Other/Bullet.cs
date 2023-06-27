@@ -7,6 +7,7 @@ using System.Linq;
 
 public class Bullet : DamageColider
 {
+    public Transform MissileTarget;
     public TrailRenderer m_TrailRenderer; 
     public Color SlowColor;
     public Color PosionColor;
@@ -43,10 +44,45 @@ public class Bullet : DamageColider
     }   
     public BulletDirection bulletDirection = BulletDirection.forward;
     float defaultSpeed;
+
+
+    bool isTargetingMissile = false;
+    public Vector2 Target_Boss;
+    public Transform t;
+    public void SetTargeting(Vector2 targetPos)
+    {
+        Target_Boss = targetPos;
+        isTargetingMissile = true;
+        t = EZ_PoolManager.Spawn(MissileTarget, Target_Boss, new Quaternion());
+    }
+    void TargetingMissile()
+    {
+        if (isTargetingMissile == false)
+            return;
+        float rotateAmount = 0;        
+        Vector2 direction;
+        Vector3 tart3 = Target_Boss;
+        Vector2 dir = tart3 - transform.position;
+        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+
+        //== 타겟 방향으로 회전함 ==//
+        transform.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
+
+
+        direction = Target_Boss - rb.position;
+        direction.Normalize();
+        rotateAmount = Vector3.Cross(direction, transform.up).z;
+        rb.angularVelocity = -AngleSpeed * rotateAmount;
+        rb.velocity = transform.up * speed;
+        if(Mathf.Abs(Vector2.Distance(Target_Boss,transform.position))<=0.05f)
+        {
+            animator.SetTrigger("Hit");
+            EZ_PoolManager.Despawn(t);
+            isTargetingMissile = false;
+        }
+       
+    }
     
-    
-   
- 
     private void Awake()
     {
         animator = GetComponent<Animator>();
@@ -256,12 +292,13 @@ public class Bullet : DamageColider
         material.SetColor(ColorGradient, color);
     }
     void Update()
-    {     
+    {
         //deltaTime -= Time.deltaTime;
         //if(deltaTime <=0)
         //{
         //    EZ_PoolManager.Despawn(transform);
         //}
+        TargetingMissile();
         Homing();
         boomerang();
     }
@@ -398,6 +435,12 @@ public class Bullet : DamageColider
     {
         isEnable = false;
         PrevTarget = null;
+        if(t !=null && isTargetingMissile ==true)
+        {
+            EZ_PoolManager.Despawn(t);
+            isTargetingMissile = false;
+        }
+        
     }
 }
 
