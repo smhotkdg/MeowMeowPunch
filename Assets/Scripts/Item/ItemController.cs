@@ -200,6 +200,10 @@ public class ItemController : MonoBehaviour
         }
         GameManager.Instance.Spawn(GameManager.SpawnType.GetEffect, item.gameObject.transform.position, 1);
         GameManager.Instance.isVisibleMap = temp_item.map;
+        if(temp_item.other =="showHp")
+        {
+            GameManager.Instance.ShowHpBar = true;
+        }        
         GetDamage();
     }
     public int GetMaxItemCount()

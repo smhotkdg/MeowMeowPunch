@@ -215,8 +215,27 @@ public class DungeonController : MonoBehaviour
     bool isMakeChest = false;
     void makeChest()
     {
-        Vector2 newPosition = new Vector3(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f),0) + transform.position;
-        GameManager.Instance.Spawn(GameManager.SpawnType.NoramlLootBox, newPosition,1);
+        bool isSpawnPossible = false;
+        int randCount = 0;
+        Vector2 newPosition = new Vector2();
+        while (true)
+        {
+            newPosition = new Vector3(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f), 0) + transform.position;
+            if (rangeSpawner.IsInside(newPosition))
+            {
+                isSpawnPossible = true;
+                break;
+            }
+            randCount++;
+            if (randCount > 100)
+            {
+                break;
+            }
+        }
+        if(isSpawnPossible)
+        {
+            GameManager.Instance.Spawn(GameManager.SpawnType.NoramlLootBox, newPosition, 1);
+        }        
     }
     public void DoorOpen()
     {

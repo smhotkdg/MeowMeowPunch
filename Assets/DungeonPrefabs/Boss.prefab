@@ -5323,6 +5323,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d71f48c8d7d8ba4c9f92cc85fde2fde, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawnArea:
+  - {fileID: 6244427698438989055}
   numberRandomPositions: 1
 --- !u!61 &6244427698438989055
 BoxCollider2D:
@@ -19719,10 +19721,10 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: -1.55, y: 2.5}
+    - - {x: -1.55, y: 2.8}
       - {x: -1.55, y: -2.1}
       - {x: 1.25, y: -2.1}
-      - {x: 1.25, y: 2.5}
+      - {x: 1.25, y: 2.8}
 --- !u!114 &8314043550503285342
 MonoBehaviour:
   m_ObjectHideFlags: 0

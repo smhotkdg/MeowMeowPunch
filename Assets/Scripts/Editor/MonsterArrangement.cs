@@ -6,54 +6,116 @@ using Sirenix.Utilities.Editor;
 using System.Collections.Generic;
 using Sirenix.Utilities;
 using System.Linq;
+using Leguar.TotalJSON;
+using System.IO;
 
 public class MonsterArrangement : OdinMenuEditorWindow
 {
     public enum MapType
     {
-        일반,
-        기억,
-        니은,
-        세로
+        Normal,
+        Right,
+        Left,
+        Vertical
     }
+    
     [Title("맵 타입 선택")]
     [EnumToggleButtons]
     [OnValueChanged("MapChange")]
     public MapType MapTypeField;
+    
 
+    [SerializeField]
+    string FILE_PATH = "Assets/Resources/Test.json";
     [TableMatrix(HorizontalTitle = "Map", SquareCells = true)]
     public GameObject[,] MapMonster = new GameObject[6, 7];
+       
+    GameObject xObject;
+    struct MapStruct
+    {
+        int xPos;
+        int yPos;
+        string name;
+    }
+    private void Awake()
+    {
+        xObject = Resources.Load<GameObject>("X");
+    }
+    struct SaveMapData
+    {
+        public int mapType;
+        public string name;
+        public int xPos;
+        public int yPos;        
+    }
     [Button]
     public void SetMap()
     {
-        foreach(GameObject obj in MapMonster)
+        JSON json = new JSON();     
+        for (int i =0; i< MapMonster.GetLength(0); i++)
         {
-            if(obj !=null)
+            for(int j =0; j < MapMonster.GetLength(1); j++)
             {
-                Debug.Log(obj.name);
+                if(MapMonster[i,j]!=null && MapMonster[i,j].name != "X")
+                {
+                    SaveMapData data = new SaveMapData();
+                    data.mapType = (int)MapTypeField;
+                    data.xPos = i;
+                    data.yPos = j;
+                    data.name = MapMonster[i, j].name;
+                    json = JSON.Serialize(data);
+                    saveJsonObjectToTextFile(json);
+                }
+
             }
-            else
-            {
-                Debug.Log("## ");
-            }
-            
-        }
+        } 
+    }
+    private void saveJsonObjectToTextFile(JSON jsonObject)
+    {
+        string jsonAsString = jsonObject.CreateString(); // Could also use "CreatePrettyString()" to make more human readable result, it is still valid JSON to read and parse by computer
+        StreamWriter writer = new StreamWriter(FILE_PATH,true);
+        writer.WriteLine(jsonAsString);        
+        writer.Close();
+    }
+
+    private JSON loadTextFileToJsonObject()
+    {
+        StreamReader reader = new StreamReader(FILE_PATH);
+        string jsonAsString = reader.ReadToEnd();
+        reader.Close();
+        JSON jsonObject = JSON.ParseString(jsonAsString);
+        return jsonObject;
     }
     public void MapChange()
     {
-        switch(MapTypeField)
+        
+        switch (MapTypeField)
         {
-            case MapType.기억:
+            case MapType.Right:
                 MapMonster = new GameObject[12, 14];
+                for (int i = 0; i < 6; i++)
+                {
+                    for (int j = 7; j < 14; j++)
+                    {
+                        MapMonster[i, j] = xObject;
+                    }
+                }                
                 break;
-            case MapType.니은:
+            case MapType.Left:
                 MapMonster = new GameObject[12, 14];
+                for(int i =6; i< 12; i++)
+                {
+                    for(int j =0; j< 7; j++)
+                    {
+                        MapMonster[i, j] = xObject;
+                    }
+                }
                 break;
-            case MapType.세로:
-                MapMonster = new GameObject[6, 14];
-                break;
-            case MapType.일반:
-                MapMonster = new GameObject[6, 7];
+            case MapType.Vertical:
+                MapMonster = new GameObject[6, 14];              
+                break;                
+            case MapType.Normal:
+                MapMonster = new GameObject[6, 7];             
                 break;
         }
         
@@ -63,6 +125,7 @@ public class MonsterArrangement : OdinMenuEditorWindow
     {
         var window  = GetWindow<MonsterArrangement>();
         window.position = GUIHelper.GetEditorWindowRect().AlignCenter(800, 500);
+
     }
 
     protected override OdinMenuTree BuildMenuTree()

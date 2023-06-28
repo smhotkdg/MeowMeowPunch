@@ -5223,6 +5223,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d71f48c8d7d8ba4c9f92cc85fde2fde, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawnArea:
+  - {fileID: 5108821724999193889}
   numberRandomPositions: 1
 --- !u!61 &5108821724999193889
 BoxCollider2D:

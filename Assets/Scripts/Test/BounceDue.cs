@@ -127,4 +127,13 @@ public class BounceDue : MonoBehaviour
             }
         }
     }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.tag =="wall" || collision.tag =="Room_wall")
+        {
+            isBounce = false;
+            sprite.position = shadow.position;
+            shadow.transform.localScale = Vector2.zero;
+        }
+    }
 }

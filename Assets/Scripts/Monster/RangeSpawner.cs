@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class RangeSpawner : MonoBehaviour
 {
-    private BoxCollider2D spawnArea;
+    public List<BoxCollider2D> spawnArea;
     public int numberRandomPositions = 10;
 
 
     private void Awake()
     {
-        spawnArea = GetComponent<BoxCollider2D>();
+        //spawnArea = GetComponent<BoxCollider2D>();
     }
 
 
@@ -29,8 +29,8 @@ public class RangeSpawner : MonoBehaviour
 
     public Vector2 GetRandomPosition()
     {
-
-        Bounds colliderBounds = spawnArea.bounds;
+        int rand = Random.Range(0, spawnArea.Count);
+        Bounds colliderBounds = spawnArea[rand].bounds;
         Vector3 colliderCenter = colliderBounds.center;
 
         float spawnableItemSizeX = 1 / 2;
@@ -50,10 +50,18 @@ public class RangeSpawner : MonoBehaviour
         return randomPos;
     }
 
-    public bool IsInside(BoxCollider2D c, Vector3 point)
+    public bool IsInside(Vector3 point)
     {
-        Vector3 closest = c.ClosestPoint(point);
+        Vector3 closest = new Vector3();
+        for (int i =0; i< spawnArea.Count; i++)
+        {
+            closest = spawnArea[0].ClosestPoint(point);
+            if(closest == point)
+            {
+                return true;
+            }
+        }         
         // Because closest=point if point is inside - not clear from docs I feel
-        return closest == point;
+        return false;
     }
 }

@@ -1,0 +1,30 @@
+{
+	"xPos":3,
+	"yPos":3,
+	"name":"Frog_Boss",
+	"mapType":0
+}
+{
+	"xPos":1,
+	"yPos":1,
+	"name":"Gusher",
+	"mapType":0
+}
+{
+	"xPos":2,
+	"yPos":1,
+	"name":"Gusher",
+	"mapType":0
+}
+{
+	"xPos":2,
+	"yPos":2,
+	"name":"Gaper",
+	"mapType":0
+}
+{
+	"xPos":3,
+	"yPos":1,
+	"name":"Gusher",
+	"mapType":0
+}

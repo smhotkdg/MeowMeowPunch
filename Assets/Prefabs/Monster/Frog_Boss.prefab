@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2688881527605305451}
   - component: {fileID: 4596525315087709598}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: BarSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6134885244141519819}
   - component: {fileID: 9033161000658877366}
-  m_Layer: 24
+  m_Layer: 13
   m_Name: MinimapGFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -178,7 +178,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6348913076218826082}
   - component: {fileID: 4815583947149151957}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: Status_normal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -262,7 +262,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2500210702580829071}
   - component: {fileID: 2500210702580829070}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: AttackCheckSensor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -331,7 +331,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2500210703133695293}
   - component: {fileID: 2500210703133695292}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: ObjectCheckSensor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -407,11 +407,12 @@ GameObject:
   - component: {fileID: 2500210704002906764}
   - component: {fileID: 3645199911808767578}
   - component: {fileID: 3645199911808767579}
-  - component: {fileID: 3645199911808767576}
   - component: {fileID: 5703276298833182183}
   - component: {fileID: 5180408591759683562}
   - component: {fileID: 5703276298833182182}
-  m_Layer: 27
+  - component: {fileID: 8375827885978958154}
+  - component: {fileID: -4613400747307406327}
+  m_Layer: 13
   m_Name: Frog_Boss
   m_TagString: Monster
   m_Icon: {fileID: 0}
@@ -777,35 +778,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   version: 1
   target: {fileID: 0}
---- !u!114 &3645199911808767576
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2500210704002906767}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 847a14d4dc9cc43679ab34fc78e0182f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  version: 4
-  autoRepath:
-    mode: 0
-    interval: Infinity
-    sensitivity: 10
-    maximumInterval: 2
-    visualizeSensitivity: 0
-  canMove: 1
-  speed: 4
-  orientation: 1
-  enableRotation: 0
-  rotationSpeed: 30
-  interpolatePathSwitches: 1
-  switchPathInterpolationSpeed: 10
-  targetCompatibility: {fileID: 0}
-  repathRateCompatibility: Infinity
-  canSearchCompability: 1
 --- !u!114 &5703276298833182183
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -854,6 +826,75 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &8375827885978958154
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2500210704002906767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6eb1402c17e84a9282a7f0f62eb584f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 5
+  radius: 0.1
+  height: 1
+  canMove: 1
+  maxSpeed: 0.5
+  gravity: {x: NaN, y: NaN, z: NaN}
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  centerOffsetCompatibility: NaN
+  repathRateCompatibility: NaN
+  canSearchCompability: 0
+  orientation: 1
+  enableRotation: 0
+  autoRepath:
+    mode: 1
+    interval: 5
+    sensitivity: 10
+    maximumInterval: 2
+    visualizeSensitivity: 0
+  targetCompatibility: {fileID: 0}
+  maxAcceleration: -2.5
+  rotationSpeed: 360
+  slowdownDistance: 0
+  pickNextWaypointDist: 0.2
+  endReachedDistance: 0.2
+  alwaysDrawGizmos: 0
+  slowWhenNotFacingTarget: 1
+  whenCloseToDestination: 0
+  constrainInsideGraph: 1
+--- !u!114 &-4613400747307406327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2500210704002906767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 560112f876f5746c780eca0d404e7139, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 2
+  radiusBackingField: 0.5
+  heightBackingField: 2
+  centerBackingField: 1
+  locked: 0
+  lockWhenNotMoving: 0
+  agentTimeHorizon: 0.2
+  obstacleTimeHorizon: 0.2
+  maxNeighbours: 1
+  layer: 1
+  collidesWith: -1
+  wallAvoidForce: 1
+  wallAvoidFalloff: 1
+  priority: 0.5
+  debug: 0
 --- !u!1 &3100888372437568744
 GameObject:
   m_ObjectHideFlags: 0
@@ -864,7 +905,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6310212642178581125}
   - component: {fileID: 8243776800918559691}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: BackGround
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -949,7 +990,7 @@ GameObject:
   - component: {fileID: 3720429617621770415}
   - component: {fileID: 6574546247085381570}
   - component: {fileID: 3516683645157536971}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: Status_Stren
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1046,7 +1087,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3856920722445579050}
   - component: {fileID: 3856920722445579029}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: BossShadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1129,7 +1170,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8980369399238175124}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: HealthBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1165,7 +1206,7 @@ GameObject:
   - component: {fileID: 2321335075126199081}
   - component: {fileID: 763890024451903503}
   - component: {fileID: 763890024451903500}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: Status_slow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1262,7 +1303,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2413954010076986639}
   - component: {fileID: 2078929254896881807}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: BarSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1346,7 +1387,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6164787183767337306}
   - component: {fileID: 7125749912364387847}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: Border
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1430,7 +1471,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8058566287060551641}
   - component: {fileID: 8058566287060551640}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: Gun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1514,7 +1555,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8058566287476159321}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: Front
   m_TagString: Untagged
   m_Icon: {fileID: -5442936267250999957, guid: 0000000000000000d000000000000000, type: 0}
@@ -1545,7 +1586,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8058566287913752034}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: RandomSpawn
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
@@ -1576,7 +1617,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7438498890664098446}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: HealthBarPrev
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1610,7 +1651,7 @@ GameObject:
   - component: {fileID: 3420610730607955678}
   - component: {fileID: 3569017740844668819}
   - component: {fileID: 3569017740844668816}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: Status_fascination
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1708,7 +1749,7 @@ GameObject:
   - component: {fileID: 7066089917578194765}
   - component: {fileID: 5477188587025966254}
   - component: {fileID: 5477188587025966255}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: Status_posion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1804,7 +1845,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3458170606255955550}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: Bar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1836,7 +1877,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 81966721510058541}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: Bar
   m_TagString: Untagged
   m_Icon: {fileID: 0}

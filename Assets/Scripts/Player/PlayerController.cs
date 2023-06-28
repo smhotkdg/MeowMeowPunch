@@ -9,6 +9,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
 
+    private Rigidbody2D rigidbody2;
     public bool isFly = false;
     [SerializeField]
     Vector2 NormalGunPos;
@@ -71,6 +72,7 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
+        rigidbody2 = GetComponent<Rigidbody2D>();
         for (int i = 0; i < System.Enum.GetValues(typeof(GameManager.AttackType)).Length; i++)
         {
             bAttackTypes.Add(false);
@@ -308,7 +310,7 @@ public class PlayerController : MonoBehaviour
 
     }
     void Update()
-    {
+    {        
         if(GameManager.Instance.gameStatus != GameManager.GameStatus.NOTING)
         {
             return;
@@ -324,6 +326,7 @@ public class PlayerController : MonoBehaviour
         }
         CheckAttack();  
         UpdateGun();
+        rigidbody2.velocity = new Vector2(0, 0);
     }
     public float GunRotationSpeed = 10f;
     void UpdateGun()
@@ -368,14 +371,18 @@ public class PlayerController : MonoBehaviour
 
     }
     bool isKnockback = false;
+    IEnumerator knockbackRoutine;
     public void Knockback(Vector3 value,int HitDamage)
     {
-        if(isKnockback ==false)
+        if(isKnockback ==false && canKnockback ==true)
         {
             isKnockback = true;
-            StartCoroutine(KnockbackRoutine(value, HitDamage));
+            knockbackRoutine = KnockbackRoutine(value, HitDamage);
+            StartCoroutine(knockbackRoutine);
+            //StartCoroutine(KnockbackRoutine(value, HitDamage));
         }
     }
+  
     
     public float knockbackForce=2f;
     IEnumerator KnockbackRoutine(Vector3 dir, int HitDamage)
@@ -392,7 +399,7 @@ public class PlayerController : MonoBehaviour
         {
             //transform.Translate(Vector2.left * moveSpeed * Time.deltaTime*1);
             transform.Translate(knockVec * moveSpeed * Time.deltaTime);
-            ctime += Time.deltaTime;
+            ctime += Time.deltaTime;            
             yield return null;
         }
 
@@ -551,8 +558,26 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+    bool canKnockback = true;
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "wall" || collision.gameObject.tag == "Room_wall")
+        {
+            canKnockback = true;
+        }
+    }
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        if (collision.gameObject.tag == "wall" || collision.gameObject.tag == "Room_wall")
+        {
+            if (knockbackRoutine != null)
+            {
+                StopCoroutine(knockbackRoutine);
+                isKnockback = false;
+                GameManager.Instance.gameStatus = GameManager.GameStatus.NOTING;
+            }
+            canKnockback = false;
+        }
         if (collision.gameObject.tag == "Room_wall")
         {
             if (collision.transform.parent.parent.parent.parent.GetComponent<DungeonController>().IsOpen)

@@ -86,3 +86,4 @@
 200,Mom's Eyeshadow(엄마의 아이섀도우),0,0,0,0,0,0,0,0,0,0,0,fascination,normal,3,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
 201,Iron Bar(철괴),0.3,0,0,0,0,0,0,0,0,0,0,stern,normal,3,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,normal
 204,Fanny Pack(작은 주머니),0,0,0,0,0,0,0,0,0,0,0,normal,normal,1,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,hit_drop_item
+205,내면의 눈,0,0,0,0,0,0,0,0,0,0,0,normal,normal,1,0,0,0,0,0,FALSE,FALSE,TRUE,0,FALSE,showHp

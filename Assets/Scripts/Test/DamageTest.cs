@@ -5,13 +5,14 @@ using UnityEngine;
 
 public class DamageTest : MonoBehaviour
 {
+    public RangeSpawner rangeSpawner;
     public Transform Particle;
     [Button]
     public void SetParticle()
     {
         for(int i =0; i< 10; i++)
-        {
-            Transform t= EZ_Pooling.EZ_PoolManager.Spawn(Particle, new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f)), new Quaternion());
+        {            
+            Transform t= EZ_Pooling.EZ_PoolManager.Spawn(Particle, rangeSpawner.GetRandomPosition(), new Quaternion());
             t.GetComponent<MonsterParticleController>().SetMonster(Monster.MonsterParticleType.Creature);
         }
         

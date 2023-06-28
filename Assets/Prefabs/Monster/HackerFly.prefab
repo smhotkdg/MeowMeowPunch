@@ -1175,10 +1175,11 @@ GameObject:
   - component: {fileID: 8194577210173972351}
   - component: {fileID: 7033548311842993065}
   - component: {fileID: 7033548311842993064}
-  - component: {fileID: 7033548311842993067}
   - component: {fileID: 1028617833397102257}
   - component: {fileID: -7669776528581369935}
   - component: {fileID: 8154624471273363258}
+  - component: {fileID: 826593085443519552}
+  - component: {fileID: 4885870632508932570}
   m_Layer: 13
   m_Name: HackerFly
   m_TagString: Monster
@@ -1356,8 +1357,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4e6823f6a72a5644aca6524db79f87a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MonsterDeathParticle: {fileID: 4669075122508495226, guid: 7e93ba6feb2415d44ae4e053031d4f04,
-    type: 3}
   particleType: 0
   rangeSpawner: {fileID: 0}
   IsAnimationAttack: 0
@@ -1377,7 +1376,7 @@ MonoBehaviour:
   PatrolWaitTime: 1
   PatrolDelay: 1
   PatrolList: []
-  wiatTIme: 1
+  waitTIme: 0.2
   MaxWait: 2
   attackType: 0
   isRandomAttack: 1
@@ -1451,35 +1450,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   version: 1
   target: {fileID: 0}
---- !u!114 &7033548311842993067
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8194577210173972348}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 847a14d4dc9cc43679ab34fc78e0182f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  version: 4
-  autoRepath:
-    mode: 0
-    interval: Infinity
-    sensitivity: 10
-    maximumInterval: 2
-    visualizeSensitivity: 0
-  canMove: 1
-  speed: 4
-  orientation: 1
-  enableRotation: 0
-  rotationSpeed: 30
-  interpolatePathSwitches: 1
-  switchPathInterpolationSpeed: 10
-  targetCompatibility: {fileID: 0}
-  repathRateCompatibility: Infinity
-  canSearchCompability: 1
 --- !u!95 &1028617833397102257
 Animator:
   serializedVersion: 4
@@ -1528,6 +1498,75 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Icon: {fileID: -2973741365031722151, guid: c4bd3cffffda71b4b96639403a543242, type: 3}
+--- !u!114 &826593085443519552
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8194577210173972348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6eb1402c17e84a9282a7f0f62eb584f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 5
+  radius: 0.1
+  height: 1
+  canMove: 1
+  maxSpeed: 0.5
+  gravity: {x: NaN, y: NaN, z: NaN}
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  centerOffsetCompatibility: NaN
+  repathRateCompatibility: NaN
+  canSearchCompability: 0
+  orientation: 1
+  enableRotation: 0
+  autoRepath:
+    mode: 1
+    interval: 5
+    sensitivity: 10
+    maximumInterval: 2
+    visualizeSensitivity: 0
+  targetCompatibility: {fileID: 0}
+  maxAcceleration: -2.5
+  rotationSpeed: 360
+  slowdownDistance: 0
+  pickNextWaypointDist: 0.2
+  endReachedDistance: 0.2
+  alwaysDrawGizmos: 0
+  slowWhenNotFacingTarget: 1
+  whenCloseToDestination: 0
+  constrainInsideGraph: 1
+--- !u!114 &4885870632508932570
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8194577210173972348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 560112f876f5746c780eca0d404e7139, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 2
+  radiusBackingField: 0.5
+  heightBackingField: 2
+  centerBackingField: 1
+  locked: 0
+  lockWhenNotMoving: 0
+  agentTimeHorizon: 0.2
+  obstacleTimeHorizon: 0.2
+  maxNeighbours: 1
+  layer: 1
+  collidesWith: -1
+  wallAvoidForce: 1
+  wallAvoidFalloff: 1
+  priority: 0.5
+  debug: 0
 --- !u!1 &8194577210640660684
 GameObject:
   m_ObjectHideFlags: 0

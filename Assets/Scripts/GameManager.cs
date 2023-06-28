@@ -45,6 +45,8 @@ public class GameManager : MonoBehaviour
     public Transform NormalLootBox;
     public Transform EpicLootBox;
     public Transform GetEffect;
+
+    public bool ShowHpBar = false;
     
     private static GameManager _instance = null;
     public static GameManager Instance
@@ -395,5 +397,19 @@ public class GameManager : MonoBehaviour
         {
             return false;
         }
+    }
+    public Vector2 GetRotateVector(Vector2 v, float degrees)
+    {
+        float _x = v.x * Mathf.Cos(Mathf.Deg2Rad * degrees) - v.y * Mathf.Sin(Mathf.Deg2Rad * degrees);
+        float _y = v.x * Mathf.Sin(Mathf.Deg2Rad * degrees) + v.y * Mathf.Cos(Mathf.Deg2Rad * degrees);
+        return new Vector2(_x, _y);
+    }  
+    public Vector2 GetTwoPointDistanceVector(Vector3 nowPos,Vector3 targetPos,float distance)
+    {       
+        Vector3 direction = targetPos - nowPos;
+        //Get a new point at your distance from point A
+        Vector3 point_C = nowPos + (direction.normalized * distance);
+        //Draw the line
+        return point_C;        
     }
 }

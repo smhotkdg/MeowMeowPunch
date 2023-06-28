@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 615712518467271207}
   - component: {fileID: 6924168673449364810}
   - component: {fileID: 857699779889262147}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: Status_Stren
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -108,7 +108,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1057330741698275746}
   - component: {fileID: 1057330741698275741}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: BossShadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -192,7 +192,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7834166258194667533}
   - component: {fileID: 5281925293268517187}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: BackGround
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -283,11 +283,12 @@ GameObject:
   - component: {fileID: 1844334136186658820}
   - component: {fileID: 701636039895485650}
   - component: {fileID: 701636039895485651}
-  - component: {fileID: 701636039895485648}
   - component: {fileID: 8362331084719630191}
   - component: {fileID: 8993246906344224098}
   - component: {fileID: 8362331084719630190}
-  m_Layer: 27
+  - component: {fileID: -6591810759463295849}
+  - component: {fileID: -3210415683391891476}
+  m_Layer: 13
   m_Name: Robot_Boss
   m_TagString: Monster
   m_Icon: {fileID: 0}
@@ -424,7 +425,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 7
+  m_Constraints: 4
 --- !u!114 &1844334136186658821
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -470,7 +471,7 @@ MonoBehaviour:
   IsAnimationAttack: 1
   pObject: {fileID: 0}
   MonsterHitDamage: 1
-  isStartMonster: 0
+  isStartMonster: 1
   isFly: 0
   pattern: 1
   status: 0
@@ -496,12 +497,14 @@ MonoBehaviour:
     dontNeedTarget: 0
     RandomWaitTime: 0.1
     patternType: 0
+    randomShootCount: 10
     Rush_WaitTIme: 1
     RushSpeed: 1
-  - Types: 4
-    isWaitRand: 0
-    Min_WaitTime: 0
-    Max_WaitTime: 0
+    ReflectSpeed: 1
+  - Types: 5
+    isWaitRand: 1
+    Min_WaitTime: 3
+    Max_WaitTime: 5
     attackType: 0
     isRandomAttack: 0
     BulletCount: 1
@@ -518,8 +521,10 @@ MonoBehaviour:
     dontNeedTarget: 0
     RandomWaitTime: 0.1
     patternType: 0
+    randomShootCount: 10
     Rush_WaitTIme: 1
     RushSpeed: 1.5
+    ReflectSpeed: 2
   - Types: 3
     isWaitRand: 1
     Min_WaitTime: 1
@@ -540,8 +545,10 @@ MonoBehaviour:
     dontNeedTarget: 0
     RandomWaitTime: 0.1
     patternType: 0
+    randomShootCount: 10
     Rush_WaitTIme: 1
     RushSpeed: 1
+    ReflectSpeed: 1
   - Types: 1
     isWaitRand: 0
     Min_WaitTime: 0
@@ -564,8 +571,10 @@ MonoBehaviour:
     dontNeedTarget: 0
     RandomWaitTime: 0.1
     patternType: 0
+    randomShootCount: 10
     Rush_WaitTIme: 1
     RushSpeed: 1
+    ReflectSpeed: 1
   movementType: 0
   infinityTracking: 1
   isRush: 0
@@ -649,35 +658,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   version: 1
   target: {fileID: 0}
---- !u!114 &701636039895485648
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1844334136186658823}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 847a14d4dc9cc43679ab34fc78e0182f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  version: 4
-  autoRepath:
-    mode: 0
-    interval: Infinity
-    sensitivity: 10
-    maximumInterval: 2
-    visualizeSensitivity: 0
-  canMove: 1
-  speed: 4
-  orientation: 1
-  enableRotation: 0
-  rotationSpeed: 30
-  interpolatePathSwitches: 1
-  switchPathInterpolationSpeed: 10
-  targetCompatibility: {fileID: 0}
-  repathRateCompatibility: Infinity
-  canSearchCompability: 1
 --- !u!114 &8362331084719630191
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -726,6 +706,75 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &-6591810759463295849
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1844334136186658823}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6eb1402c17e84a9282a7f0f62eb584f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 5
+  radius: 0.1
+  height: 1
+  canMove: 1
+  maxSpeed: 0.5
+  gravity: {x: NaN, y: NaN, z: NaN}
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  centerOffsetCompatibility: NaN
+  repathRateCompatibility: NaN
+  canSearchCompability: 0
+  orientation: 1
+  enableRotation: 0
+  autoRepath:
+    mode: 1
+    interval: 5
+    sensitivity: 10
+    maximumInterval: 2
+    visualizeSensitivity: 0
+  targetCompatibility: {fileID: 0}
+  maxAcceleration: -2.5
+  rotationSpeed: 360
+  slowdownDistance: 0
+  pickNextWaypointDist: 0.2
+  endReachedDistance: 0.2
+  alwaysDrawGizmos: 0
+  slowWhenNotFacingTarget: 1
+  whenCloseToDestination: 0
+  constrainInsideGraph: 1
+--- !u!114 &-3210415683391891476
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1844334136186658823}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 560112f876f5746c780eca0d404e7139, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 2
+  radiusBackingField: 0.5
+  heightBackingField: 2
+  centerBackingField: 1
+  locked: 0
+  lockWhenNotMoving: 0
+  agentTimeHorizon: 0.2
+  obstacleTimeHorizon: 0.2
+  maxNeighbours: 1
+  layer: 1
+  collidesWith: -1
+  wallAvoidForce: 1
+  wallAvoidFalloff: 1
+  priority: 0.5
+  debug: 0
 --- !u!1 &1844334136930158519
 GameObject:
   m_ObjectHideFlags: 0
@@ -736,7 +785,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1844334136930158517}
   - component: {fileID: 1844334136930158516}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: ObjectCheckSensor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -805,7 +854,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1844334137482498311}
   - component: {fileID: 1844334137482498310}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: AttackCheckSensor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -874,7 +923,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7147549666814171114}
   - component: {fileID: 8790613427951670365}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: Status_normal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -958,7 +1007,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2196137878155082467}
   - component: {fileID: 351508545395765014}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: BarSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1041,7 +1090,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1501686161018832086}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: Bar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1073,7 +1122,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4182111292056809637}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: Bar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1107,7 +1156,7 @@ GameObject:
   - component: {fileID: 1464407743169713238}
   - component: {fileID: 769375541889174811}
   - component: {fileID: 769375541889174808}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: Status_fascination
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1203,7 +1252,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6633862827219820550}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: HealthBarPrev
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1237,7 +1286,7 @@ GameObject:
   - component: {fileID: 6423583413873620421}
   - component: {fileID: 8586128371861241382}
   - component: {fileID: 8586128371861241383}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: Status_posion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1333,7 +1382,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6124661386623127402}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: RandomSpawn
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
@@ -1364,7 +1413,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6124661386682624465}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: Front
   m_TagString: Untagged
   m_Icon: {fileID: -5442936267250999957, guid: 0000000000000000d000000000000000, type: 0}
@@ -1396,7 +1445,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6124661387342798161}
   - component: {fileID: 6124661387342798160}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: Gun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1481,7 +1530,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1921623217579239303}
   - component: {fileID: 2878709904522824199}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: BarSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1565,7 +1614,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7973435143323231186}
   - component: {fileID: 6469794191562019983}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: Border
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1649,7 +1698,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7273103838096746367}
   - component: {fileID: 2761743194577262301}
-  m_Layer: 24
+  m_Layer: 13
   m_Name: MinimapGFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1732,7 +1781,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5155005428824912668}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: HealthBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1768,7 +1817,7 @@ GameObject:
   - component: {fileID: 1953970361129097633}
   - component: {fileID: 3581221167045479047}
   - component: {fileID: 3581221167045479044}
-  m_Layer: 27
+  m_Layer: 13
   m_Name: Status_slow
   m_TagString: Untagged
   m_Icon: {fileID: 0}

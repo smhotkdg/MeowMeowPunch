@@ -42,7 +42,8 @@ public class Monster : MonoBehaviour
         Missile_Attack,
         Jump,
         Missile_Idle,
-        Dash
+        Dash,
+        Reflect,
     }    
     public enum BossMissileType
     {
@@ -120,6 +121,9 @@ public class Monster : MonoBehaviour
         public float Rush_WaitTIme = 1f;
         [ShowIf("@Types == BossAttackType.Dash")]
         public float RushSpeed = 1f;
+
+        [ShowIf("@Types == BossAttackType.Reflect")]
+        public float ReflectSpeed = 1f;
 
     }
    
@@ -286,7 +290,8 @@ public class Monster : MonoBehaviour
     public List<GameObject> StatusList = new List<GameObject>();
     List<bool> StatusBool = new List<bool>();
     List<GameObject> StatusTemp = new List<GameObject>();
-    AILerp iLerp;
+    //AILerp iLerp;
+    AIPath Ipath;
     GameObject RandomSpawn;
     float spawnDeltaTime;
     public SpriteRenderer spriteRenderer;
@@ -307,7 +312,8 @@ public class Monster : MonoBehaviour
         material = GetComponent<SpriteRenderer>().material;
         Aisetter = GetComponent<AIDestinationSetter>();
         patrol_Setter = GetComponent<Patrol>();
-        iLerp = GetComponent<AILerp>();
+        //iLerp = GetComponent<AILerp>();
+        Ipath = GetComponent<AIPath>();
         CheckMoveRoutine = CheckMoveCoRoutine();
         StartCoroutine(CheckMoveRoutine);        
     }
@@ -340,12 +346,21 @@ public class Monster : MonoBehaviour
         {
             StatusBool.Add(false);
         }
+
     }
     private void OnEnable()
     {
         isStartBoss = false;
         isStartMonster = false;
         bossPatternIndex = 0;
+        if(rangeSpawner ==null)
+        {
+            GameObject obj = GameObject.Find("RangeSpawner");
+            if(obj !=null)
+            {
+                rangeSpawner = obj.GetComponent<RangeSpawner>();
+            }
+        }
     }
     [Button]
     public void SetHP()
@@ -496,9 +511,15 @@ public class Monster : MonoBehaviour
             randVector.y = knockback.y + randy;
             if(enableKncokBack)
             {
-                iLerp.canMove = false;
-                StartCoroutine(KnockbackRoutine(randVector));
-                isKnockback = true;
+                if(canKnockback)
+                {
+                    //iLerp.canMove = false;
+                    Ipath.canMove = false;
+                    knockbackRoutine = KnockbackRoutine(randVector);
+                    StartCoroutine(knockbackRoutine);
+                    isKnockback = true;
+                }
+             
             }
           
         }
@@ -521,6 +542,7 @@ public class Monster : MonoBehaviour
         }
         
     }
+    IEnumerator knockbackRoutine;
     IEnumerator PosionAttackRoutine(float _damage)
     {
         yield return new WaitForSeconds(0.1f);
@@ -677,15 +699,18 @@ public class Monster : MonoBehaviour
         Vector3 pos = GameManager.Instance.Player.transform.position;
         NNInfo info = AstarPath.active.GetNearest(pos);
         GraphNode node = info.node;
-        iLerp.speed = myPattern_.RushSpeed;
+        //iLerp.speed = myPattern_.RushSpeed;
+        Ipath.maxSpeed = myPattern_.RushSpeed;
         RandomSpawn.transform.SetParent(transform.parent);
         RandomSpawn.transform.position = pos;
         Aisetter.target = RandomSpawn.transform;
         float endWiat= MaxWait;
-        while (!iLerp.reachedDestination)
+        //while (!iLerp.reachedDestination)
+        while(!Ipath.reachedDestination)
         {
             endWiat -= Time.deltaTime;
-            iLerp.SearchPath();
+            //iLerp.SearchPath();
+            Ipath.SearchPath();
             if (endWiat <= 0)
             {
                 break;
@@ -695,7 +720,8 @@ public class Monster : MonoBehaviour
         animator.Play("crash");
         yield return new WaitForSeconds(1f);
         RandomSpawn.transform.SetParent(transform);       
-        iLerp.SearchPath();
+        //iLerp.SearchPath();
+        Ipath.SearchPath();
         bossPatternIndex++;
         BossMonsterPattern();
 
@@ -707,7 +733,8 @@ public class Monster : MonoBehaviour
         {
             bossPatternIndex = 0;
         }
-        switch(myPatterns[bossPatternIndex].Types)
+        Ipath.maxSpeed = myPatterns[bossPatternIndex].RushSpeed;
+        switch (myPatterns[bossPatternIndex].Types)
         {
             case BossAttackType.Idle:
                 animator.Play("idle");
@@ -737,13 +764,41 @@ public class Monster : MonoBehaviour
                 animator.Play("rush");
                 StartCoroutine(BossDashRoutine(myPatterns[bossPatternIndex]));
                 break;
+            case BossAttackType.Reflect:
+                animator.Play("rush");
+                Aisetter.enabled = false;
+                patrol_Setter.enabled = false;
+                StartReflectBoss();
+                Ipath.maxSpeed = myPatterns[bossPatternIndex].ReflectSpeed;                
+                StartCoroutine(EndReflectRoutine(myPatterns[bossPatternIndex]));
+                break;
         }
      
+    }
+    IEnumerator EndReflectRoutine(MyPattern_Movement myPattern_)
+    {
+        yield return new WaitForSeconds(UnityEngine.Random.Range(myPattern_.Min_WaitTime, myPattern_.Max_WaitTime));
+        animator.Play("crash");        
+        RandomSpawn.transform.SetParent(transform);
+        //Ipath.canMove = true;
+        bossPatternIndex++;
+        BossMonsterPattern();
+    }
+    public void StartReflectBoss()
+    {
+        Vector3 pos = GameManager.Instance.GetTwoPointDistanceVector(transform.position,GameManager.Instance.Player.transform.position,20);       
+
+        RandomMoveVector = pos;
+        RandomSpawn.transform.SetParent(transform.parent);
+        RandomSpawn.transform.position = pos;
+        Aisetter.target = RandomSpawn.transform;
+        Target = RandomSpawn;        
     }
     bool isStartBoss =false;
     private void Update()
     {
-        if(followPlayer)
+        DrawRay();
+        if (followPlayer)
         {
             BossShadow.transform.position = Vector2.Lerp(BossShadow.transform.position, GameManager.Instance.Player.transform.position, Time.deltaTime); 
         }
@@ -755,6 +810,13 @@ public class Monster : MonoBehaviour
             {
                 BossMonsterPattern();
                 isStartBoss = true;
+            }
+            if (myPatterns.Count > 0 && bossPatternIndex < myPatterns.Count)
+            {
+                if (myPatterns[bossPatternIndex].Types == BossAttackType.Reflect)
+                {
+                    transform.position = Vector2.MoveTowards(transform.position, RandomSpawn.transform.position, myPatterns[bossPatternIndex].ReflectSpeed * Time.deltaTime);
+                }
             }
             return;
         }
@@ -783,10 +845,17 @@ public class Monster : MonoBehaviour
         {            
             transform.position = Vector2.MoveTowards(transform.position, RandomSpawn.transform.position, moveSpeed * Time.deltaTime);
         }
+     
+        
     }
     private void FixedUpdate()
-    {       
-        if(isMove)
+    {
+        if(isBossMonster ==false)
+        {
+            healthBar.parent.gameObject.SetActive(GameManager.Instance.ShowHpBar);
+            healthBarPrev.parent.gameObject.SetActive(GameManager.Instance.ShowHpBar);
+        }        
+        if (isMove)
         {
             animator.SetFloat("MotionX", 1);
             animator.SetFloat("MotionY", 1);
@@ -989,7 +1058,8 @@ public class Monster : MonoBehaviour
             shoot = false;            
             if (IsAnimationAttack)
             {
-                iLerp.canMove = false;
+                //iLerp.canMove = false;
+                Ipath.canMove = false;
                 forceAttack = true;
                 animator.SetTrigger("Attack");
             }
@@ -1188,24 +1258,46 @@ public class Monster : MonoBehaviour
         }
         
     }
+    bool canKnockback = true;
     
     private void OnCollisionEnter2D(Collision2D collision)
-    {        
-        if(collision.gameObject.tag =="Player")
+    {
+        if (collision.gameObject.tag == "wall" || collision.gameObject.tag == "Room_wall")
+        {
+            if (knockbackRoutine != null)
+            {
+                StopCoroutine(knockbackRoutine);
+                canKnockback = false;
+                isKnockback = false;
+            }
+        }
+        if (collision.gameObject.tag =="Player")
         {            
             collision.gameObject.GetComponent<PlayerController>().Knockback(transform.position,-MonsterHitDamage);
         }
         if(movementType == MovementType.Reflect)
         {
-            Vector3 dir = Vector3.Reflect(iLerp.velocity, collision.GetContact(0).normal);
+            Vector3 dir = Vector3.Reflect(Ipath.velocity, collision.GetContact(0).normal);
             dir = dir * 10;
             RandomSpawn.transform.position = dir;            
-        }        
+        }
+        if (myPatterns.Count > 0 && bossPatternIndex < myPatterns.Count)
+        {
+            if (myPatterns[bossPatternIndex].Types == BossAttackType.Reflect)
+            {
+                Vector3 dir = Vector3.Reflect(Ipath.velocity, collision.GetContact(0).normal);
+                dir = dir * 10;
+                RandomSpawn.transform.position = dir;
+            }
+        }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        
+        if (collision.gameObject.tag == "wall" || collision.gameObject.tag == "Room_wall")
+        {
+            canKnockback = true;
+        }
     }
 
     void MoveObject()
@@ -1213,7 +1305,8 @@ public class Monster : MonoBehaviour
         MoveTypeChecker();        
         if (StatusBool[(int)Status.Stren])
         {
-            iLerp.canMove = false;
+            //iLerp.canMove = false;
+            Ipath.canMove = false;
             return;
         }
         if (StatusBool[(int)Status.Fascination])
@@ -1221,9 +1314,10 @@ public class Monster : MonoBehaviour
             if(movementType != MovementType.None)
             {
                 transform.position = Vector3.MoveTowards(transform.position, GameManager.Instance.Player.transform.position, -moveSpeed / 2 * Time.deltaTime);
-            }            
+            }
             //iLerp.SearchPath();
-            iLerp.canMove = false;
+            //iLerp.canMove = false;
+            Ipath.canMove = false;
         }       
         
         if(StatusBool[(int)Status.Fascination] ==false && isKnockback ==false)
@@ -1231,9 +1325,10 @@ public class Monster : MonoBehaviour
             if(Target !=null)
             {
                 Aisetter.target = Target.transform;
-            }                
-            if(forceAttack ==false)
-                iLerp.canMove = true;            
+            }
+            if (forceAttack == false)
+                Ipath.canMove = true;
+                //iLerp.canMove = true;            
         }        
     }
 
@@ -1244,8 +1339,7 @@ public class Monster : MonoBehaviour
     {        
         isMoveRandom = true;
         Vector3 pos = transform.position;
-        pos.x += UnityEngine.Random.Range(-1f,1f);
-        pos.y += UnityEngine.Random.Range(-1f, 1f);
+        pos = rangeSpawner.GetRandomPosition();        
         NNInfo info = AstarPath.active.GetNearest(pos);
         GraphNode node = info.node;
         
@@ -1256,10 +1350,10 @@ public class Monster : MonoBehaviour
         Aisetter.target = RandomSpawn.transform;
         Target = RandomSpawn;
         float endWiat = MaxWait;
-        while (!iLerp.reachedDestination)
+        while (!Ipath.reachedDestination)
         {
             endWiat -= Time.deltaTime;
-            iLerp.SearchPath();
+            Ipath.SearchPath();
             if(endWiat <=0)
             {
                 break;
@@ -1277,16 +1371,16 @@ public class Monster : MonoBehaviour
         // 여기를 러쉬 로
         Vector3 pos = GameManager.Instance.Player.transform.position;    
         NNInfo info = AstarPath.active.GetNearest(pos);
-        GraphNode node = info.node;        
-        iLerp.speed = RushSpeed;     
+        GraphNode node = info.node;
+        Ipath.maxSpeed = RushSpeed;     
         RandomSpawn.transform.SetParent(transform.parent);
         RandomSpawn.transform.position = pos;
         Aisetter.target = RandomSpawn.transform;
-        float endWiat = MaxWait;
-        while (!iLerp.reachedDestination)
+        float endWiat = MaxWait;        
+        while (!Ipath.reachedDestination)
         {
             endWiat -= Time.deltaTime;
-            iLerp.SearchPath();
+            Ipath.SearchPath();
             if (endWiat <= 0)
             {
                 break;
@@ -1297,7 +1391,7 @@ public class Monster : MonoBehaviour
         RandomSpawn.transform.SetParent(transform);
         //
         Rush_WaitTIme = defaultRushTime;
-        iLerp.SearchPath();
+        Ipath.SearchPath();
         isStartRush = false;        
     }
     bool isStartRush = false;
@@ -1331,7 +1425,7 @@ public class Monster : MonoBehaviour
         }
         else
         {
-            iLerp.speed = moveSpeed;
+            Ipath.maxSpeed = moveSpeed;
             switch (movementType)
             {
                 case MovementType.None:
@@ -1352,11 +1446,12 @@ public class Monster : MonoBehaviour
                     patrol_Setter.enabled = false;
                     if (Target == null)
                     {
-                        iLerp.canMove = false;
+                        Ipath.canMove = false;
                     }
                     else
                     {
-                        iLerp.SearchPath();
+                        Ipath.canMove = true;
+                        Ipath.SearchPath();
                     }
                     break;
                 case MovementType.patrol:
@@ -1409,19 +1504,19 @@ public class Monster : MonoBehaviour
             
             yield return new WaitForSeconds(PatrolWaitTime);              
             
-            while (!iLerp.reachedDestination)
-            {                
-                iLerp.SearchPath();
+            while (!Ipath.reachedDestination)
+            {
+                Ipath.SearchPath();
                 Target = patrol_Setter.GetTarget().gameObject;
-                if (iLerp.reachedDestination)
+                if (Ipath.reachedDestination)
                 {
                     break;
                 }
                 yield return null;
             }
             Target = null;
-            yield return new WaitForSeconds(0.1f);                      
-            iLerp.SearchPath();            
+            yield return new WaitForSeconds(0.1f);
+            Ipath.SearchPath();            
         }
         
         isStartPatrol = false;
@@ -1562,7 +1657,7 @@ public class Monster : MonoBehaviour
             isSpawn = false;
             if (IsAnimationAttack)
             {
-                iLerp.canMove = false;
+                Ipath.canMove = false;
                 forceAttack = true;
                 animator.SetTrigger("Attack");
             }
@@ -1607,16 +1702,37 @@ public class Monster : MonoBehaviour
     }
     void Spawn()
     {
-        GameObject temp = Instantiate(SpawanObject);
-        temp.transform.SetParent(transform.parent);
-        temp.transform.localScale = new Vector3(1, 1, 1);
-        temp.transform.position = new Vector3(UnityEngine.Random.Range(transform.position.x - 0.3f, transform.position.x + 0.3f),
-            UnityEngine.Random.Range(transform.position.y - 0.3f, transform.position.y + 0.3f));
-        temp.GetComponent<Monster>().isStartMonster = true;
-        if (pObject != null)
+        bool isSpawnPossible = false;
+        int randCount = 0;
+        Vector2 randPos = new Vector2();
+        while (true)
         {
-            pObject.GetComponent<DungeonController>().AddObject(temp);
+            randPos = new Vector3(UnityEngine.Random.Range(transform.position.x - 0.3f, transform.position.x + 0.3f),
+            UnityEngine.Random.Range(transform.position.y - 0.3f, transform.position.y + 0.3f));
+            if(rangeSpawner.IsInside(randPos))
+            {
+                isSpawnPossible = true;
+                break;
+            }
+            randCount++;
+            if(randCount >100)
+            {
+                break;
+            }
         }
+        if(isSpawnPossible)
+        {
+            GameObject temp = Instantiate(SpawanObject);
+            temp.transform.SetParent(transform.parent);
+            temp.transform.localScale = new Vector3(1, 1, 1);
+            temp.transform.position = randPos;
+            temp.GetComponent<Monster>().isStartMonster = true;
+            if (pObject != null)
+            {
+                pObject.GetComponent<DungeonController>().AddObject(temp);
+            }
+        }
+     
     }
     public void AnimAttack()
     {        
@@ -1636,6 +1752,10 @@ public class Monster : MonoBehaviour
     public void EndAttack()
     {
         forceAttack = false;
-        iLerp.canMove = true;
+        Ipath.canMove = true;
+    }
+    void DrawRay()
+    {
+        Debug.DrawLine(transform.position, GameManager.Instance.GetTwoPointDistanceVector(transform.position, GameManager.Instance.Player.transform.position, 20), Color.red);
     }
 }
