@@ -471,7 +471,7 @@ MonoBehaviour:
   IsAnimationAttack: 1
   pObject: {fileID: 0}
   MonsterHitDamage: 1
-  isStartMonster: 1
+  isStartMonster: 0
   isFly: 0
   pattern: 1
   status: 0
@@ -626,6 +626,7 @@ MonoBehaviour:
   - {fileID: 857699779889262146}
   - {fileID: 3287824004785275192}
   spriteRenderer: {fileID: 1844334136186658878}
+  MinimapGFX: {fileID: 8481965492876278267}
   moveSpeed: 0.3
   RandomMoveVector: {x: 0, y: 0}
 --- !u!114 &701636039895485650

@@ -1,3 +1,5 @@
+using DungeonMaker;
+using DungeonMaker.Core;
 using Sirenix.OdinInspector;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,6 +9,32 @@ public class DamageTest : MonoBehaviour
 {
     public RangeSpawner rangeSpawner;
     public Transform Particle;
+
+ 
+    public class testClass
+    {
+        public string name;
+        public int index;
+        public RoomObject[,] m;
+    }
+    [Button]
+    public void SaveTest()
+    {
+     
+        testClass t = new testClass();
+        t.name = "aaa";
+        t.index = 123;
+        t.m = new RoomObject[2, 2];
+
+    }
+    [Button]
+    public void LoadDungeon()
+    {        
+        if(ES3.KeyExists("DungeonObject"))
+        {
+            MapMaker.Instance.LoadMapData(ES3.Load<Generator>("DungeonObject"));
+        }
+    }
     [Button]
     public void SetParticle()
     {

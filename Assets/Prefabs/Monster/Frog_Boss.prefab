@@ -624,6 +624,7 @@ MonoBehaviour:
     randomShootCount: 10
     Rush_WaitTIme: 1
     RushSpeed: 1
+    ReflectSpeed: 1
   - Types: 2
     isWaitRand: 1
     Min_WaitTime: 1
@@ -647,6 +648,7 @@ MonoBehaviour:
     randomShootCount: 10
     Rush_WaitTIme: 1
     RushSpeed: 1
+    ReflectSpeed: 1
   - Types: 0
     isWaitRand: 1
     Min_WaitTime: 1
@@ -670,6 +672,7 @@ MonoBehaviour:
     randomShootCount: 10
     Rush_WaitTIme: 1
     RushSpeed: 1
+    ReflectSpeed: 1
   - Types: 1
     isWaitRand: 0
     Min_WaitTime: 0
@@ -695,6 +698,7 @@ MonoBehaviour:
     randomShootCount: 10
     Rush_WaitTIme: 1
     RushSpeed: 1
+    ReflectSpeed: 1
   movementType: 0
   infinityTracking: 1
   isRush: 0
@@ -746,6 +750,7 @@ MonoBehaviour:
   - {fileID: 3516683645157536970}
   - {fileID: 1624214795153185712}
   spriteRenderer: {fileID: 2500210704002906806}
+  MinimapGFX: {fileID: 1524837553098802586}
   moveSpeed: 0.3
   RandomMoveVector: {x: 0, y: 0}
 --- !u!114 &3645199911808767578

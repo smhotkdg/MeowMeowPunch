@@ -48,7 +48,10 @@ public class UIManager : MonoBehaviour
     }
     public void SetDamageNumber(GameObject target, float _damage)
     {
-        DamageNumber newDamageNumber = DamageNumberObject.Spawn(target.transform.position, _damage);
+        if(GameManager.Instance.ShowHpBar)
+        {
+            DamageNumber newDamageNumber = DamageNumberObject.Spawn(target.transform.position, _damage);
+        }        
     }
     public void SetHp()
     {

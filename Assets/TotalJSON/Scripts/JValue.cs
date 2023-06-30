@@ -40,6 +40,10 @@ namespace Leguar.TotalJSON {
 
 		internal abstract object zDeserialize(Type type, string toFieldName, DeserializeSettings deserializeSettings);
 
-	}
+        public T Deserialize<T>()
+        {
+            throw new NotImplementedException();
+        }
+    }
 
 }

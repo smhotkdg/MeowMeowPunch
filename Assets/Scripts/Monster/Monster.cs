@@ -181,7 +181,7 @@ public class Monster : MonoBehaviour
     [ShowIf("movementType", MovementType.Random)]
     public float MaxWait = 2f;
 
-    [Title("공격 타입")]
+    [Title("공격 타입")]    
     public enum AttackType
     {
         None,
@@ -296,10 +296,11 @@ public class Monster : MonoBehaviour
     float spawnDeltaTime;
     public SpriteRenderer spriteRenderer;
     IEnumerator CheckMoveRoutine;
-
+    public GameObject MinimapGFX;
     float defaultRushTime =0;    
     private void Awake()
-    {        
+    {
+        MinimapGFX = transform.Find("MinimapGFX").gameObject;
         defaultRushTime = Rush_WaitTIme;
         spawnDeltaTime = SpawnTime;
         ShootTimer = defaultShootTImer;
@@ -315,7 +316,8 @@ public class Monster : MonoBehaviour
         //iLerp = GetComponent<AILerp>();
         Ipath = GetComponent<AIPath>();
         CheckMoveRoutine = CheckMoveCoRoutine();
-        StartCoroutine(CheckMoveRoutine);        
+        StartCoroutine(CheckMoveRoutine);
+        Ipath.canMove = false;
     }
     private void OnDisable()
     {
@@ -349,9 +351,10 @@ public class Monster : MonoBehaviour
 
     }
     private void OnEnable()
-    {
+    {        
         isStartBoss = false;
         isStartMonster = false;
+        Ipath.canMove = false;
         bossPatternIndex = 0;
         if(rangeSpawner ==null)
         {

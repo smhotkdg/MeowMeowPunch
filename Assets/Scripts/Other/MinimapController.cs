@@ -5,14 +5,17 @@ using UnityEngine;
 public class MinimapController : MonoBehaviour
 {
     public Camera minimapCamera;
-
+    [SerializeField]
+    float maxMinimapSize = 20;
+    [SerializeField]
+    float minMinimapSize = 5;
     private void OnEnable()
     {
-        minimapCamera.orthographicSize = 15;
+        minimapCamera.orthographicSize = maxMinimapSize;
     }
     private void OnDisable()
     {
-        minimapCamera.orthographicSize = 5;
+        minimapCamera.orthographicSize = minMinimapSize;
     }
 
 }

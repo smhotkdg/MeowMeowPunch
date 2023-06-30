@@ -110,6 +110,7 @@ public class DungeonController : MonoBehaviour
             Monsters[i].gameObject.GetComponent<Monster>().rangeSpawner = rangeSpawner;
             Monsters[i].gameObject.GetComponent<Monster>().isStartMonster = true;
             Monsters[i].gameObject.GetComponent<Monster>().pObject = this.gameObject;
+            Monsters[i].gameObject.GetComponent<Monster>().MinimapGFX.SetActive(true);
         }
         if(IsOpen ==false)
         {
@@ -175,6 +176,7 @@ public class DungeonController : MonoBehaviour
             {
                 tr.gameObject.GetComponent<Monster>().MonsterIndex = findMaxIndex;                
                 tr.gameObject.GetComponent<Monster>().DestoryEventHandler += DungeonController_DestoryEventHandler;
+                tr.gameObject.GetComponent<Monster>().MinimapGFX.SetActive(false);
                 Monsters.Add(tr.gameObject);
                 findMaxIndex++;
                 MonsterDestory.Add(false);

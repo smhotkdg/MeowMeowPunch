@@ -11,150 +11,159 @@ using N = DungeonMaker.Core.RoomNode;
 
 namespace DungeonMaker
 {
-	[ExecuteInEditMode]
-	public class Generator : MonoBehaviour
-	{
-		#region Static Variables
-		private static Random random = new Random();
-		#endregion Static Variales
+    [ExecuteInEditMode]
+    public class Generator : MonoBehaviour
+    {
+        #region Static Variables
+        private static Random random = new Random();
+        #endregion Static Variales
 
 
-		#region Public Variables
-		public bool auto = true;
-		public bool multithreading = true;
-		public bool staticSeed;
-		public int seed;
-		public ModeType mode;
-		public Vector2 spacing;
-		[Tooltip("Set of dungeons that can be used.")]
-		public List<D> dungeons = new List<D>();
-		#endregion Public Variables
+        #region Public Variables
+        public bool auto = true;
+        public bool multithreading = true;
+        public bool staticSeed;
+        public int seed;
+        public ModeType mode;
+        public Vector2 spacing;
+        [Tooltip("Set of dungeons that can be used.")]
+        public List<D> dungeons = new List<D>();
+        #endregion Public Variables
 
 
-		#region Private Variables
-		public Correlator correlator;
-		private Transform parent;
-		#endregion Private Variables
+        #region Private Variables
+        public Correlator correlator;
+        private Transform parent;
+        #endregion Private Variables
 
 
-		#region Events
-		public static event VoidDelegate OnGeneratorStart;
-		public static event DungeonObjectDelegate OnGeneratorFinish;
-		#endregion Events
+        #region Events
+        public static event VoidDelegate OnGeneratorStart;
+        public static event DungeonObjectDelegate OnGeneratorFinish;
+        #endregion Events
 
 
-		#region Properties
-		public static Random Random
-		{
-			get { return random; }
-		}
-		public bool Generating
-		{
-			get { return correlator != null && correlator.State == CorrelatorState.RUNNING; }
-		}
-		private D RandomDungeon
-		{
-			get
-			{
-				if (dungeons.Count == 0) return null;
+        #region Properties
+        public static Random Random
+        {
+            get { return random; }
+        }
+        public bool Generating
+        {
+            get { return correlator != null && correlator.State == CorrelatorState.RUNNING; }
+        }
+        private D RandomDungeon
+        {
+            get
+            {
+                if (dungeons.Count == 0) return null;
 
-				return dungeons[Random.Next(dungeons.Count)];
-			}
-		}
-		#endregion Properties
+                return dungeons[Random.Next(dungeons.Count)];
+            }
+        }
+        #endregion Properties
 
 
-		#region Unity Methods
-		private void OnEnable()
-		{
+        #region Unity Methods
+        private void OnEnable()
+        {
 #if UNITY_EDITOR
-			EditorApplication.update += Verify;
+            EditorApplication.update += Verify;
 #endif
 
-			correlator = new Correlator();
-		}
+            correlator = new Correlator();
+        }
 
-		private void OnDisable()
-		{
+        private void OnDisable()
+        {
 #if UNITY_EDITOR
-			EditorApplication.update -= Verify;
+            EditorApplication.update -= Verify;
 #endif
 
-			if (correlator != null)
-				correlator.Abort();
-		}
+            if (correlator != null)
+                correlator.Abort();
+        }
 
-		private void OnDestroy()
-		{
-			if (correlator != null)
-				correlator.Abort();
-		}
+        private void OnDestroy()
+        {
+            if (correlator != null)
+                correlator.Abort();
+        }
 
-		private void OnApplicationQuit()
-		{
-			if (correlator != null)
-				correlator.Abort();
-		}
+        private void OnApplicationQuit()
+        {
+            if (correlator != null)
+                correlator.Abort();
+        }
+        bool isLoad = false;
+        private void Start()
+        {
+            if (auto && Application.isPlaying)
+            {
+                Generate();
+            }
+        }
 
-		private void Start()
-		{
-			if (auto && Application.isPlaying)
-			{
-				Generate();
-			}
-		}
-
-		private void Update()
-		{
-			Verify();
-		}
-		#endregion Unity Methods
+        private void Update()
+        {
+            Verify();
+        }
+        #endregion Unity Methods
 
 
-		#region Main Methods
-		public void Generate(D dungeon = null)
-		{
-			if (correlator.State == CorrelatorState.RUNNING) return;
+        #region Main Methods
+        public void Generate(D dungeon = null)
+        {
+            isLoad = false;
+            if (correlator.State == CorrelatorState.RUNNING) return;
 
-			SetSeed();
+            SetSeed();
 
-			D d = dungeon != null ? dungeon : RandomDungeon;
+            D d = dungeon != null ? dungeon : RandomDungeon;
 
-			if (d == null)
-			{
-				Debug.LogError("<b>Dungeon Maker</b>\nGenerator: No valid dungeon found.");
-				return;
-			}
+            if (d == null)
+            {
+                Debug.LogError("<b>Dungeon Maker</b>\nGenerator: No valid dungeon found.");
+                return;
+            }
 
-			if (d.nodes.Count < 2)
-			{
-				string problem = d.nodes.Count == 0 ? " empty." : " too small.";
+            if (d.nodes.Count < 2)
+            {
+                string problem = d.nodes.Count == 0 ? " empty." : " too small.";
 
-				Debug.LogError("<b>Dungeon Maker</b>\nGenerator: (" + d.Name + ") The dungeon is" + problem);
-				return;
-			}
+                Debug.LogError("<b>Dungeon Maker</b>\nGenerator: (" + d.Name + ") The dungeon is" + problem);
+                return;
+            }
 
-			correlator.Run(d, multithreading);
+            correlator.Run(d, multithreading);
 
-			LaunchOnGeneratorStartEvent();
-		}
+            LaunchOnGeneratorStartEvent();
+        }
+        public void GenerateLoad()
+        {
+            isLoad = true;
+            if (correlator.State == CorrelatorState.RUNNING) return;
 
-		private void Verify()
-		{
-			if (correlator != null && correlator.State == CorrelatorState.DONE)
-			{
-				Map m = correlator.Extract();
+            correlator.RunLoad(multithreading);
 
-				if (m != null && m.completed)
-				{
-					Destroy();
-					Build(m);
-				}
-				else Debug.LogError("<b>Dungeon Maker</b>\nGenerator: (" + m.dungeon.Name + ") The dungeon could not be generated.");
+            LaunchOnGeneratorStartEvent();
+        }
+        private void Verify()
+        {
+            if (correlator != null && correlator.State == CorrelatorState.DONE)
+            {
+                Map m = correlator.Extract();
 
-				LaunchOnGeneratorFinishEvent();
-			}
-		}
+                if (m != null && m.completed)
+                {
+                    Destroy();
+                    Build(m);
+                }
+                else Debug.LogError("<b>Dungeon Maker</b>\nGenerator: (" + m.dungeon.Name + ") The dungeon could not be generated.");
+
+                LaunchOnGeneratorFinishEvent();
+            }
+        }
 
         private void Shuffle(List<GameObject> list)
         {
@@ -187,177 +196,229 @@ namespace DungeonMaker
                 return false;
             }
         }
+        public int[,] mapIndex;
+        void saveIndex(int y ,int x,string dungeonname)
+        {         
+            switch(dungeonname)
+            {
+                case "Noraml":
+                    mapIndex[y, x] = 0;
+                    break;
+                case "Noraml_v":
+                    mapIndex[y, x] = 1;
+                    break;
+                case "Normal_Left":
+                    mapIndex[y, x] = 2;
+                    break;
+                case "Normal_Right":
+                    mapIndex[y, x] = 3;
+                    break;
+            }                
+        }
+        GameObject GetIndex(int y, int x,List<GameObject> os)
+        {
+            return os[mapIndex[y, x]];
+        }
         private void Build(Map map)
-		{
-			N[,] matrix = map.matrix;
-			RoomObject[,] m = new RoomObject[matrix.GetLength(0), matrix.GetLength(1)];
+        {
+            N[,] matrix = map.matrix;            
+            RoomObject[,] m = new RoomObject[matrix.GetLength(0), matrix.GetLength(1)];
+            if (isLoad == false)
+                mapIndex = new int[matrix.GetLength(0), matrix.GetLength(1)];
 
-			parent = new GameObject(map.dungeon.Name).transform;
+            parent = new GameObject(map.dungeon.Name).transform;
 
-			DungeonObject dungeon = AddDungeonObject(parent.gameObject, map.dungeon, m);
+            DungeonObject dungeon = AddDungeonObject(parent.gameObject, map.dungeon, m);
 
-			for (int y = 0; y < matrix.GetLength(0); y++)
-			{
-				for (int x = 0; x < matrix.GetLength(1); x++)
-				{
-					N n = matrix[y, x];
+            for (int y = 0; y < matrix.GetLength(0); y++)
+            {
+                for (int x = 0; x < matrix.GetLength(1); x++)
+                {
+                    N n = matrix[y, x];
 
-					if (n == null) continue;
+                    if (n == null) continue;
 
-					C c = new C(x, y);
-					RoomType t = GeneratorUtils.GetType(c, ref map.matrix);
-					List<GameObject> os = n.room.rooms.GetSet(t);
-					GameObject o = GeneratorUtils.RandomObject(os);
+                    C c = new C(x, y);
+                    RoomType t = GeneratorUtils.GetType(c, ref map.matrix);
+                    List<GameObject> os = n.room.rooms.GetSet(t);
+                    GameObject o = GeneratorUtils.RandomObject(os);
 
-					if (o == null)
-					{
-						os = n.room.rooms.GetSet(RoomType.NONE);
+                    if (o == null)
+                    {
+                        os = n.room.rooms.GetSet(RoomType.NONE);
                         //여기서 가중치 랜덤
                         List<GameObject> weightNormalList = new List<GameObject>();
                         List<GameObject> weightList = new List<GameObject>();
-                        if (os.Count >1)
+                        //지금은 일반방만
+                        //다른 방들도 가중치로 저장하고 해야함
+                        if (os.Count > 1)
                         {
-                            for(int i=0; i< os.Count; i++)
+                            for (int i = 0; i < os.Count; i++)
                             {
-                                if(os[i].GetComponent<DungeonController>().weight >=1)
-                                {                                    
-                                    weightNormalList.Add(os[i]);                                    
+                                if (os[i].GetComponent<DungeonController>().weight >= 1)
+                                {
+                                    weightNormalList.Add(os[i]);
                                 }
                                 else
                                 {
                                     weightList.Add(os[i]);
                                 }
                             }
-                            if(weightList.Count >0)
+                            if (weightList.Count > 0)
                             {
                                 Shuffle(weightList);
-                                if(FindProbability(weightList[0].GetComponent<DungeonController>().weight))
-                                {
-                                    o = weightList[0];
+                                if (FindProbability(weightList[0].GetComponent<DungeonController>().weight))
+                                {                                    
+                                    if(isLoad)
+                                    {                                        
+                                        o = GetIndex(y, x, os);
+                                    }
+                                    else
+                                    {
+                                        o = weightList[0];
+                                        saveIndex(x, y, o.name);
+                                    }
                                 }
                                 else
                                 {
-                                    o = GeneratorUtils.RandomObject(weightNormalList);
+                                    
+                                    if (isLoad)
+                                    {
+                                        o = GetIndex(y, x, os);
+                                    }
+                                    else
+                                    {
+                                        o = GeneratorUtils.RandomObject(weightNormalList);
+                                        saveIndex(x, y, o.name);
+                                    }
                                 }
                             }
                             else
                             {
-                                o = GeneratorUtils.RandomObject(weightNormalList);
+                                if (isLoad)
+                                {
+                                    o = GetIndex(y, x, os);
+                                }
+                                else
+                                {
+                                    o = GeneratorUtils.RandomObject(weightNormalList);
+                                    saveIndex(x, y, o.name);
+                                }                                
                             }
-                            
+
                         }
                         else
                         {
                             o = GeneratorUtils.RandomObject(os);
                         }
-						
-					}
 
-					if (o != null)
-					{
-						GameObject r = Create(c, n, o);
-						RoomObject room = AddRoomObject(r, dungeon, n, t, c);
+                    }
 
-						m[y, x] = room;
-					}
-					else
-					{
-						Debug.LogError("<b>Dungeon Maker</b>\nGenerator: (" + n.room.Name + ") The room format is incorrect.");
-						return;
-					}
-				}
-			}
+                    if (o != null)
+                    {
+                        GameObject r = Create(c, n, o);
+                        RoomObject room = AddRoomObject(r, dungeon, n, t, c);
 
-			AddDungeonObject(parent.gameObject, map.dungeon, m);
-		}
+                        m[y, x] = room;
+                    }
+                    else
+                    {
+                        Debug.LogError("<b>Dungeon Maker</b>\nGenerator: (" + n.room.Name + ") The room format is incorrect.");
+                        return;
+                    }
+                }
+            }
 
-		public void Destroy(bool editor = false)
-		{
-			if (parent != null)
-			{
-				DestroyImmediate(parent.gameObject);
-			}
-			else if (editor)
-			{
-				Debug.LogWarning("<b>Dungeon Maker</b>\nGenerator: The reference to the dungeon has been lost.");
-			}
-		}
-		#endregion Main Methods
+            AddDungeonObject(parent.gameObject, map.dungeon, m);
+        }
+
+        public void Destroy(bool editor = false)
+        {
+            if (parent != null)
+            {
+                DestroyImmediate(parent.gameObject);
+            }
+            else if (editor)
+            {
+                Debug.LogWarning("<b>Dungeon Maker</b>\nGenerator: The reference to the dungeon has been lost.");
+            }
+        }
+        #endregion Main Methods
 
 
-		#region Utility Methods
-		private GameObject Create(C c, N n, GameObject o)
-		{
-			Vector3 p = mode == ModeType._2D
-				? new Vector3(c.x * spacing.x, c.y * spacing.y, 0f)
-				: new Vector3(c.x * spacing.x, 0f, c.y * spacing.y);
+        #region Utility Methods
+        private GameObject Create(C c, N n, GameObject o)
+        {
+            Vector3 p = mode == ModeType._2D
+                ? new Vector3(c.x * spacing.x, c.y * spacing.y, 0f)
+                : new Vector3(c.x * spacing.x, 0f, c.y * spacing.y);
 
-			GameObject r = Instantiate(o, p, Quaternion.identity);
-			r.transform.SetParent(parent);
-			r.name = n.room.name.ToString();
+            GameObject r = Instantiate(o, p, Quaternion.identity);
+            r.transform.SetParent(parent);
+            r.name = n.room.name.ToString();
 
-			return r;
-		}
-		private DungeonObject AddDungeonObject(GameObject o, D d, RoomObject[,] m)
-		{
-			DungeonObject dungeonObject = o.GetComponent<DungeonObject>();
+            return r;
+        }
+        private DungeonObject AddDungeonObject(GameObject o, D d, RoomObject[,] m)
+        {
+            DungeonObject dungeonObject = o.GetComponent<DungeonObject>();
 
-			if (dungeonObject == null)
-			{
-				dungeonObject = o.AddComponent<DungeonObject>();
-			}
+            if (dungeonObject == null)
+            {
+                dungeonObject = o.AddComponent<DungeonObject>();
+            }
 
-			dungeonObject.Init(d, m, seed);
+            dungeonObject.Init(d, m, seed);
 
-			return dungeonObject;
-		}
-		private RoomObject AddRoomObject(GameObject o, DungeonObject d, N n, RoomType t, C c)
-		{
-			RoomObject roomObject = o.GetComponent<RoomObject>();
+            return dungeonObject;
+        }
+        private RoomObject AddRoomObject(GameObject o, DungeonObject d, N n, RoomType t, C c)
+        {
+            RoomObject roomObject = o.GetComponent<RoomObject>();
 
-			if (roomObject == null)
-			{
-				roomObject = o.AddComponent<RoomObject>();
-			}
+            if (roomObject == null)
+            {
+                roomObject = o.AddComponent<RoomObject>();
+            }
 
-			roomObject.Init(d, n, t, c.x, c.y);
+            roomObject.Init(d, n, t, c.x, c.y);
 
-			return roomObject;
-		}
-		public void SetSeed()
-		{
-			if (!staticSeed)
-				seed = random.Next(int.MinValue, int.MaxValue);
+            return roomObject;
+        }
+        public void SetSeed()
+        {
+            if (!staticSeed)
+                seed = random.Next(int.MinValue, int.MaxValue);
 
-			random = new Random(seed);
-			UnityEngine.Random.InitState(seed);
-		}
-		private void LaunchOnGeneratorStartEvent()
-		{
-			if (OnGeneratorStart != null)
-			{
-				OnGeneratorStart();
-
-#if UNITY_EDITOR
-				AssetDatabase.Refresh();
-#endif
-			}
-		}
-		private void LaunchOnGeneratorFinishEvent()
-		{
-			if (OnGeneratorFinish != null)
-			{
-				DungeonObject dungeonObject = parent == null 
-					? null 
-					: parent.GetComponent<DungeonObject>();
-
-				OnGeneratorFinish(dungeonObject);
+            random = new Random(seed);
+            UnityEngine.Random.InitState(seed);
+        }
+        private void LaunchOnGeneratorStartEvent()
+        {
+            if (OnGeneratorStart != null)
+            {
+                OnGeneratorStart();
 
 #if UNITY_EDITOR
-				AssetDatabase.Refresh();
+                AssetDatabase.Refresh();
 #endif
-			}
-		}
-		#endregion Utility Methods
-	}
+            }
+        }
+        private void LaunchOnGeneratorFinishEvent()
+        {
+            if (OnGeneratorFinish != null)
+            {
+                DungeonObject dungeonObject = parent == null
+                    ? null
+                    : parent.GetComponent<DungeonObject>();
+
+                OnGeneratorFinish(dungeonObject);
+
+#if UNITY_EDITOR
+                AssetDatabase.Refresh();
+#endif
+            }
+        }
+        #endregion Utility Methods
+    }
 }

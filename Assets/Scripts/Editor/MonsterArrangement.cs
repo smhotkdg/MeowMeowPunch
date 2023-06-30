@@ -41,43 +41,80 @@ public class MonsterArrangement : OdinMenuEditorWindow
     {
         xObject = Resources.Load<GameObject>("X");
     }
-    struct SaveMapData
+    public class SaveMapData
     {
-        public int mapType;
-        public string name;
+        public string name = "";
         public int xPos;
-        public int yPos;        
+        public int yPos;
+    }
+    public class MapData
+    {
+        public float MapHash;
+        public int MapType;
+        public List<SaveMapData> saveMapDatas = new List<SaveMapData>();
+    }
+    void GetMaxIndex()
+    {
+        //MapData data= loadTextFileToJsonObject();
+        //Debug.Log(data);
     }
     [Button]
     public void SetMap()
     {
-        JSON json = new JSON();     
+        JSON json = new JSON();
+        MapData mapData = new MapData();
+        mapData.MapHash = Random.Range(0f, 10000000f);
+   
         for (int i =0; i< MapMonster.GetLength(0); i++)
         {
             for(int j =0; j < MapMonster.GetLength(1); j++)
-            {
-                if(MapMonster[i,j]!=null && MapMonster[i,j].name != "X")
+            {                
+                if (MapMonster[i,j]!=null && MapMonster[i,j].name != "X")
                 {
-                    SaveMapData data = new SaveMapData();
-                    data.mapType = (int)MapTypeField;
+                    SaveMapData data = new SaveMapData(); 
+                    data.name = MapMonster[i, j].name;
                     data.xPos = i;
                     data.yPos = j;
-                    data.name = MapMonster[i, j].name;
-                    json = JSON.Serialize(data);
-                    saveJsonObjectToTextFile(json);
-                }
-
+                    mapData.saveMapDatas.Add(data);
+                }                
             }
         } 
+        json = JSON.Serialize(mapData);
+        saveJsonObjectToTextFile(json);
+        GetMaxIndex();
     }
     private void saveJsonObjectToTextFile(JSON jsonObject)
     {
         string jsonAsString = jsonObject.CreateString(); // Could also use "CreatePrettyString()" to make more human readable result, it is still valid JSON to read and parse by computer
-        StreamWriter writer = new StreamWriter(FILE_PATH,true);
+        StreamWriter writer = new StreamWriter(FILE_PATH);
         writer.WriteLine(jsonAsString);        
         writer.Close();
     }
-
+    [Button]
+    public void MergeJson()
+    {
+        JSON aa = new JSON();        
+        for(int i =1; i<= 3; i++)
+        {
+            string path = "Assets/Resources/Test";
+            string index = i.ToString();
+            path = path + index + ".json";
+            StreamReader reader = new StreamReader(path);
+            string jsonAsString = reader.ReadToEnd();
+            reader.Close();
+            JSON jsonObject = JSON.ParseString(jsonAsString);
+            aa.Add(index, jsonObject);
+        }
+        saveJsonObjectToTextFile(aa);
+    }
+    [Button]
+    public void LoadTest()
+    {
+        JSON data = loadTextFileToJsonObject();
+        MapData map =  data.GetJSON("1").Deserialize<MapData>();
+        //Debug.Log(data.Get("1")["saveMapDatas"][0]["name"]);
+        Debug.Log(map.saveMapDatas[0].name);
+    }
     private JSON loadTextFileToJsonObject()
     {
         StreamReader reader = new StreamReader(FILE_PATH);

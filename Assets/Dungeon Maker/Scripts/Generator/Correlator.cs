@@ -11,7 +11,7 @@ namespace DungeonMaker.Core
 		private Thread thread;
 		private Generator generator;
 		public D dungeon;
-		private M map;
+		public M map;
 		private CorrelatorState state;
 		private bool multithreading;
 		#endregion Private Variables
@@ -42,8 +42,27 @@ namespace DungeonMaker.Core
 				Correlate();
 			}
 		}
+        public void RunLoad(bool multithreading, Generator generator = null)
+        {
+            if (!ChangeState(CorrelatorState.RUNNING))
+                return;
 
-		public void Abort()
+            //this.dungeon = dungeon;
+            this.generator = generator;
+            this.multithreading = multithreading;
+
+            if (multithreading)
+            {
+                thread = new Thread(Correlate);
+                thread.Start();
+            }
+            else
+            {
+                Correlate();
+            }
+        }
+
+        public void Abort()
 		{
 			if (!ChangeState(CorrelatorState.DONE))
 				return;
@@ -72,7 +91,8 @@ namespace DungeonMaker.Core
 				if (generator != null)
 					generator.SetSeed();
 
-				map = new M(dungeon);
+                if(map ==null)
+				    map = new M(dungeon);
 				it++;
 
 			} while (!map.completed && it < max);

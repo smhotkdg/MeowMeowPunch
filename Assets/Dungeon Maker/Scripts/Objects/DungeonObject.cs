@@ -6,10 +6,10 @@ namespace DungeonMaker
 {
 	public class DungeonObject : MonoBehaviour
 	{
-        #region Private Variables
-        private DungeonData dungeon;
-        private RoomObject[,] map;
-        private List<RoomObject> rooms;
+		#region Private Variables
+		private DungeonData dungeon;
+		private RoomObject[,] map;
+		private List<RoomObject> rooms;
 		private int seed;
 		#endregion Private Variables
 

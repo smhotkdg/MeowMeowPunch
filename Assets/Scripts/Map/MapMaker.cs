@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MapMaker : MonoBehaviour
-{
+{    
     public Generator generator;
     public GameObject CmvCam;
     public GameObject Player;
@@ -49,6 +49,17 @@ public class MapMaker : MonoBehaviour
     }
     public bool isMakeEnd = false;
     DungeonObject dungeonObject;
+    void SaveDungeon()
+    {
+        ES3.Save<Generator>("DungeonObject", generator);
+        Correlator correlator = new Correlator();
+        correlator = generator.correlator;
+        DungeonData d = new DungeonData();
+        d = generator.correlator.dungeon;
+        Map map = new Map(d);
+        map = generator.correlator.map;
+        ES3.Save<Correlator>("correlator", correlator);
+    }
     IEnumerator MapMakeRoutine()
     {
         yield return new WaitForSecondsRealtime(0.15f);
@@ -192,6 +203,8 @@ public class MapMaker : MonoBehaviour
             }
         }
         isMakeEnd = true;
+        
+        SaveDungeon();
     }
     private void Generator_OnGeneratorFinish(DungeonObject d)
     {
@@ -239,7 +252,7 @@ public class MapMaker : MonoBehaviour
         GameManager.Instance.RemoveItems();
         DungeonData dungeonData = generator.dungeons[GameManager.Instance.Stage-1];
         generator.Generate(dungeonData);
-
+        
         foreach (RoomNode node in generator.correlator.dungeon.nodes)
         {
             if (node.room.name == "init")
@@ -253,6 +266,29 @@ public class MapMaker : MonoBehaviour
         {
             GameManager.Instance.AddKey(1);
         }
+        
+        GameManager.Instance.MonsterParticleRemoveAll();
+    }
+    public void LoadMapData(Generator _genrator)
+    {
+        isMakeEnd = false;
+        GameManager.Instance.RemoveItems();
+        //generator.Generate(dungeonData);
+        generator = _genrator;        
+        generator.GenerateLoad();
+        foreach (RoomNode node in generator.correlator.dungeon.nodes)
+        {
+            if (node.room.name == "init")
+            {
+                generator.correlator.dungeon.currentNode = node;
+
+            }
+        }
+        UIManager.Instance.SetGameUI();
+        if (GameManager.Instance.Stage == 1)
+        {
+            GameManager.Instance.AddKey(1);
+        }        
         GameManager.Instance.MonsterParticleRemoveAll();
     }
 }

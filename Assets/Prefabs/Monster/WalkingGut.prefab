@@ -177,7 +177,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1986553867890105757
 Transform:
   m_ObjectHideFlags: 0
@@ -804,7 +804,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3339218014047879
 Transform:
   m_ObjectHideFlags: 0
@@ -1278,7 +1278,7 @@ MonoBehaviour:
   IsAnimationAttack: 1
   pObject: {fileID: 0}
   MonsterHitDamage: 1
-  isStartMonster: 1
+  isStartMonster: 0
   isFly: 0
   pattern: 0
   status: 0
@@ -1335,6 +1335,7 @@ MonoBehaviour:
   - {fileID: 5505288013248549849}
   - {fileID: 7647443820604636323}
   spriteRenderer: {fileID: 6780726692564950437}
+  MinimapGFX: {fileID: 1712326696115619967}
   moveSpeed: 0.3
   RandomMoveVector: {x: 0, y: 0}
 --- !u!114 &5637707811707859273
