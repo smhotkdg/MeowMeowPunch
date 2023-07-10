@@ -266,6 +266,37 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &1815114012950843762
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7190623595310270952}
+  m_Layer: 13
+  m_Name: EffectPos
+  m_TagString: Untagged
+  m_Icon: {fileID: 1206586993520771344, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7190623595310270952
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1815114012950843762}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.093000025, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1844334136186658879}
+  m_RootOrder: 13
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1844334136186658823
 GameObject:
   m_ObjectHideFlags: 0
@@ -320,6 +351,7 @@ Transform:
   - {fileID: 6124661387342798161}
   - {fileID: 1057330741698275746}
   - {fileID: 7273103838096746367}
+  - {fileID: 7190623595310270952}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -402,7 +434,7 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.004882917, y: 0.008176163}
+  m_Offset: {x: 0, y: 0}
   m_Size: {x: 0.3998979, y: 0.3998979}
   m_Direction: 0
 --- !u!50 &1844334136186658875
@@ -466,6 +498,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4e6823f6a72a5644aca6524db79f87a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  effect_target: {fileID: 1815114012950843762}
+  effectSacle: {x: 0.6, y: 0.6}
   particleType: 0
   rangeSpawner: {fileID: 0}
   IsAnimationAttack: 1
@@ -501,10 +535,11 @@ MonoBehaviour:
     Rush_WaitTIme: 1
     RushSpeed: 1
     ReflectSpeed: 1
+    isAlwaysTargetPlayer: 0
   - Types: 5
     isWaitRand: 1
-    Min_WaitTime: 3
-    Max_WaitTime: 5
+    Min_WaitTime: 5
+    Max_WaitTime: 7
     attackType: 0
     isRandomAttack: 0
     BulletCount: 1
@@ -524,7 +559,8 @@ MonoBehaviour:
     randomShootCount: 10
     Rush_WaitTIme: 1
     RushSpeed: 1.5
-    ReflectSpeed: 2
+    ReflectSpeed: 1.5
+    isAlwaysTargetPlayer: 1
   - Types: 3
     isWaitRand: 1
     Min_WaitTime: 1
@@ -549,6 +585,7 @@ MonoBehaviour:
     Rush_WaitTIme: 1
     RushSpeed: 1
     ReflectSpeed: 1
+    isAlwaysTargetPlayer: 0
   - Types: 1
     isWaitRand: 0
     Min_WaitTime: 0
@@ -575,6 +612,7 @@ MonoBehaviour:
     Rush_WaitTIme: 1
     RushSpeed: 1
     ReflectSpeed: 1
+    isAlwaysTargetPlayer: 0
   movementType: 0
   infinityTracking: 1
   isRush: 0
@@ -585,8 +623,15 @@ MonoBehaviour:
   PatrolList: []
   waitTIme: 0.2
   MaxWait: 2
+  TeleportMinTime: 1
+  TeleportMaxTime: 3
+  TeleportAttackWaitTime: 1
+  TeleportRewaindMinDelay: 1
+  TeleportRewaindMaxDelay: 3
+  isTeleport: 0
   attackType: 0
   isRandomAttack: 1
+  ForceAttack: 0
   BulletCount: 1
   isSIngleWay: 0
   DealyEachBullet: 0.1
@@ -599,6 +644,7 @@ MonoBehaviour:
   GunObject: {fileID: 6124661387342798163}
   InfinityAttack: 0
   dontNeedTarget: 1
+  FlipShootPos: 0
   SpawanObject: {fileID: 2106711422497459634, guid: 91ae6771083dba548b5c3843020b44e8,
     type: 3}
   SpawnTime: 6.5
@@ -607,6 +653,7 @@ MonoBehaviour:
   DeathSpawnMonsterList: []
   DeathSpawnCount: 0
   DeathSpawnRandom: 0
+  Death_ExplotionObject: {fileID: 0}
   BaseHp: 150
   StageHp: 50
   Hp: 10

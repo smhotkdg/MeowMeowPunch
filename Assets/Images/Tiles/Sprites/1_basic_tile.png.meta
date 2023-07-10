@@ -812,9 +812,9 @@ TextureImporter:
       1_basic_tile 25: -1581481734271370048
       1_basic_tile 24: -6122825052101451410
       1_basic_tile 30: 3578357878752448174
-      1_basic_tile 28: -5002363879197257118
       1_basic_tile 29: 7320609017249720715
       1_basic_tile 0: -141347875345412251
+      1_basic_tile 11: 1518270109194199564
       1_basic_tile 17: -7242630875445514938
       1_basic_tile 8: 6557803402358017038
       1_basic_tile 1: -4856089461340808793
@@ -836,7 +836,7 @@ TextureImporter:
       1_basic_tile 14: -2042046929251509832
       1_basic_tile 23: 3128545764269318002
       1_basic_tile 10: -8892794965590796418
-      1_basic_tile 11: 1518270109194199564
+      1_basic_tile 28: -5002363879197257118
       1_basic_tile 6: 9127482811320108565
   spritePackingTag: 
   pSDRemoveMatte: 0

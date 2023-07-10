@@ -46,6 +46,9 @@ public class GameManager : MonoBehaviour
     public Transform EpicLootBox;
     public Transform GetEffect;
 
+    public Transform Key_Top_Bottom;
+    public Transform Key_Left_Right;
+
     public bool ShowHpBar = false;
     
     private static GameManager _instance = null;
@@ -78,7 +81,8 @@ public class GameManager : MonoBehaviour
     public enum GameStatus
     {
         NOTING,
-        KNOCKBACK
+        KNOCKBACK,
+        DO_FORCE
     }
     public bool isVisibleMap = false;
     public GameStatus gameStatus = GameStatus.NOTING;
@@ -91,6 +95,7 @@ public class GameManager : MonoBehaviour
     public int Coin = 0;
     public int Key = 0;
 
+    
 
     public enum WeightItem
     {
@@ -302,6 +307,10 @@ public class GameManager : MonoBehaviour
         NoramlLootBox,
         EpicLootBox,
         GetEffect,
+        Key_Top,
+        Key_Bottom,
+        Key_Left,
+        Key_Right,
     }
     public void RemoveItems()
     {
@@ -371,6 +380,25 @@ public class GameManager : MonoBehaviour
                     tempObject = EZ_PoolManager.Spawn(GetEffect, InitPos, new Quaternion());
                     tempObject.transform.position = InitPos;                    
                     break;
+                case SpawnType.Key_Top:
+                    tempObject = EZ_PoolManager.Spawn(Key_Top_Bottom, InitPos, new Quaternion());
+                    tempObject.transform.position = InitPos;
+                    tempObject.localScale = new Vector3(1, 1, 1);
+                    break;
+                case SpawnType.Key_Bottom:                   
+                    tempObject = EZ_PoolManager.Spawn(Key_Top_Bottom, InitPos, new Quaternion());
+                    tempObject.transform.position = InitPos;                    
+                    break;
+                case SpawnType.Key_Left:                
+                    tempObject = EZ_PoolManager.Spawn(Key_Left_Right, InitPos, new Quaternion());
+                    tempObject.transform.position = InitPos;
+                    tempObject.localScale = new Vector3(1, 1, 1);
+                    break;
+                case SpawnType.Key_Right:                   
+                    tempObject = EZ_PoolManager.Spawn(Key_Left_Right, InitPos, new Quaternion());
+                    tempObject.transform.position = InitPos;
+                    tempObject.localScale = new Vector3(-1, 1, 1);
+                    break;
             }
             
             yield return new WaitForSeconds(.05f);
@@ -411,5 +439,17 @@ public class GameManager : MonoBehaviour
         Vector3 point_C = nowPos + (direction.normalized * distance);
         //Draw the line
         return point_C;        
+    }
+
+    public void ChangePlayerSprite(bool flag)
+    {
+        playerController.spriteRenderer.enabled = flag;
+        playerController.gunsprite.enabled = flag;
+    }
+    public delegate void KeyEvent();
+    public event KeyEvent KeyEventHandler;
+    public void EndKeyEvent()
+    {
+        KeyEventHandler?.Invoke();
     }
 }

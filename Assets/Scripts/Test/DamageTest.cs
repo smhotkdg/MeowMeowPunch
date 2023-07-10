@@ -33,6 +33,8 @@ public class DamageTest : MonoBehaviour
         if(ES3.KeyExists("DungeonObject"))
         {
             MapMaker.Instance.LoadMapData(ES3.Load<Generator>("DungeonObject"));
+            //Debug.Log(ES3.Load<int>("DungeonSeed"));
+            //MapMaker.Instance.LoadMapData(ES3.Load<int>("DungeonSeed"));            
         }
     }
     [Button]

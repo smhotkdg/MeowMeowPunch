@@ -46,6 +46,7 @@ public class DamageColider : MonoBehaviour
     {
         bulletType = BulletType.player;
         Hit = false;
+        isStopMovement = false;
         //Vector2 dir = transform.GetComponent<Rigidbody2D>().velocity;
         //float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
         //transform.transform.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
@@ -80,6 +81,7 @@ public class DamageColider : MonoBehaviour
                 {
                     EZ_Pooling.EZ_PoolManager.Despawn(transform);
                 }
+                StopBullet();
             }
             OnObstacleEnterLaser(collision.ClosestPoint(transform.position));
             Hit = true;
@@ -126,6 +128,7 @@ public class DamageColider : MonoBehaviour
                     {
                         EZ_Pooling.EZ_PoolManager.Despawn(transform);
                     }
+                    StopBullet();
                     //EZ_Pooling.EZ_PoolManager.Despawn(transform);                    
                 }
 
@@ -151,6 +154,7 @@ public class DamageColider : MonoBehaviour
                     {
                         EZ_Pooling.EZ_PoolManager.Despawn(transform);
                     }
+                    StopBullet();
                     //EZ_Pooling.EZ_PoolManager.Despawn(transform);                    
                 }
 
@@ -181,6 +185,7 @@ public class DamageColider : MonoBehaviour
                     {
                         EZ_Pooling.EZ_PoolManager.Despawn(transform);
                     }
+                    StopBullet();
                     //EZ_Pooling.EZ_PoolManager.Despawn(transform);
                 }
                 Hit = true;
@@ -198,12 +203,19 @@ public class DamageColider : MonoBehaviour
                     {
                         EZ_Pooling.EZ_PoolManager.Despawn(transform);
                     }
+                    StopBullet();
                     //EZ_Pooling.EZ_PoolManager.Despawn(transform);
                 }
             }
             Hit = true;
         }
 
+        
+    }
+    public bool isStopMovement = false;
+    public void StopBullet()
+    {
+        isStopMovement = true;
     }
 
     Vector2 SetLIner(GameObject target, float margin)

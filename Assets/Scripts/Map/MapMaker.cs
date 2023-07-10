@@ -250,7 +250,8 @@ public class MapMaker : MonoBehaviour
     {
         isMakeEnd = false;
         GameManager.Instance.RemoveItems();
-        DungeonData dungeonData = generator.dungeons[GameManager.Instance.Stage-1];
+        //DungeonData dungeonData = generator.dungeons[GameManager.Instance.Stage-1];
+        DungeonData dungeonData = generator.dungeons[0];
         generator.Generate(dungeonData);
         
         foreach (RoomNode node in generator.correlator.dungeon.nodes)
@@ -268,6 +269,9 @@ public class MapMaker : MonoBehaviour
         }
         
         GameManager.Instance.MonsterParticleRemoveAll();
+
+        GameManager.Instance.ChangePlayerSprite(true);
+        GameManager.Instance.gameStatus = GameManager.GameStatus.NOTING;
     }
     public void LoadMapData(Generator _genrator)
     {

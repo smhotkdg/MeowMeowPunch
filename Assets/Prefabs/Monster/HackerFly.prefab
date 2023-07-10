@@ -739,6 +739,37 @@ SpriteRenderer:
   m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &4506520634821679270
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6676758170640503229}
+  m_Layer: 13
+  m_Name: EffectPos
+  m_TagString: Untagged
+  m_Icon: {fileID: 1206586993520771344, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6676758170640503229
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4506520634821679270}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.141, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8194577210173972292}
+  m_RootOrder: 12
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4898781835993119288
 GameObject:
   m_ObjectHideFlags: 0
@@ -1211,6 +1242,7 @@ Transform:
   - {fileID: 4386422176033484817}
   - {fileID: 4386422176219685418}
   - {fileID: 1391200434865929635}
+  - {fileID: 6676758170640503229}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1255,13 +1287,13 @@ SpriteRenderer:
   m_SortingLayerID: 47421343
   m_SortingLayer: 4
   m_SortingOrder: 0
-  m_Sprite: {fileID: -2973741365031722151, guid: c4bd3cffffda71b4b96639403a543242,
+  m_Sprite: {fileID: 1408619010074816522, guid: ee7033c8e6542b142aefcd918881a8fe,
     type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.64, y: 0.64}
+  m_Size: {x: 0.48, y: 0.48}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -1357,13 +1389,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4e6823f6a72a5644aca6524db79f87a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  effect_target: {fileID: 4506520634821679270}
+  effectSacle: {x: 0.15, y: 0.15}
   particleType: 0
   rangeSpawner: {fileID: 0}
   IsAnimationAttack: 0
   pObject: {fileID: 0}
   MonsterHitDamage: 1
   isStartMonster: 0
-  isFly: 0
+  isFly: 1
   pattern: 0
   status: 0
   isBossMonster: 0

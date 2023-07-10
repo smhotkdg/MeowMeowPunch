@@ -10,6 +10,9 @@ using EZ_Pooling;
 
 public class Monster : MonoBehaviour
 {
+    private Rigidbody2D rigidbody2D;
+    public GameObject effect_target;
+    public Vector2 effectSacle;
     public enum MonsterParticleType {
         Mechanic,
         Creature
@@ -125,6 +128,8 @@ public class Monster : MonoBehaviour
         [ShowIf("@Types == BossAttackType.Reflect")]
         public float ReflectSpeed = 1f;
 
+        [ShowIf("@Types == BossAttackType.Reflect")]
+        public bool isAlwaysTargetPlayer = false;
     }
    
 
@@ -155,7 +160,8 @@ public class Monster : MonoBehaviour
         //랜덤
         Random,
         Reflect,
-        mole
+        mole,
+        Teleport
     }
     [ShowIf("pattern", Pattern.single)]
     public MovementType movementType;
@@ -181,6 +187,21 @@ public class Monster : MonoBehaviour
     [ShowIf("movementType", MovementType.Random)]
     public float MaxWait = 2f;
 
+    [ShowIf("@isTeleport == true")]
+    public float TeleportMinTime = 1f;
+    [ShowIf("@isTeleport == true")]
+    public float TeleportMaxTime = 3f;
+
+    [ShowIf("@isTeleport == true")]
+    public float TeleportAttackWaitTime = 1f;
+
+    [ShowIf("@isTeleport == true")]
+    public float TeleportRewaindMinDelay = 1f;
+    [ShowIf("@isTeleport == true")]
+    public float TeleportRewaindMaxDelay = 3f;
+
+    public bool isTeleport = false;
+
     [Title("공격 타입")]    
     public enum AttackType
     {
@@ -203,6 +224,13 @@ public class Monster : MonoBehaviour
     public AttackType attackType;    
     [ShowIf("@pattern == Pattern.single &&  attackType == AttackType.Missile")]
     public bool isRandomAttack = false;
+
+    /// <summary>
+    ///자동으로 공격 에일리언 경우 자동공격이 아닌 패턴공격형식
+    /// </summary>
+    [ShowIf("attackType", AttackType.Missile)]
+    public bool ForceAttack = false;
+    
     [ShowIf("attackType", AttackType.Missile)]
     public int BulletCount = 1;
     [ShowIf("@(BulletCount >1 && attackType == AttackType.Missile) || attackType == AttackType.patternMissile")]
@@ -232,6 +260,9 @@ public class Monster : MonoBehaviour
     [ShowIf("@attackType == AttackType.Missile || attackType == AttackType.patternMissile")]
     public bool dontNeedTarget = false;
 
+    [ShowIf("@attackType == AttackType.Missile")]
+    public bool FlipShootPos = false;
+
     [ShowIf("attackType", AttackType.SpawnMonster)]
     public GameObject SpawanObject;
     [ShowIf("attackType", AttackType.SpawnMonster)]
@@ -249,6 +280,7 @@ public class Monster : MonoBehaviour
         None,
         SpawnMonster,
         patternMissile,
+        Explosion,
     }
     [ShowIf("pattern", Pattern.single)]
     public DeathType deathType = DeathType.None;
@@ -259,6 +291,10 @@ public class Monster : MonoBehaviour
     public int DeathSpawnCount;
     [ShowIf("@deathType==DeathType.SpawnMonster && DeathSpawnCount>0")]
     public bool DeathSpawnRandom =false;
+
+    [ShowIf("deathType", DeathType.Explosion)]
+    public Transform Death_ExplotionObject;
+
     [Title("================================")]
     public float BaseHp =10;
     public float StageHp =0;
@@ -297,11 +333,15 @@ public class Monster : MonoBehaviour
     public SpriteRenderer spriteRenderer;
     IEnumerator CheckMoveRoutine;
     public GameObject MinimapGFX;
-    float defaultRushTime =0;    
+    float defaultRushTime =0;
+    Vector2 InitshooPos;
     private void Awake()
     {
+        rigidbody2D = GetComponent<Rigidbody2D>();
+        InitshooPos = BulletPos.localPosition;
         MinimapGFX = transform.Find("MinimapGFX").gameObject;
         defaultRushTime = Rush_WaitTIme;
+        
         spawnDeltaTime = SpawnTime;
         ShootTimer = defaultShootTImer;
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -537,6 +577,7 @@ public class Monster : MonoBehaviour
         }
         Hp -= damage;
         SetBarSize(Hp / defaultHp);
+        SoundManager.Instance.PlaySFX("MonsterHit");
         if (Hp<=0)
         {
             Death();
@@ -568,6 +609,10 @@ public class Monster : MonoBehaviour
     private void LateUpdate()
     {
         CheckFlip();
+        if(isRandomAttack ==false)
+        {
+            UpdateGun();
+        }        
     }
     IEnumerator BossRandomWaitRoutine()
     {
@@ -652,6 +697,7 @@ public class Monster : MonoBehaviour
             GunObject.transform.rotation = Quaternion.Euler(0, 0, gunAngle);
 
             Transform _bulltPos = myPattern_.BulletPosList[UnityEngine.Random.Range(0, myPattern_.BulletPosList.Count)];
+            
             Vector2 moveVec = (_bulltPos.transform.up + (_bulltPos.transform.right * rangle_bullet / 2)) * myPattern_.Shootspeed;
             Transform object_transfrom;
 
@@ -794,6 +840,7 @@ public class Monster : MonoBehaviour
         RandomMoveVector = pos;
         RandomSpawn.transform.SetParent(transform.parent);
         RandomSpawn.transform.position = pos;
+        Ipath.canMove = true;
         Aisetter.target = RandomSpawn.transform;
         Target = RandomSpawn;        
     }
@@ -846,7 +893,17 @@ public class Monster : MonoBehaviour
         }
         if(movementType == MovementType.Reflect)
         {            
-            transform.position = Vector2.MoveTowards(transform.position, RandomSpawn.transform.position, moveSpeed * Time.deltaTime);
+            if(isRush)
+            {
+                if(isStartRush)
+                {
+                    transform.position = Vector2.MoveTowards(transform.position, RandomSpawn.transform.position, moveSpeed * Time.deltaTime);
+                }
+            }
+            else
+            {
+                transform.position = Vector2.MoveTowards(transform.position, RandomSpawn.transform.position, moveSpeed * Time.deltaTime);
+            }            
         }
      
         
@@ -1047,6 +1104,10 @@ public class Monster : MonoBehaviour
     bool forceAttack = false;
     void CheckAttack()
     {
+        if(ForceAttack)
+        {
+            return;
+        }
         if(shoot ==false)
         {
             ShootTimer -= Time.deltaTime;
@@ -1265,6 +1326,14 @@ public class Monster : MonoBehaviour
     
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        if(isFly)
+        {
+            if (collision.gameObject.tag == "Obstacle" || collision.gameObject.tag == "cliff")
+            {                
+                Physics2D.IgnoreCollision(capsuleCollider, collision.collider);                
+            }
+        }
+     
         if (collision.gameObject.tag == "wall" || collision.gameObject.tag == "Room_wall")
         {
             if (knockbackRoutine != null)
@@ -1280,18 +1349,57 @@ public class Monster : MonoBehaviour
         }
         if(movementType == MovementType.Reflect)
         {
-            Vector3 dir = Vector3.Reflect(Ipath.velocity, collision.GetContact(0).normal);
-            dir = dir * 10;
-            RandomSpawn.transform.position = dir;            
+            if(collision.gameObject.tag !="outBlock" )
+            {
+                if (isRush)
+                {
+                    if (isStartRush)
+                    {
+                        Vector3 dir = Vector3.Reflect(Ipath.velocity, collision.GetContact(0).normal);
+                        dir = dir * 10;
+                        RandomSpawn.transform.position = dir;
+                    }
+                }
+                else
+                {
+                    Vector3 dir = Vector3.Reflect(Ipath.velocity, collision.GetContact(0).normal);
+                    dir = dir * 10;
+                    RandomSpawn.transform.position = dir;
+                }
+            }
+         
+
+                    
         }
         if (myPatterns.Count > 0 && bossPatternIndex < myPatterns.Count)
         {
-            if (myPatterns[bossPatternIndex].Types == BossAttackType.Reflect)
+            if (collision.gameObject.tag != "outBlock")
             {
-                Vector3 dir = Vector3.Reflect(Ipath.velocity, collision.GetContact(0).normal);
-                dir = dir * 10;
-                RandomSpawn.transform.position = dir;
-            }
+                if (myPatterns[bossPatternIndex].Types == BossAttackType.Reflect)
+                {                    
+                    
+                    Vector3 pos = GameManager.Instance.GetTwoPointDistanceVector(transform.position, GameManager.Instance.Player.transform.position, 20);                    
+                    Vector3 dir = Vector3.Reflect(Ipath.velocity, collision.GetContact(0).normal);                      
+                    dir = dir * 20;
+                    if (myPatterns[bossPatternIndex].isAlwaysTargetPlayer)
+                    {
+                        if (collision.gameObject.tag == "Player")
+                        {
+                            RandomSpawn.transform.position = dir;
+                        }
+                        else
+                        {
+                            RandomSpawn.transform.position = pos;
+                        }
+                    }
+                    else
+                    {
+                        RandomSpawn.transform.position = dir;
+                    }
+                        
+                }
+
+            }         
         }
     }
 
@@ -1343,13 +1451,16 @@ public class Monster : MonoBehaviour
         isMoveRandom = true;
         Vector3 pos = transform.position;
         pos = rangeSpawner.GetRandomPosition();        
+        if(!rangeSpawner.IsInside(pos))
+        {
+            pos = GameManager.Instance.Player.transform.position;
+        }
         NNInfo info = AstarPath.active.GetNearest(pos);
-        GraphNode node = info.node;
+        GraphNode node = info.node;        
         
-        Vector3 randomPoint = node.RandomPointOnSurface();
-        RandomMoveVector = randomPoint;
+        RandomMoveVector = pos;
         RandomSpawn.transform.SetParent(transform.parent);
-        RandomSpawn.transform.position = randomPoint;        
+        RandomSpawn.transform.position = pos;        
         Aisetter.target = RandomSpawn.transform;
         Target = RandomSpawn;
         float endWiat = MaxWait;
@@ -1371,33 +1482,54 @@ public class Monster : MonoBehaviour
     IEnumerator PatrolCoRoutine;
     IEnumerator RushRoutine()
     {
-        // 여기를 러쉬 로
-        Vector3 pos = GameManager.Instance.Player.transform.position;    
-        NNInfo info = AstarPath.active.GetNearest(pos);
-        GraphNode node = info.node;
-        Ipath.maxSpeed = RushSpeed;     
+        Vector3 pos = GameManager.Instance.GetTwoPointDistanceVector(transform.position, GameManager.Instance.Player.transform.position, 2);
+        Ipath.maxSpeed = RushSpeed;
+        RandomMoveVector = pos;
         RandomSpawn.transform.SetParent(transform.parent);
         RandomSpawn.transform.position = pos;
         Aisetter.target = RandomSpawn.transform;
-        float endWiat = MaxWait;        
-        while (!Ipath.reachedDestination)
-        {
-            endWiat -= Time.deltaTime;
-            Ipath.SearchPath();
-            if (endWiat <= 0)
-            {
-                break;
-            }
-            yield return null;
-        }
-        yield return new WaitForSeconds(waitTIme);        
+        Target = RandomSpawn;
+        yield return new WaitForSeconds(2f);
+        animator.Play("stop");
+        Rush_WaitTIme = defaultRushTime;        
         RandomSpawn.transform.SetParent(transform);
-        //
-        Rush_WaitTIme = defaultRushTime;
+        //iLerp.SearchPath();
         Ipath.SearchPath();
-        isStartRush = false;        
+        isStartRush = false;
+
+        // 여기를 러쉬 로
+        //Vector3 pos = GameManager.Instance.Player.transform.position;    
+        //NNInfo info = AstarPath.active.GetNearest(pos);
+        //animator.Play("move");
+        //Ipath.canMove = true;
+        //GraphNode node = info.node;
+        //Ipath.maxSpeed = RushSpeed;     
+        //RandomSpawn.transform.SetParent(transform.parent);
+        //RandomSpawn.transform.position = GameManager.Instance.Player.transform.position;
+        //Aisetter.target = RandomSpawn.transform;
+        //float endWiat = MaxWait;        
+        //while (!Ipath.reachedDestination)
+        //{
+        //    endWiat -= Time.deltaTime;
+        //    Ipath.SearchPath();
+        //    RandomSpawn.transform.position = GameManager.Instance.Player.transform.position;
+        //    Aisetter.target = RandomSpawn.transform;
+        //    if (endWiat <= 0)
+        //    {
+        //        break;
+        //    }
+        //    yield return null;
+        //}
+        //yield return new WaitForSeconds(waitTIme);        
+        //RandomSpawn.transform.SetParent(transform);
+        //animator.Play("stop");
+        ////
+        //Rush_WaitTIme = defaultRushTime;
+        //Ipath.SearchPath();
+        //isStartRush = false;        
     }
     bool isStartRush = false;
+    bool isStartTeleport = false;
     void MoveTypeChecker()
     {
         if (isRush == true && Rush_WaitTIme <= 0)
@@ -1425,6 +1557,26 @@ public class Monster : MonoBehaviour
                 isStartRush = true;
             }
          
+        }
+        else if(isTeleport ==true && isStartTeleport ==false)
+        {
+            StartCoroutine(TeleortRoutine());
+            //iLerp.canMove = false;
+            CheckPlayerFlip();
+            if (RandomMoveCoRoutine != null)
+            {
+                StopCoroutine(RandomMoveCoRoutine);
+                isMoveRandom = false;
+            }
+            if (PatrolCoRoutine != null)
+            {
+                Aisetter.enabled = true;
+                patrol_Setter.enabled = false;
+                StopCoroutine(PatrolCoRoutine);
+                isStartPatrol = false;
+            }
+
+            isStartTeleport = true;
         }
         else
         {
@@ -1477,8 +1629,24 @@ public class Monster : MonoBehaviour
             }
         }
     }
-    
-    
+    public void MoveRandomPosition()
+    {
+        transform.position = rangeSpawner.GetRandomPosition();
+        
+    }
+    IEnumerator TeleortRoutine()
+    {
+        animator.Play("teleport_start");
+        capsuleCollider.enabled = false;
+        yield return new WaitForSeconds(UnityEngine.Random.Range(TeleportMinTime, TeleportMaxTime));
+        animator.Play("teleport_end");
+        capsuleCollider.enabled = true;
+        yield return new WaitForSeconds(TeleportAttackWaitTime);
+        animator.Play("attack");
+        yield return new WaitForSeconds(UnityEngine.Random.Range(TeleportRewaindMinDelay, TeleportRewaindMaxDelay));
+        isStartTeleport = false;
+    }
+
     bool bStartReflect = false;
     public void StartReflect()
     {        
@@ -1587,7 +1755,9 @@ public class Monster : MonoBehaviour
     }
     void CheckFlip()
     {
-        if(isStartRush)
+        
+            
+        if (isStartRush)
         {
             CheckPlayerFlip();
         }
@@ -1598,14 +1768,16 @@ public class Monster : MonoBehaviour
                 if (Target.transform.position.x < transform.position.x)
                 {
                     //transform.localScale = new Vector3(-1, 1, 1);
-                    spriteRenderer.flipX = true;
+                    if (canFlip)
+                        spriteRenderer.flipX = true;                   
                     //healthBar.parent.localScale = new Vector3(-1, 1, 1);
                     //healthBarPrev.parent.localScale = new Vector3(-1,1,1);
                 }
                 else
                 {
                     //transform.localScale = new Vector3(1, 1, 1);
-                    spriteRenderer.flipX = false;
+                    if (canFlip)
+                        spriteRenderer.flipX = false;                    
                     //healthBar.parent.localScale = new Vector3(1, 1, 1);
                     //healthBarPrev.parent.localScale = new Vector3(1, 1, 1);
                 }
@@ -1616,14 +1788,16 @@ public class Monster : MonoBehaviour
                 if (AttackTarget.transform.position.x < transform.position.x)
                 {
                     //transform.localScale = new Vector3(-1, 1, 1);
-                    spriteRenderer.flipX = true;
+                    if (canFlip)
+                        spriteRenderer.flipX = true;                    
                     //healthBar.parent.localScale = new Vector3(-1, 1, 1);
                     //healthBarPrev.parent.localScale = new Vector3(-1, 1, 1);
                 }
                 else
                 {
                     //transform.localScale = new Vector3(1, 1, 1);
-                    spriteRenderer.flipX = false;
+                    if (canFlip)
+                        spriteRenderer.flipX = false;                    
                     //healthBar.parent.localScale = new Vector3(1, 1, 1);
                     //healthBarPrev.parent.localScale = new Vector3(1, 1, 1);
                 }
@@ -1640,8 +1814,48 @@ public class Monster : MonoBehaviour
                 //    spriteRenderer.flipX = false;
                 //}
             }
+        }        
+        if (FlipShootPos)
+        {
+            if(!spriteRenderer.flipX)
+            {
+                BulletPos.localPosition = InitshooPos;
+            }
+            else
+            {
+                Vector2 newBulletPos = InitshooPos;
+                newBulletPos.x = -newBulletPos.x;
+                BulletPos.localPosition = newBulletPos;
+            }
         }
-       
+     
+    }
+    void UpdateGun()
+    {
+        if (AttackTarget != null)
+        {
+            Vector2 direction = AttackTarget.transform.position - GunObject.transform.position;
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+            Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+
+            GunObject.transform.rotation = Quaternion.Lerp(GunObject.transform.rotation, rotation, Time.deltaTime * 10000);         
+        }
+        else
+        {          
+            //gunsprite.flipY = true;
+            GunObject.transform.localScale = new Vector3(1, 1, 1);
+        }
+        if (spriteRenderer.flipX)
+        {
+            GunObject.transform.localScale = new Vector3(-1, 1, 1);
+        }
+        else
+        {
+            GunObject.transform.localScale = new Vector3(-1, -1, 1);
+        }
+
+
     }
     bool isSpawn =false;
     void CheckSpwan()
@@ -1693,6 +1907,7 @@ public class Monster : MonoBehaviour
                     temp.transform.localScale = new Vector3(1, 1, 1);
                     temp.transform.position = new Vector3(UnityEngine.Random.Range(transform.position.x - 0.3f, transform.position.x + 0.3f),
                         UnityEngine.Random.Range(transform.position.y - 0.3f, transform.position.y + 0.3f));
+                    temp.GetComponent<Monster>().rangeSpawner = rangeSpawner;
                     temp.GetComponent<Monster>().isStartMonster = true;
                     if (pObject != null)
                     {
@@ -1700,6 +1915,9 @@ public class Monster : MonoBehaviour
                     }
                 }                 
                 
+                break;
+            case DeathType.Explosion:
+                EZ_PoolManager.Spawn(Death_ExplotionObject, transform.localPosition, new Quaternion());
                 break;
         }
     }
@@ -1729,6 +1947,7 @@ public class Monster : MonoBehaviour
             temp.transform.SetParent(transform.parent);
             temp.transform.localScale = new Vector3(1, 1, 1);
             temp.transform.position = randPos;
+            temp.GetComponent<Monster>().rangeSpawner = rangeSpawner;
             temp.GetComponent<Monster>().isStartMonster = true;
             if (pObject != null)
             {
@@ -1737,6 +1956,7 @@ public class Monster : MonoBehaviour
         }
      
     }
+    
     public void AnimAttack()
     {        
         switch (attackType)
@@ -1750,12 +1970,15 @@ public class Monster : MonoBehaviour
             case AttackType.SpawnMonster:
               
                 break;
-        }        
+        }
+        canFlip = false;
     }
+    bool canFlip = true;
     public void EndAttack()
     {
         forceAttack = false;
         Ipath.canMove = true;
+        canFlip = true;
     }
     void DrawRay()
     {

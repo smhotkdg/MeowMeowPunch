@@ -51,8 +51,8 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
     private TargetFollow targetFollow;
 
-    SpriteRenderer spriteRenderer;
-    SpriteRenderer gunsprite;
+    public SpriteRenderer spriteRenderer;
+    public SpriteRenderer gunsprite;
     private Animator GunAnim;
     float defaultSpeed;
     IEnumerator CheckShieldRoutine;
@@ -501,6 +501,10 @@ public class PlayerController : MonoBehaviour
     float moveValue = 0;
     private void FixedUpdate()
     {
+        if (GameManager.Instance.gameStatus != GameManager.GameStatus.NOTING)
+        {
+            return;
+        }
         Vector3 direction = new Vector3(0, 0, 0);
         direction = new Vector3((Joystick.Horizontal / 100)*speed, (Joystick.Vertical / 100) * speed);
         transform.position += direction;
@@ -600,7 +604,7 @@ public class PlayerController : MonoBehaviour
                 collision.transform.parent.GetComponent<Rule>().NextMap.gameObject.GetComponent<DungeonController>().StartMonster();
             }
         }
-        if(collision.gameObject.tag == "Obstacle")
+        if(collision.gameObject.tag == "Obstacle" || collision.gameObject.tag == "cliff")
         {
             if(isFly)
             {

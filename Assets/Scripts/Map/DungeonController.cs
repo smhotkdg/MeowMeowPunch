@@ -1,11 +1,29 @@
 using DungeonMaker;
+using Sirenix.OdinInspector;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 public class DungeonController : MonoBehaviour
-{
+{    
+    public enum RoomStyle
+    {
+        normal,
+        left,
+        right,
+        vertical
+    }
+
+    public List<GameObject> SingList;
+
+    public List<Sprite> DoorSingNoramlList;
+    public List<Sprite> DoorSingBottomList;
+
+    public RoomStyle roomStyle = RoomStyle.normal;
+
+    public Vector2 LeftTopPos;
+    public float xy_margin;
+
     public BossController bossController;
     public enum RoomType
     {
@@ -50,8 +68,10 @@ public class DungeonController : MonoBehaviour
                 RoomIndex.Add(0);
             }
         }
-    
-      
+        for(int i=0; i <SingList.Count;i++)
+        {
+            SingList[i].SetActive(false);
+        }
     }
 
     private void BossController_onCompleteEnableHandler()
@@ -93,7 +113,7 @@ public class DungeonController : MonoBehaviour
                 }
                 else
                 {
-                    RoomIndex[i] = (int)RoomType.Noraml;
+                    RoomIndex[i] = (int)RoomType.Noraml;                    
                     //DoorList[i].Play("Close");                    
                 }
             }
@@ -186,7 +206,7 @@ public class DungeonController : MonoBehaviour
                 if(tr.name == "NextStage")
                 {
                     NextRoomObejct = tr.gameObject;
-                    NextRoomObejct.SetActive(false);
+                    //NextRoomObejct.SetActive(false);
                 }
                 if(tr.name == "Item_object")
                 {
@@ -215,6 +235,7 @@ public class DungeonController : MonoBehaviour
     }
 
     bool isMakeChest = false;
+    [Button]
     void makeChest()
     {
         bool isSpawnPossible = false;
@@ -222,7 +243,7 @@ public class DungeonController : MonoBehaviour
         Vector2 newPosition = new Vector2();
         while (true)
         {
-            newPosition = new Vector3(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f), 0) + transform.position;
+            newPosition = new Vector3(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f), 0) + GameManager.Instance.Player.transform.position;
             if (rangeSpawner.IsInside(newPosition))
             {
                 isSpawnPossible = true;
@@ -247,7 +268,7 @@ public class DungeonController : MonoBehaviour
             if (DoorList[i].gameObject.transform.parent.GetComponent<Rule>().NextMap != null)
             {
                 if (DoorList[i].gameObject.transform.parent.GetComponent<Rule>().NextMap.name != "ItemRoom")
-                {
+                {                   
                     //DoorList[i].SetTrigger("Open");
                     if(roomType == RoomType.Noraml)
                     {
@@ -291,6 +312,69 @@ public class DungeonController : MonoBehaviour
                         DoorList[i].Play("Treasure_Open");
                     }
                 }
+
+                int doorSingIndex = 0;
+                switch (DoorList[i].gameObject.transform.parent.parent.name)
+                {
+                    case "TOP":
+                        doorSingIndex = 0;
+                        break;
+                    case "BOTTOM":
+                        doorSingIndex = 1;
+                        break;
+                    case "LEFT":
+                        doorSingIndex = 2;
+                        break;
+                    case "RIGHT":
+                        doorSingIndex = 3;
+                        break;
+                }
+                SingList[doorSingIndex].SetActive(true);
+                if (RoomIndex[i] == (int)RoomType.Shop)
+                {
+                    if(doorSingIndex !=1)
+                    {
+                        SingList[doorSingIndex].GetComponent<SpriteRenderer>().sprite = DoorSingNoramlList[1];
+                    }
+                    else
+                    {
+                        SingList[doorSingIndex].GetComponent<SpriteRenderer>().sprite = DoorSingBottomList[1];
+                    }
+                }
+                else if (RoomIndex[i] == (int)RoomType.Item)
+                {
+                    if (doorSingIndex != 1)
+                    {
+                        SingList[doorSingIndex].GetComponent<SpriteRenderer>().sprite = DoorSingNoramlList[0];
+                    }
+                    else
+                    {
+                        SingList[doorSingIndex].GetComponent<SpriteRenderer>().sprite = DoorSingBottomList[0];
+                    }
+                }
+                else if (RoomIndex[i] == (int)RoomType.Boss)
+                {
+                    if (doorSingIndex != 1)
+                    {
+                        SingList[doorSingIndex].GetComponent<SpriteRenderer>().sprite = DoorSingNoramlList[3];
+                    }
+                    else
+                    {
+                        SingList[doorSingIndex].GetComponent<SpriteRenderer>().sprite = DoorSingBottomList[3];
+                    }
+                }
+                else if(RoomIndex[i] == (int)RoomType.Noraml)
+                {
+                    if (doorSingIndex != 1)
+                    {
+                        SingList[doorSingIndex].GetComponent<SpriteRenderer>().sprite = DoorSingNoramlList[2];
+                    }
+                    else
+                    {
+                        SingList[doorSingIndex].GetComponent<SpriteRenderer>().sprite = DoorSingBottomList[2];
+                    }
+                }
+
             }
         }
     }
@@ -302,7 +386,8 @@ public class DungeonController : MonoBehaviour
             IsOpen = true;
             if(isBossRoom)
             {
-                NextRoomObejct.SetActive(true);
+                //NextRoomObejct.SetActive(true);
+                NextRoomObejct.GetComponent<NextStageController>().OpenNext();
                 ItemObject.SetActive(true);
             }
             if(isMakeChest ==false && isMakeLootbox==true)

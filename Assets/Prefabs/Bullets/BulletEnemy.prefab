@@ -132,6 +132,10 @@ MonoBehaviour:
   DamangeColor: {r: 0, g: 0, b: 0, a: 0}
   bulletTransform: {fileID: 0}
   Hit: 0
+  isStopMovement: 0
+  TargetPlayerAttack: 0
+  isDirectShoot: 1
+  ShootWaitTime: 0
   MissileTarget: {fileID: 7256887084973383751, guid: 04b296f2ea46ca6459ffea3052dced2c,
     type: 3}
   m_TrailRenderer: {fileID: 6517892859157097405}
@@ -148,6 +152,7 @@ MonoBehaviour:
   boomerangTime: 2
   bulletDirection: 0
   Target_Boss: {x: 0, y: 0}
+  t: {fileID: 0}
   AngleSpeed: 500
   hormingTime: 1
   trees: []

@@ -8,6 +8,7 @@ public class MagentController : MonoBehaviour
     {
         if(collision.tag == "Product")
         {
+            //if(GameManager.Instance.room)
             collision.GetComponent<BounceDue>().StartMovePlayer();
         }
     }    

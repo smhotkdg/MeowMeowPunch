@@ -523,6 +523,37 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &1967910939311789161
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4914997852480521298}
+  m_Layer: 13
+  m_Name: EffectPos
+  m_TagString: Untagged
+  m_Icon: {fileID: 1206586993520771344, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4914997852480521298
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1967910939311789161}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6780726692564950436}
+  m_RootOrder: 12
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2982482914266031393
 GameObject:
   m_ObjectHideFlags: 0
@@ -1127,6 +1158,7 @@ Transform:
   - {fileID: 1404758271380075249}
   - {fileID: 1404758272266854602}
   - {fileID: 451772411633868813}
+  - {fileID: 4914997852480521298}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1171,13 +1203,13 @@ SpriteRenderer:
   m_SortingLayerID: 47421343
   m_SortingLayer: 4
   m_SortingOrder: 0
-  m_Sprite: {fileID: 1305347024106380446, guid: c4bd3cffffda71b4b96639403a543242,
+  m_Sprite: {fileID: -2819285051132448954, guid: 9533ff39c80fef944bd5a5b9728af056,
     type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.64, y: 0.64}
+  m_Size: {x: 0.48, y: 0.48}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -1209,8 +1241,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.01736395, y: -0.013665624}
-  m_Size: {x: 0.16899863, y: 0.16899863}
+  m_Offset: {x: 0, y: 0}
+  m_Size: {x: 0.17, y: 0.17}
   m_Direction: 0
 --- !u!50 &6780726692564950432
 Rigidbody2D:
@@ -1273,6 +1305,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4e6823f6a72a5644aca6524db79f87a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  effect_target: {fileID: 1967910939311789161}
+  effectSacle: {x: 0.25, y: 0.25}
   particleType: 1
   rangeSpawner: {fileID: 0}
   IsAnimationAttack: 1
@@ -1316,6 +1350,7 @@ MonoBehaviour:
   DeathSpawnMonsterList: []
   DeathSpawnCount: 0
   DeathSpawnRandom: 0
+  Death_ExplotionObject: {fileID: 0}
   BaseHp: 30
   StageHp: 5
   Hp: 10

@@ -16,6 +16,8 @@ TagManager:
   - Room_wall
   - Product
   - Shield
+  - cliff
+  - outBlock
   layers:
   - Default
   - TransparentFX
@@ -46,7 +48,7 @@ TagManager:
   - Shield
   - stopEnemies
   - outBlock
-  - 
+  - cliff
   - 
   - 
   m_SortingLayers:

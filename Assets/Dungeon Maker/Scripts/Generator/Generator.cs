@@ -197,9 +197,9 @@ namespace DungeonMaker
             }
         }
         public int[,] mapIndex;
-        void saveIndex(int y ,int x,string dungeonname)
-        {         
-            switch(dungeonname)
+        void saveIndex(int y, int x, string dungeonname)
+        {
+            switch (dungeonname)
             {
                 case "Noraml":
                     mapIndex[y, x] = 0;
@@ -213,9 +213,9 @@ namespace DungeonMaker
                 case "Normal_Right":
                     mapIndex[y, x] = 3;
                     break;
-            }                
+            }
         }
-        GameObject GetIndex(int y, int x,List<GameObject> os)
+        GameObject GetIndex(int y, int x, List<GameObject> os)
         {
             return os[mapIndex[y, x]];
         }
@@ -268,9 +268,9 @@ namespace DungeonMaker
                             {
                                 Shuffle(weightList);
                                 if (FindProbability(weightList[0].GetComponent<DungeonController>().weight))
-                                {                                    
-                                    if(isLoad)
-                                    {                                        
+                                {
+                                    if (isLoad)
+                                    {
                                         o = GetIndex(y, x, os);
                                     }
                                     else
@@ -278,10 +278,11 @@ namespace DungeonMaker
                                         o = weightList[0];
                                         saveIndex(x, y, o.name);
                                     }
+                                    //o = weightList[0];
                                 }
                                 else
                                 {
-                                    
+
                                     if (isLoad)
                                     {
                                         o = GetIndex(y, x, os);
@@ -291,6 +292,7 @@ namespace DungeonMaker
                                         o = GeneratorUtils.RandomObject(weightNormalList);
                                         saveIndex(x, y, o.name);
                                     }
+                                    //o = GeneratorUtils.RandomObject(weightNormalList);
                                 }
                             }
                             else
@@ -303,7 +305,8 @@ namespace DungeonMaker
                                 {
                                     o = GeneratorUtils.RandomObject(weightNormalList);
                                     saveIndex(x, y, o.name);
-                                }                                
+                                }
+                                //o = GeneratorUtils.RandomObject(weightNormalList);
                             }
 
                         }
